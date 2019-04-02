@@ -1,0 +1,30 @@
+{%- include 'modules/payments/shared/api_credentials' -%}
+{%- capture "signature" -%}
+  {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
+{%- endcapture -%}
+
+{% form %}
+  {% assign data_attribute = form_builder.fields.properties.data.name %}
+  <input type="hidden" name="redirect_to" value="{{ redirect_to }}" />
+  <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
+  <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
+  {% for property in data %}
+    <p>
+      {{ property.first }}
+      <input type="text" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
+    </p>
+  {% endfor %}
+  
+  {% if property.source == null %}
+    <script src="https://checkout.stripe.com/checkout.js" defer></script>
+    <script src="{{ 'modules/stripe/javascripts/CheckoutPaymentForm.js' | asset_url }}" defer></script>
+    <input type="hidden" name="{{ data_attribute }}[source]" value="" data-cc-token />
+  {% else %}
+    <button class='stripe-button-el' type="submit">
+      <span>Pay {{ data.amount | default: 0 | pricify_cents: data.currency  }}</span>
+    </button>
+  {% endif %}
+
+  {% include 'modules/stripe/card/form', data: data %}
+{% endform %}
+

@@ -1,0 +1,34 @@
+{% if form_builder.errors != blank %}
+  <p class="alert-danger">
+  {{ form_builder.errors }}
+  </p>
+  {% log "something went really wrong on setup-card: ", type: 'error' %}
+  {% log form_builder.errors, type: 'error' %}
+{% endif %}
+
+<div class="form-group form_credit_card_id">
+  <input style="display: none;" type="radio" value="new" id="form_credit_card_id_new" data-credit-card="new" checked>
+</div>
+
+{% if button %}
+  <div class="row">
+    <div class="col">
+      <button type="button" class="btn stripe-button-el btn-primary pull-left mr-5" data-stripe-checkout-button>
+        <span><i class="fa fa-lock"></i> {{ button }}</span>
+      </button>
+    </div>
+  </div>
+{% endif %}
+
+<div
+  class="hidden"
+  data-add-new-card="true"
+  data-user-email="{{ data.email }}"
+  data-checkout-title="PlatformOS"
+  data-amount="{{ data.amount }}"
+  data-checkout-description="{{ data.description }}"
+  data-public-key="{{ context.exports.payments.gateway.public_key }}"
+  data-button-label="{{ label | default: 'Pay' }}"
+  hidden
+  >
+</div>
