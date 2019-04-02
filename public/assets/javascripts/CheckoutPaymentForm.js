@@ -26,6 +26,7 @@ class CheckoutPaymentForm {
     this.stripeIcon = this.addCardContainer.dataset.checkoutIcon;
     this.stripeButtonLabel = this.addCardContainer.dataset.buttonLabel;
     this.stripeAmount = this.addCardContainer.dataset.amount;
+    this.requireZip = this.addCardContainer.dataset.requireZip;
   }
 
   configure() {
@@ -53,7 +54,7 @@ class CheckoutPaymentForm {
       amount: this.stripeAmount,
       description: this.stripeDescription,
       panelLabel: this.stripeButtonLabel,
-      zipCode: false,
+      zipCode: this.requireZip == 'true',
       email: this.stripeEmail
     });
   }
