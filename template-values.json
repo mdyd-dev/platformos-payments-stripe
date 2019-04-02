@@ -1,0 +1,4 @@
+{
+  "stripe_pk_key": "your_stripe_pk_key",
+  "stripe_sk_key": "your_stripe_sk_key"
+}

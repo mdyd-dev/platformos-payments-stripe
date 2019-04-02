@@ -1,6 +1,6 @@
 {%- include 'modules/payments/shared/api_credentials' -%}
 {%- capture "signature" -%}
-  {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
+  {% include 'modules/stripe/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
 {%- endcapture -%}
 
 {% form %}
@@ -10,8 +10,7 @@
   <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
   {% for property in data %}
     <p>
-      {{ property.first }}
-      <input type="text" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
+      <input type="hidden" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
     </p>
   {% endfor %}
   
