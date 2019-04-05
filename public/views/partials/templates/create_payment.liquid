@@ -1,16 +1,16 @@
-{%- include 'modules/payments/shared/api_credentials' -%}
+{%- include 'modules/stripe/shared/api_credentials' -%}
 {%- capture "signature" -%}
-  {% include 'modules/stripe/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
+  {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
 {%- endcapture -%}
 
 {% form %}
   {% assign data_attribute = form_builder.fields.properties.data.name %}
-  <input type="hidden" name="redirect_to" value="{{ redirect_to }}" />
+  <input type="hidden" name="redirect_to" value="{{ config.redirect_to }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
   {% for property in data %}
     <p>
-      <input type="hidden" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
+      <input type="hidden" name="{{ data_attribute }}[{{ property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
     </p>
   {% endfor %}
   
@@ -24,6 +24,6 @@
     </button>
   {% endif %}
 
-  {% include 'modules/stripe/card/form', data: data %}
+  {% include 'modules/stripe/card/form', data: data, config: config %}
 {% endform %}
 

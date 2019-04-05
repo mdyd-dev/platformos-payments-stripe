@@ -1,5 +1,5 @@
 ---
-name: delete_card
+name: delete_credit_card
 to: https://api.stripe.com/v1/customers/{{ data.customer_id }}/sources/{{ data.gateway_id }}
 enabled: true
 format: https
@@ -12,7 +12,7 @@ callback: >
   {% endif %}
 headers: >
   {% if data %}
-    {%- include 'modules/payments/shared/api_credentials' -%}
+    {%- include 'modules/stripe/shared/api_credentials' -%}
     {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}"

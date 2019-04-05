@@ -12,7 +12,7 @@ callback: >
   {% endif %}
 headers: >
   {% if data %}
-    {%- include 'modules/payments/shared/api_credentials' -%}
+    {%- include 'modules/stripe/shared/api_credentials' -%}
     {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}"
