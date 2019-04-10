@@ -1,0 +1,7 @@
+{% assign text_parameterized = text | downcase | replace: ' ', '-'  %}
+{% assign input = input | default: text_parameterized %}
+
+<div class="form-group">
+  <label for="input-{{ input }}">{{ text }}</label>
+  <input type="text" name="{{ name }}" class="form-control" id="input-{{ input }}" data-{{ input }} value="{{ value }}">
+</div>

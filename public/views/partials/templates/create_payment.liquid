@@ -14,8 +14,7 @@
       <input type="hidden" name="{{ data_attribute }}[{{ property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
   {% endfor %}
   
-  {% if property.source != blank %}
-
+  {% if data.source == blankl %}
     <script src="https://checkout.stripe.com/checkout.js" defer></script>
     <script src="{{ 'modules/stripe/javascripts/CheckoutPaymentForm.js' | asset_url }}" defer></script>
     <input type="hidden" name="{{ data_attribute }}[source]" value="" data-cc-token />

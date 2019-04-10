@@ -1,6 +1,6 @@
 ---
-name: get_payout
-to: https://api.stripe.com/v1/balance/history?payout={{ data.payout_id }}
+name: get_account
+to: https://api.stripe.com/v1/accounts/{{ data.gateway_id }}
 enabled: true
 format: https
 trigger_condition: true
@@ -10,10 +10,10 @@ headers: >
   {% if data %}
     {%- include 'modules/stripe/shared/api_credentials' -%}
     {
-      "Stripe-Account": "{{ data.account_id }}",
+      "Stripe-Account": "{{ data.gateway_id }}",
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}"
     }
   {% endif %}
 ---
-expand[]=data.source.source_transfer
+

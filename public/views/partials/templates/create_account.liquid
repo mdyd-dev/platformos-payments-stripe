@@ -1,0 +1,163 @@
+{%- include 'modules/stripe/shared/api_credentials' -%}
+<script>
+  const stripe_pk = "{{ context.exports.payments.gateway.public_key }}"
+</script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{{ 'modules/stripe/javascripts/StripeAccount.js' | asset_url }}" defer></script>
+
+{%- capture "signature" -%}
+  {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
+{%- endcapture -%}
+<div>
+  {% if response.verification.disabled_reason %}
+    <div class="alert alert-danger" role="alert">
+      {{ response.verification.disabled_reason }}
+    </div>
+  {% endif %}
+  {% if response.verification.fields_needed %}
+    <div class="alert alert-danger" role="alert">
+      Please provide the following information
+    </div>
+    <ul>
+      {% for field_needed in response.verification.fields_needed %}
+        <li>
+          {{ field_needed | t }}
+        </li>
+      {% endfor%}
+    </ul>
+  {% endif %}
+</div>
+<div class="row">
+  <div class="col-md-2 col-sm-12">
+    <h5>Payouts {% if response.payouts_enabled == 'enabled' %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
+  </div>
+  <div class="col-md-10 col-sm-12">
+    <h5>Transfers {% if response.transfers_enabled == 'enabled' %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
+  </div>
+</div>
+{% form html-class: 'account-form' %}
+  {% assign data_attribute = form_builder.fields.properties.data.name %}
+  <input type="hidden" name="{{ data_attribute }}[source]" value="" data-cc-token />
+  <input type="hidden" name="redirect_to" value="{{ config.redirect_to | default: context.location.href }}" />
+  <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
+  <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
+  {% if data.gateway_id %}
+    <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully updated an accout" />
+  {% else %}
+    <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully created an accout" />
+  {% endif %}
+  <input type="text" name="{{ data_attribute}}[account_token]" id="account-token">
+  
+  {% for property in data %}
+    <input type="hidden" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" />
+  {% endfor %}
+
+  {% unless data.country %}
+    <div class="form-group">
+      <label for="first_name">Country</label>
+      <select name="{{ data_attribute}}[last_name]"  class="form-control" >
+        <option value="US">United States</option>
+        <option value="PL">Poland</option>
+      </select>
+    </div>
+  {% endunless %}
+
+  {% unless data.country %}
+    <div class="form-group">
+      <label for="inputEmail4">Email</label>
+      <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
+    </div>
+  {% endunless %}
+
+  {% unless data.business_type %}
+    <div class="form-group">
+      <legend class="">Account Type</legend>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" 
+               type="radio"
+               name="{{ data_attribute}}[business_type]"
+               id="inlineRadio1"
+               value="individual"
+               {% if response.legal_entity.type  == 'individual' %}checked{% endif %}
+               {% if data.gateway_id %}disabled{% endif %}>
+        <label class="form-check-label" for="inlineRadio1">Individual</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" 
+               type="radio" 
+               name="{{ data_attribute}}[business_type]" 
+               id="inlineRadio2" 
+               value="Company"
+               {% if response.legal_entity.type  == 'company' %}checked{% endif %} 
+               {% if data.gateway_id %}disabled{% endif %}>
+        <label class="form-check-label" for="inlineRadio2">Company</label>
+      </div>
+    </div>
+  {% endunless %}
+  {% comment %}
+  
+  <fieldset class="individual hidden-print d-none">
+    <div class="form-group">
+      <label for="inputAddress">Address</label>
+      <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+    </div>
+
+    <div class="form-group">
+      <label for="inputAddress2">Address 2</label>
+      <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputCity">City</label>
+        <input type="text" class="form-control" id="inputCity">
+      </div>
+      <div class="form-group col-md-4">
+        <label for="inputState">State</label>
+        <select id="inputState" class="form-control">
+          <option selected>Choose...</option>
+          <option>...</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="inputZip">Zip</label>
+        <input type="text" class="form-control" id="inputZip">
+      </div>
+    </div>
+  </fieldset>
+  {% endcomment %}
+
+  <fieldset class="company">
+    {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {% include text_field with "Business Name", value: response.legal_entity.business_name  %}
+      </div>
+      <div class="form-group col-md-6">
+        {% include text_field with "Phone", value: response.legal_entity.phone_number %}
+      </div>
+    </div>
+    {% include text_field with "Address", value: response.legal_entity.address.line1 %}
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {% include text_field with "City", value: response.legal_entity.address.city %}
+      </div>
+      <div class="form-group col-md-4">
+        {% include text_field with "State", value: response.legal_entity.address.state %}
+      </div>
+      <div class="form-group col-md-2">
+        {% include text_field with "Zip", value: response.legal_entity.address.postal_code %}
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="gridCheck" required {% if data.gateway_id %}checked{% endif %}>
+      <label class="form-check-label" for="gridCheck">
+        By clicking, you agree to <a href="#">our terms</a> and the <a href="https://stripe.com/en-US/connect-account/legal">Stripe Connected Account Agreement</a>.
+      </label>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">{{ config.button }}</button>
+{% endform %}
+

@@ -1,0 +1,9 @@
+en:
+  external_account: "External Account:"
+  legal_entity:
+    dob:
+      day: "Date of birth - day"
+      month: "Date of birth - month"
+      year: "Date of birth - year"
+    first_name: "First Name"
+    last_name: "Last Name"
