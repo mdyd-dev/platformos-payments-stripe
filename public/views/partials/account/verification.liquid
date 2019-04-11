@@ -1,0 +1,38 @@
+  {% if response.verification.disabled_reason %}
+    <div class="alert alert-danger" role="alert">
+      {{ response.verification.disabled_reason }}
+    </div>
+  {% endif %}
+
+  {% if response.verification.fields_needed != empty %}
+    {% parse_json "alert" %}
+      {% if response.charges_enabled != true %}
+        {
+          "type": "alert",
+          "msg": "Account payment is currently disabled, please provide the following information so that we can enable your payments." 
+         }
+      {% elsif response.payouts_enabled != true %}
+        {
+          "type": "warning",
+          "msg": "Account payouts is currently disabled, please provide the following information so that we can enable your payoyts."
+        }
+      {% else %}
+        {
+          "type":"info",
+          "msg": "Your account is now fully opertaional but looks like there are still somthing missing. Please provide the following information: "
+         }
+      {% endif %}
+    {% endparse_json %}
+
+    <div class="alert alert-{{ alert.type }}" role="alert">
+      <p>{{ alert.msg }}</p>
+      <ul class='mt-3'>
+        {% for field_needed in response.verification.fields_needed %}
+          <li>
+            {{ 'stripe.fields_needed.' | append: field_needed | t }}
+          </li>
+        {% endfor%}
+      </ul>
+    </div>
+  {% endif %}
+</div>

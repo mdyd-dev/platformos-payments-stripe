@@ -1,11 +1,35 @@
 en:
   external_account: "External Account:"
-  legal_entity:
-    dob:
-      day: "Date of birth - day"
-      month: "Date of birth - month"
-      year: "Date of birth - year"
-    first_name: "First Name"
-    last_name: "Last Name"
-    business_tax_id: "Business Tax ID"
-    ssn_last_4: "Social Security number - last 4 digits"
+  stripe:
+    fields_needed:
+      legal_entity:
+        dob:
+          day: "Date of birth - day"
+          month: "Date of birth - month"
+          year: "Date of birth - year"
+        first_name: "First Name"
+        last_name: "Last Name"
+        business_tax_id: "Business Tax ID (Employer Identification Number)"
+        ssn_last_4: "Social Security number - last 4 digits"
+        verification:
+          document: Photo ID
+    account:
+      business-name: Company Name
+      phone: Phone Number
+      tax-id: Employer Identification Number
+      address: Address
+      city: City
+      state: State
+      zip: Postal Code
+      first-name: First Name
+      last-name: Last Name
+      id-number: SSN
+      date-of-birth: Date of Birth
+      country: Country
+      currency: Currency
+      routing-number: Routing Number
+      account-number: Account Number
+      account-holder-name: Account Holder Name
+
+
+

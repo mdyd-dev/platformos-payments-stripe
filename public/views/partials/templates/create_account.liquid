@@ -10,24 +10,9 @@
   {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
 {%- endcapture -%}
 <div>
-  {% if response.verification.disabled_reason %}
-    <div class="alert alert-danger" role="alert">
-      {{ response.verification.disabled_reason }}
-    </div>
-  {% endif %}
-  {% if response.verification.fields_needed %}
-    <div class="alert alert-danger" role="alert">
-      Please provide the following information
-    </div>
-    <ul>
-      {% for field_needed in response.verification.fields_needed %}
-        <li>
-          {{ field_needed | t }}
-        </li>
-      {% endfor%}
-    </ul>
-  {% endif %}
-</div>
+
+{%- include 'modules/stripe/account/verification' -%}
+
 {% form html-class: 'account-form' %}
   {% assign data_attribute = form_builder.fields.properties.data.name %}
   <input type="hidden" name="redirect_to" value="{{ config.redirect_to | default: context.location.href }}" />
@@ -128,11 +113,18 @@
 
   <fieldset class="company">
     <div class="form-row">
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         {% include text_field with "Business Name", value: response.legal_entity.business_name  %}
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         {% include text_field with "Phone", value: response.legal_entity.phone_number %}
+      </div>
+      <div class="form-group col-md-4">
+        {% if response.legal_entity.business_tax_id_provided %}
+          {% assign tax_placeholder = 'Provided' %}
+          {% assign tax_disabled = true %}
+        {% endif %}
+        {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled %}
       </div>
     </div>
     {% include text_field with "Address", value: response.legal_entity.address.line1 %}
@@ -212,13 +204,19 @@
     <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>
     <input type="hidden" name="{{ person_attribute}}[gateway_id]" value="{{ person.id }}" id="person-token">
     <div class="form-row">
-      <div class="form-group col-md-4">
+      <div class="form-group col-md-3">
         {% include text_field with "First Name", value: person.first_name  %}
       </div>
-      <div class="form-group col-md-4">
+      <div class="form-group col-md-3">
         {% include text_field with "Last Name", value: person.last_name  %}
       </div>
-      <div class="form-group col-md-4">
+      <div class="form-group col-md-3">
+        {% if person.id_number_provided %}
+          {% assign id_placeholder = 'Provided' %}
+        {% endif %}
+        {% include text_field with "ID Number", value: person.id_number, placeholder: id_placeholder, disabled: person.id_number_provided %}
+      </div>
+      <div class="form-group col-md-3">
         {% if person.dob.day %}
           {% assign date_of_birth = person.dob.day | append: '/' | append: person.dob.month | append: '/' | append: person.dob.year %}
         {% else %}
@@ -237,6 +235,13 @@
       </div>
       <div class="form-group col-md-2">
         {% include text_field with "Zip", value: person.address.postal_code %}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {% assign photo_id = forloop.index | append: "_front_photo" %}
+        <label for="{{ photo_id }}">Photo ID (Front)</label><br/>
+        <input type="file" id="{{ photo_id }}" data-front-photo-id name="id-file" accept=".jpeg,.jpg,.png">
       </div>
     </div>
   </fieldset>

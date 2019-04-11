@@ -8,6 +8,9 @@ async function handleForm(event) {
   console.log("Processing");
   event.preventDefault();
 
+
+
+
   const resolved = (result) => {
     console.log('Resolved');
   }
@@ -49,20 +52,25 @@ async function handleForm(event) {
       )
     )
   }
-  
+  let company = {
+    name: document.querySelector('.company [data-business-name]').value,
+    phone: document.querySelector('.company [data-phone]').value,
+    address: {
+      line1: document.querySelector('.company [data-address]').value,
+      city: document.querySelector('.company [data-city]').value,
+      state: document.querySelector('.company [data-state]').value,
+      postal_code: document.querySelector('.company [data-zip]').value,
+    },
+  }
+  let tax_id = document.querySelector('.company [data-tax-id]').value;
+  if (tax_id) {
+    company.tax_id = tax_id;
+  }
+
   stripePromises.push(
     stripe.createToken('account', {
     business_type: 'company',
-    company: {
-      name: document.querySelector('.company [data-business-name]').value,
-      phone: document.querySelector('.company [data-phone]').value,
-      address: {
-        line1: document.querySelector('.company [data-address]').value,
-        city: document.querySelector('.company [data-city]').value,
-        state: document.querySelector('.company [data-state]').value,
-        postal_code: document.querySelector('.company [data-zip]').value,
-      },
-    },
+    company: company,
     tos_shown_and_accepted: true,
     }).then(function(result, person) {
       document.querySelector('#account-token').value = result.token.id;
@@ -72,6 +80,9 @@ async function handleForm(event) {
 
   for (i = 0; i < persons.length; ++i) {
     let person = persons[i];
+
+
+
     let stripePerson = { 
       person: {
         first_name: person.querySelector('[data-first-name]').value,
@@ -84,16 +95,36 @@ async function handleForm(event) {
         }
       }
     }
-
+    
+    let idNumber = person.querySelector('[data-id-number]').value
+    if (idNumber) {
+      stripePerson.person.id_number = idNumber;
+    }
     let dobValue = person.querySelector('[data-date-of-birth]').value
     if (dobValue.length != 0 ) {
       let dob = dobValue.split('/');
-      stripePerson.dob = {}
-      if (dob[0] != undefined) stripePerson.dob.day = dob[0]
-      if (dob[1] != undefined) stripePerson.dob.month = dob[1]
-      if (dob[2] != undefined) stripePerson.dob.year = dob[2]
+      stripePerson.person.dob = {}
+      if (dob[0] != undefined) stripePerson.person.dob.day = dob[0]
+      if (dob[1] != undefined) stripePerson.person.dob.month = dob[1]
+      if (dob[2] != undefined) stripePerson.person.dob.year = dob[2]
     }
 
+    const data = new FormData();
+    data.append('file', person.querySelector('[data-front-photo-id]').files[0]);
+    data.append('purpose', 'identity_document');
+    
+    const fileResult = await fetch('https://uploads.stripe.com/v1/files', {
+      method: 'POST',
+      headers: {'Authorization': `Bearer ${stripe._apiKey}`},
+      body: data,
+    });
+    const fileData = await fileResult.json();
+    
+    stripePerson.person.verification = {};
+    stripePerson.person.verification.document = {};
+    stripePerson.person.verification.document.front = fileData.id;
+    console.log("SP", stripePerson);
+    
     stripePromises.push(
       stripe.createToken('person', stripePerson).then(
         function(person, result) {
