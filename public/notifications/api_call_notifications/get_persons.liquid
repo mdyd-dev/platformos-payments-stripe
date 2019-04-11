@@ -1,0 +1,19 @@
+---
+name: get_persons
+to: https://api.stripe.com/v1/accounts/{{ data.gateway_id }}/persons
+enabled: true
+format: https
+trigger_condition: true
+request_type: Get
+callback:
+headers: >
+  {% if data %}
+    {%- include 'modules/stripe/shared/api_credentials' -%}
+    {
+      "Stripe-Account": "{{ data.gateway_id }}",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}"
+    }
+  {% endif %}
+---
+

@@ -1,2 +1,22 @@
-{% log request, type: "REQUEST" %}
-{% log customization, type: "CUSTOMIZATION" %}
+{% assign data = params.properties_attributes.data %}
+{% log "Processing CALLBACK", type: "DEBUG" %}
+{% for person_hash in data.persons %}
+  {% assign person = person_hash.last %}
+  {% assign token = person.token %}
+  {% if token or person.gateway_id %}
+    {%- assign gateway_api_template = "modules/stripe/create_person" -%}
+
+    {% parse_json 'person_data' %}
+      {
+        "gateway_id": "{{ person.gateway_id }}",
+        "account_id": "{{ customization.properties.gateway_id }}",
+        "person_token": "{{ token }}"
+      }
+    {% endparse_json %}
+    
+    {% log person_data, type: "PERSON DATA" %}
+
+    {%- execute_query 'modules/payments/gateway_create', result_name: 'person_response', data: person_data, gateway_template: gateway_api_template -%}
+    {% log person_response, type: "Person Response" %}
+  {% endif %}
+{% endfor %}

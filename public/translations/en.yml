@@ -7,3 +7,5 @@ en:
       year: "Date of birth - year"
     first_name: "First Name"
     last_name: "Last Name"
+    business_tax_id: "Business Tax ID"
+    ssn_last_4: "Social Security number - last 4 digits"

@@ -28,16 +28,15 @@
   {% endif %}
 </div>
 <div class="row">
-  <div class="col-md-2 col-sm-12">
-    <h5>Payouts {% if response.payouts_enabled == 'enabled' %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
+  <div class="col-md-3 col-sm-12">
+    <h5>Payments {% if response.charges_enabled == true %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
   </div>
-  <div class="col-md-10 col-sm-12">
-    <h5>Transfers {% if response.transfers_enabled == 'enabled' %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
+  <div class="col-md-9 col-sm-12">
+    <h5>Payouts {% if response.payouts_enabled == true %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
   </div>
 </div>
 {% form html-class: 'account-form' %}
   {% assign data_attribute = form_builder.fields.properties.data.name %}
-  <input type="hidden" name="{{ data_attribute }}[source]" value="" data-cc-token />
   <input type="hidden" name="redirect_to" value="{{ config.redirect_to | default: context.location.href }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
@@ -46,14 +45,15 @@
   {% else %}
     <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully created an accout" />
   {% endif %}
-  <input type="text" name="{{ data_attribute}}[account_token]" id="account-token">
+  <input type="hidden" name="{{ data_attribute }}[account_token]" id="account-token">
+  <input type="hidden" name="{{ data_attribute }}[external_account]" data-external-account>
   
   {% for property in data %}
     <input type="hidden" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" />
   {% endfor %}
 
   {% unless data.country %}
-    <div class="form-group">
+    <div class="fo,first_name,last_namerm-group">
       <label for="first_name">Country</label>
       <select name="{{ data_attribute}}[last_name]"  class="form-control" >
         <option value="US">United States</option>
@@ -69,9 +69,9 @@
     </div>
   {% endunless %}
 
+  <h4 class="mt-4 mb-4">Account Information</h4>
   {% unless data.business_type %}
     <div class="form-group">
-      <legend class="">Account Type</legend>
       <div class="form-check form-check-inline">
         <input class="form-check-input" 
                type="radio"
@@ -149,6 +149,47 @@
       </div>
     </div>
   </fieldset>
+  
+
+{% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_persons" %}
+{% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
+<h4 class='mb-4'>Representatives</h4>
+{% for person in persons_response.data %}
+  <fieldset class="person border-bottom border-light mb-5">
+    {% assign person_attribute = data_attribute | append: '[persons][' | append: forloop.index | append: ']' %} 
+    <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>
+    <input type="hidden" name="{{ person_attribute}}[gateway_id]" value="{{ person.id }}" id="person-token">
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        {% include text_field with "First Name", value: person.first_name  %}
+      </div>
+      <div class="form-group col-md-4">
+        {% include text_field with "Last Name", value: person.last_name  %}
+      </div>
+      <div class="form-group col-md-4">
+        {% if person.dob.day %}
+          {% assign date_of_birth = person.dob.day | append: '/' | append: person.dob.month | append: '/' | append: person.dob.year %}
+        {% else %}
+          {% assign date_of_birth = '' %}
+        {% endif %}
+        {% include text_field with "Date of Birth", value: date_of_birth  %}
+      </div>
+    </div>
+    {% include text_field with "Address", value: person.address.line1 %}
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {% include text_field with "City", value: person.address.city %}
+      </div>
+      <div class="form-group col-md-4">
+        {% include text_field with "State", value: person.address.state %}
+      </div>
+      <div class="form-group col-md-2">
+        {% include text_field with "Zip", value: person.address.postal_code %}
+      </div>
+    </div>
+  </fieldset>
+
+{% endfor %}
 
   <div class="form-group">
     <div class="form-check">
