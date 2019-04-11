@@ -1,0 +1,12 @@
+{% assign text = select %}
+{% assign text_parameterized = text | downcase | replace: ' ', '-'  %}
+{% assign input = input | default: text_parameterized %}
+
+<div class="form-group">
+  <label for="input-{{ input }}">{{ text }}</label>
+  <select type="text" name="{{ name }}" class="form-control" id="input-{{ input }}" data-{{ input }} value="{{ value }}" placeholder={{ placeholder }}>
+    {% for option in collection %}
+      <option value="{{ option.first }}" {% if option.first == value %}selected{% endif %}>{{ option.last }}</option>
+    {% endfor %}
+    </select>
+</div>

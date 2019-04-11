@@ -4,6 +4,7 @@
 </script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{{ 'modules/stripe/javascripts/StripeAccount.js' | asset_url }}" defer></script>
+<script src="{{ 'modules/stripe/javascripts/Collapse.js' | asset_url }}" defer></script>
 
 {%- capture "signature" -%}
   {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
@@ -26,14 +27,6 @@
       {% endfor%}
     </ul>
   {% endif %}
-</div>
-<div class="row">
-  <div class="col-md-3 col-sm-12">
-    <h5>Payments {% if response.charges_enabled == true %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
-  </div>
-  <div class="col-md-9 col-sm-12">
-    <h5>Payouts {% if response.payouts_enabled == true %}<span class="badge badge-success">enabled{% else %}<span class="badge badge-danger">disabled{% endif %}</span></h5>
-  </div>
 </div>
 {% form html-class: 'account-form' %}
   {% assign data_attribute = form_builder.fields.properties.data.name %}
@@ -68,8 +61,13 @@
       <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
     </div>
   {% endunless %}
+  
+  <span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
+  <span class="badge badge-{% if response.charges_enabled == true %}success{% else %}danger{% endif %}">Payments {% if response.charges_enabled == true %}enabled{% else %}disabled{% endif %}</span>
+  <h4 class="mt-4 mb-4">
+    Account Information 
+  </h4>
 
-  <h4 class="mt-4 mb-4">Account Information</h4>
   {% unless data.business_type %}
     <div class="form-group">
       <div class="form-check form-check-inline">
@@ -125,9 +123,10 @@
     </div>
   </fieldset>
   {% endcomment %}
+  {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
+  {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
 
   <fieldset class="company">
-    {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
     <div class="form-row">
       <div class="form-group col-md-6">
         {% include text_field with "Business Name", value: response.legal_entity.business_name  %}
@@ -149,7 +148,60 @@
       </div>
     </div>
   </fieldset>
-  
+
+
+
+  {%- assign external_account = response.external_accounts.data.first -%}
+  {%- assign account_number = '**** ' | append: external_account.last4 -%}
+  <div class="col-12 border rounded border-light p-3 bg-light mb-5">
+    <div class="row">
+      <div class="col-10 col-md-11">
+        <h5 class="card-title">External Account</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ external_account.bank_name }} {{ account_number }} {{ external_account.currency | upcase }}</h6>
+      </div>
+      <div class="cal-1 pt-2">
+        <a href="#" data-toggle="collapse" data-target=".external_account" class="btn btn-primary">Edit</a>
+      </div>
+    </div>
+
+    <fieldset class="row pt-5 bg-white external_account collapse" disabled>
+      <div class="col-12">
+          <div class="errors alert alert-danger" role="alert"></div>
+          <div class="form-row">
+            <div class="form-group col-md-2">
+              {% include text_field with "Country", value: external_account.country  %}
+            </div>
+            <div class="form-group col-md-2">
+              {% assign currency = external_account.currency | upcase %}
+              {% include text_field with "Currency", value: currency %}
+            </div>
+            <div class="form-group col-md-4">
+              {% include text_field with "Routing Number", value: external_account.routing_number %}
+            </div>
+            <div class="form-group col-md-4">
+              {% include text_field with "Account Number", 
+              value: external_account.account_number,
+              placeholder: account_number, required: true 
+              %}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              {% include text_field with "Account Holder Name", value: external_account.account_holder_name %}
+            </div>
+            <div class="form-group col-md-6">
+              {% parse_json "account_holder_type_options" %}
+              { "individual": "Individual", "company": "Company"}
+              {% endparse_json %}
+              {% include select_field with "Account Holder Type",
+              value: external_account.account_holder_type, 
+              collection: account_holder_type_options
+              %}
+            </div>
+          </div>
+      </div>
+    </fieldset>
+  </div>
 
 {% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_persons" %}
 {% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
@@ -202,3 +254,9 @@
   <button type="submit" class="btn btn-primary">{{ config.button }}</button>
 {% endform %}
 
+
+<style type="text/css" media="all">
+  .alert-danger:empty{
+    display: none;
+  }
+</style>

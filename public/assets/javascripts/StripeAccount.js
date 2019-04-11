@@ -18,18 +18,37 @@ async function handleForm(event) {
 
   let stripePromises = [];
 
-  stripePromises.push(
-    stripe.createToken('bank_account', {
-      country: 'US',
-      currency: 'usd',
-      routing_number: '110000000',
-      account_number: '000123456789',
-      account_holder_name: 'Jenny Rosen',
-      account_holder_type: 'individual',
-    }).then(function(result) {
-      document.querySelector('[data-external-account]').value = result.token.id;
-    })
-  )
+  let bank_account_container = document.querySelector('.external_account')
+  if (!bank_account_container.hasAttribute('disabled')) {
+    let bank_account = {
+      country: bank_account_container.querySelector('[data-country]').value,
+      currency: bank_account_container.querySelector('[data-currency]').value,
+      routing_number: bank_account_container.querySelector('[data-routing-number]').value,
+      account_number: bank_account_container.querySelector('[data-account-number]').value,
+      account_holder_name: bank_account_container.querySelector('[data-account-holder-name]').value,
+      account_holder_type: bank_account_container.querySelector('[data-account-holder-type]').value,
+    }
+    
+    stripePromises.push(
+      stripe.createToken('bank_account', bank_account).then(
+        function(result) {
+          if ( result.error ) { 
+            console.log("THEN", result.error)
+            document.querySelector('.external_account .errors').textContent = result.error.message;
+            return Promise.reject()
+          } else {
+            console.log("YAY SETTING TOKEN", result.token.id );
+            document.querySelector('[data-external-account]').value = result.token.id;
+          }
+        }
+      ).catch(
+        function(result) {
+          console.log("CATCH", result)
+          return Promise.reject()
+        }
+      )
+    )
+  }
   
   stripePromises.push(
     stripe.createToken('account', {
@@ -87,7 +106,7 @@ async function handleForm(event) {
 
   await Promise.all(stripePromises).then(function(result, person) {
     myForm.submit();
-  });
+  }).catch( function() { console.log("DO NOTHING")} );
 
 }
 

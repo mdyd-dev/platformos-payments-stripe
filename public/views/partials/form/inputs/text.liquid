@@ -3,5 +3,5 @@
 
 <div class="form-group">
   <label for="input-{{ input }}">{{ text }}</label>
-  <input type="text" name="{{ name }}" class="form-control" id="input-{{ input }}" data-{{ input }} value="{{ value }}">
+  <input type="text" name="{{ name }}" class="form-control" id="input-{{ input }}" data-{{ input }} value="{{ value }}" placeholder={{ placeholder }} {% if required %}required{% endif %}>
 </div>
