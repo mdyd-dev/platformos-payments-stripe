@@ -29,9 +29,10 @@
             required: true
             %}
           </div>
+          {% assign currency = external_account.currency | upcase %}
           <div class="form-group col-md-2">
             {% include select_field with "Currency",
-            value: external_account.currency,
+            value: currency,
             collection: context.exports.payments.currency_list
             required: true
             %}
