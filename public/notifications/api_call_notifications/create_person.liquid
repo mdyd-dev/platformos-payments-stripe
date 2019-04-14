@@ -1,6 +1,6 @@
 ---
 name: create_person
-to: https://api.stripe.com/v1/accounts/{{ data.account_id }}/persons/{{ data.gateway_id }}
+to: https://api.stripe.com/v1/accounts/{{ data.account_id }}/persons{% if data.gateway_id != blank %}/{{ data.gateway_id }}{% endif %}
 enabled: true
 format: https
 trigger_condition: true

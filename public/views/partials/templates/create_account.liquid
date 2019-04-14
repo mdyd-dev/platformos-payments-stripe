@@ -2,6 +2,7 @@
 <script>
   const stripe_pk = "{{ context.exports.payments.gateway.public_key }}"
 </script>
+
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{{ 'modules/stripe/javascripts/StripeAccount.js' | asset_url }}" defer></script>
 <script src="{{ 'modules/stripe/javascripts/Collapse.js' | asset_url }}" defer></script>
@@ -11,252 +12,21 @@
 {%- endcapture -%}
 <div>
 
-{%- include 'modules/stripe/account/verification' -%}
+
 
 {% form html-class: 'account-form' %}
-  {% assign data_attribute = form_builder.fields.properties.data.name %}
-  <input type="hidden" name="redirect_to" value="{{ config.redirect_to | default: context.location.href }}" />
-  <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
-  <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
-  {% if data.gateway_id %}
-    <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully updated an accout" />
-  {% else %}
-    <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully created an accout" />
-  {% endif %}
-  <input type="hidden" name="{{ data_attribute }}[account_token]" id="account-token">
-  <input type="hidden" name="{{ data_attribute }}[external_account]" data-external-account>
-  
-  {% for property in data %}
-    <input type="hidden" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" />
-  {% endfor %}
-
-  {% unless data.country %}
-    <div class="fo,first_name,last_namerm-group">
-      <label for="first_name">Country</label>
-      <select name="{{ data_attribute}}[last_name]"  class="form-control" >
-        <option value="US">United States</option>
-        <option value="PL">Poland</option>
-      </select>
-    </div>
-  {% endunless %}
-
-  {% unless data.country %}
-    <div class="form-group">
-      <label for="inputEmail4">Email</label>
-      <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
-    </div>
-  {% endunless %}
-  
-  <span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
-  <span class="badge badge-{% if response.charges_enabled == true %}success{% else %}danger{% endif %}">Payments {% if response.charges_enabled == true %}enabled{% else %}disabled{% endif %}</span>
-  <h4 class="mt-4 mb-4">
-    Account Information 
-  </h4>
-
-  {% unless data.business_type %}
-    <div class="form-group">
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" 
-               type="radio"
-               name="{{ data_attribute}}[business_type]"
-               id="inlineRadio1"
-               value="individual"
-               {% if response.legal_entity.type  == 'individual' %}checked{% endif %}
-               {% if data.gateway_id %}disabled{% endif %}>
-        <label class="form-check-label" for="inlineRadio1">Individual</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" 
-               type="radio" 
-               name="{{ data_attribute}}[business_type]" 
-               id="inlineRadio2" 
-               value="Company"
-               {% if response.legal_entity.type  == 'company' %}checked{% endif %} 
-               {% if data.gateway_id %}disabled{% endif %}>
-        <label class="form-check-label" for="inlineRadio2">Company</label>
-      </div>
-    </div>
-  {% endunless %}
-  {% comment %}
-  
-  <fieldset class="individual hidden-print d-none">
-    <div class="form-group">
-      <label for="inputAddress">Address</label>
-      <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-    </div>
-
-    <div class="form-group">
-      <label for="inputAddress2">Address 2</label>
-      <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="inputCity">City</label>
-        <input type="text" class="form-control" id="inputCity">
-      </div>
-      <div class="form-group col-md-4">
-        <label for="inputState">State</label>
-        <select id="inputState" class="form-control">
-          <option selected>Choose...</option>
-          <option>...</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label for="inputZip">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-    </div>
-  </fieldset>
-  {% endcomment %}
   {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
   {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
+  {%- assign data_attribute = form_builder.fields.properties.data.name -%}
 
-  <fieldset class="company">
-    <div class="form-row">
-      <div class="form-group col-md-4">
-        {% include text_field with "Business Name", value: response.legal_entity.business_name  %}
-      </div>
-      <div class="form-group col-md-4">
-        {% include text_field with "Phone", value: response.legal_entity.phone_number %}
-      </div>
-      <div class="form-group col-md-4">
-        {% if response.legal_entity.business_tax_id_provided %}
-          {% assign tax_placeholder = 'Provided' %}
-          {% assign tax_disabled = true %}
-        {% endif %}
-        {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled %}
-      </div>
-    </div>
-    {% include text_field with "Address", value: response.legal_entity.address.line1 %}
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {% include text_field with "City", value: response.legal_entity.address.city %}
-      </div>
-      <div class="form-group col-md-4">
-        {% include text_field with "State", value: response.legal_entity.address.state %}
-      </div>
-      <div class="form-group col-md-2">
-        {% include text_field with "Zip", value: response.legal_entity.address.postal_code %}
-      </div>
-    </div>
-  </fieldset>
-
-
-
-  {%- assign external_account = response.external_accounts.data.first -%}
-  {%- assign account_number = '**** ' | append: external_account.last4 -%}
-  <div class="col-12 border rounded border-light p-3 bg-light mb-5">
-    <div class="row">
-      <div class="col-10 col-md-11">
-        <h5 class="card-title">External Account</h5>
-        <h6 class="card-subtitle mb-2 text-muted">{{ external_account.bank_name }} {{ account_number }} {{ external_account.currency | upcase }}</h6>
-      </div>
-      <div class="cal-1 pt-2">
-        <a href="#" data-toggle="collapse" data-target=".external_account" class="btn btn-primary">Edit</a>
-      </div>
-    </div>
-
-    <fieldset class="row pt-5 bg-white external_account collapse" disabled>
-      <div class="col-12">
-          <div class="errors alert alert-danger" role="alert"></div>
-          <div class="form-row">
-            <div class="form-group col-md-2">
-              {% include text_field with "Country", value: external_account.country  %}
-            </div>
-            <div class="form-group col-md-2">
-              {% assign currency = external_account.currency | upcase %}
-              {% include text_field with "Currency", value: currency %}
-            </div>
-            <div class="form-group col-md-4">
-              {% include text_field with "Routing Number", value: external_account.routing_number %}
-            </div>
-            <div class="form-group col-md-4">
-              {% include text_field with "Account Number", 
-              value: external_account.account_number,
-              placeholder: account_number, required: true 
-              %}
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              {% include text_field with "Account Holder Name", value: external_account.account_holder_name %}
-            </div>
-            <div class="form-group col-md-6">
-              {% parse_json "account_holder_type_options" %}
-              { "individual": "Individual", "company": "Company"}
-              {% endparse_json %}
-              {% include select_field with "Account Holder Type",
-              value: external_account.account_holder_type, 
-              collection: account_holder_type_options
-              %}
-            </div>
-          </div>
-      </div>
-    </fieldset>
-  </div>
-
-{% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_persons" %}
-{% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
-<h4 class='mb-4'>Representatives</h4>
-{% for person in persons_response.data %}
-  <fieldset class="person border-bottom border-light mb-5">
-    {% assign person_attribute = data_attribute | append: '[persons][' | append: forloop.index | append: ']' %} 
-    <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>
-    <input type="hidden" name="{{ person_attribute}}[gateway_id]" value="{{ person.id }}" id="person-token">
-    <div class="form-row">
-      <div class="form-group col-md-3">
-        {% include text_field with "First Name", value: person.first_name  %}
-      </div>
-      <div class="form-group col-md-3">
-        {% include text_field with "Last Name", value: person.last_name  %}
-      </div>
-      <div class="form-group col-md-3">
-        {% if person.id_number_provided %}
-          {% assign id_placeholder = 'Provided' %}
-        {% endif %}
-        {% include text_field with "ID Number", value: person.id_number, placeholder: id_placeholder, disabled: person.id_number_provided %}
-      </div>
-      <div class="form-group col-md-3">
-        {% if person.dob.day %}
-          {% assign date_of_birth = person.dob.day | append: '/' | append: person.dob.month | append: '/' | append: person.dob.year %}
-        {% else %}
-          {% assign date_of_birth = '' %}
-        {% endif %}
-        {% include text_field with "Date of Birth", value: date_of_birth  %}
-      </div>
-    </div>
-    {% include text_field with "Address", value: person.address.line1 %}
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {% include text_field with "City", value: person.address.city %}
-      </div>
-      <div class="form-group col-md-4">
-        {% include text_field with "State", value: person.address.state %}
-      </div>
-      <div class="form-group col-md-2">
-        {% include text_field with "Zip", value: person.address.postal_code %}
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {% assign photo_id = forloop.index | append: "_front_photo" %}
-        <label for="{{ photo_id }}">Photo ID (Front)</label><br/>
-        <input type="file" id="{{ photo_id }}" data-front-photo-id name="id-file" accept=".jpeg,.jpg,.png">
-      </div>
-    </div>
-  </fieldset>
-
-{% endfor %}
-
-  <div class="form-group">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="gridCheck" required {% if data.gateway_id %}checked{% endif %}>
-      <label class="form-check-label" for="gridCheck">
-        By clicking, you agree to <a href="#">our terms</a> and the <a href="https://stripe.com/en-US/connect-account/legal">Stripe Connected Account Agreement</a>.
-      </label>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary">{{ config.button }}</button>
+  {%- include 'modules/stripe/account/status' -%}
+  {%- include 'modules/stripe/account/form_data' -%}
+  {%- include 'modules/stripe/account/basic_settings' -%}
+  {%- include 'modules/stripe/account/external_account' -%}
+  {%- include 'modules/stripe/account/individual' -%}
+  {%- include 'modules/stripe/account/company' -%}
+  {%- include 'modules/stripe/account/persons' -%}
+  {%- include 'modules/stripe/account/submit' -%}
 {% endform %}
 
 

@@ -3,8 +3,10 @@ const triggers = Array.from(document.querySelectorAll('[data-toggle="collapse"]'
 // Listen for click events, but only on our triggers
 window.addEventListener('click', (ev) => {
   const elm = ev.target;
+  console.log("click");
   if (triggers.includes(elm)) {
-    ev.preventDefault();
+    console.log("click 2");
+    if (elm.hasAttribute("href")) ev.preventDefault();
     const selector = elm.getAttribute('data-target');
     collapse(selector, 'toggle');
   }

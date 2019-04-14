@@ -1,0 +1,40 @@
+{% parse_json "country_list" %}
+  {
+    "AU": "Australia",
+    "CA": "Canada",
+    "GB": "Great Britan",
+    "NZ": "New Zealand",
+    "US": "United States"
+  }
+{% endparse_json %}
+
+{% parse_json "currency_list" %}
+  {
+    "AUD": "Australian Dollar",
+    "BRL": "Brazilian Real",
+    "GBP": "British Pound",
+    "CAD": "Canadian Dollar",
+    "CZK": "Czech Koruna",
+    "DKK": "Danish Krone",
+    "EUR": "Euro",
+    "HKD": "Hong Kong Dollar",
+    "HUF": "Hngarian Forint",
+    "ILS": "Israeli New Sheqel",
+    "JPY": "Japanese Yen",
+    "MYR": "Malaysian Ringgit",
+    "MXN": "Mexican Peso",
+    "TWD": "New Taiwan Dollar",
+    "NZD": "New Zealand Dollar",
+    "NOK": "Norwegian Krone",
+    "PHP": "Philippine Peso",
+    "PLN": "Polish Złoty",
+    "RUB": "Russian Ruble",
+    "SGD": "Singapore Dollar",
+    "SEK": "Swedish Krona",
+    "CHF": "Swiss Franc",
+    "THB": "Thai Baht",
+    "USD": "United States Dollar"
+  }
+{% endparse_json %}
+
+{% export currency_list, country_list, namespace: "payments"  %}

@@ -2,6 +2,7 @@ en:
   external_account: "External Account:"
   stripe:
     fields_needed:
+      external_account: External Account
       legal_entity:
         dob:
           day: "Date of birth - day"
@@ -13,6 +14,11 @@ en:
         ssn_last_4: "Social Security number - last 4 digits"
         verification:
           document: Photo ID
+        address:
+          line1: Address
+          city: City
+          state: State
+          postal_code: Postal Code
     account:
       business-name: Company Name
       phone: Phone Number
@@ -21,7 +27,6 @@ en:
       city: City
       state: State
       zip: Postal Code
-      first-name: First Name
       last-name: Last Name
       id-number: SSN
       date-of-birth: Date of Birth
@@ -30,6 +35,7 @@ en:
       routing-number: Routing Number
       account-number: Account Number
       account-holder-name: Account Holder Name
+      first_name: First Name
 
 
 

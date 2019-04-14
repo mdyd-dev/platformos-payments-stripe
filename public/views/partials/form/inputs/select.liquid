@@ -4,7 +4,17 @@
 
 <div class="form-group">
   <label for="input-{{ input }}">{{ text }}</label>
-  <select type="text" name="{{ name }}" class="form-control" id="input-{{ input }}" data-{{ input }} value="{{ value }}" placeholder={{ placeholder }}>
+  <select 
+         type="text"
+         name="{{ name }}"
+         class="form-control"
+         id="input-{{ input }}"
+         data-{{ input }}
+         value="{{ value }}"
+         placeholder={{ placeholder }}
+         {% if required %}required{% endif %}
+         {% if disabled %}disabled{% endif %}
+         >
     {% for option in collection %}
       <option value="{{ option.first }}" {% if option.first == value %}selected{% endif %}>{{ option.last }}</option>
     {% endfor %}

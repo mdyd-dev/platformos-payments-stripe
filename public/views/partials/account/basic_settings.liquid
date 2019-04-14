@@ -1,0 +1,51 @@
+{% if data.country == blank %}
+  <div class="fo,first_name,last_namerm-group">
+    <label for="first_name">Country</label>
+    <select name="{{ data_attribute}}[last_name]"  class="form-control" >
+      <option value="US">United States</option>
+      <option value="PL">Poland</option>
+    </select>
+  </div>
+{% endif %}
+
+{% unless data.country %}
+  <div class="form-group">
+    <label for="inputEmail4">Email</label>
+    <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
+  </div>
+{% endunless %}
+
+<span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
+<span class="badge badge-{% if response.charges_enabled == true %}success{% else %}danger{% endif %}">Payments {% if response.charges_enabled == true %}enabled{% else %}disabled{% endif %}</span>
+<h4 class="mt-4 mb-4">
+  Account Information
+</h4>
+
+{% unless data.business_type %}
+  <div class="form-group">
+    <div class="form-check form-check-inline">
+      <input class="form-check-input"
+             type="radio"
+             name="{{ data_attribute}}[business_type]"
+             id="inlineRadio1"
+             value="individual"
+             data-target=".company, .individual"
+             data-toggle="collapse"
+             {% if response.legal_entity.type == 'individual' or response.legal_entity.type == blank %}checked{% endif %}
+             {% if data.gateway_id != blank %}disabled{% endif %}>
+      <label class="form-check-label" for="inlineRadio1">Individual</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input"
+             type="radio"
+             name="{{ data_attribute}}[business_type]"
+             id="inlineRadio2"
+             data-target=".company, .individual"
+             data-toggle="collapse"
+             value="Company"
+             {% if response.legal_entity.type  == 'company' %}checked{% endif %}
+             {% if data.gateway_id != blank %}disabled{% endif %}>
+      <label class="form-check-label" for="inlineRadio2">Company</label>
+    </div>
+  </div>
+{% endunless %}

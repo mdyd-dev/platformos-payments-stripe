@@ -8,7 +8,7 @@
     {% parse_json "alert" %}
       {% if response.charges_enabled != true %}
         {
-          "type": "alert",
+          "type": "danger",
           "msg": "Account payment is currently disabled, please provide the following information so that we can enable your payments." 
          }
       {% elsif response.payouts_enabled != true %}
@@ -19,7 +19,7 @@
       {% else %}
         {
           "type":"info",
-          "msg": "Your account is now fully opertaional but looks like there are still somthing missing. Please provide the following information: "
+          "msg": "Your account is now fully opertaional but looks like there are still something missing. Please provide the following information: "
          }
       {% endif %}
     {% endparse_json %}

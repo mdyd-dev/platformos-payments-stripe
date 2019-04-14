@@ -1,0 +1,65 @@
+{% include 'modules/stripe/shared/constants' %}
+
+{%- assign external_account = response.external_accounts.data.first -%}
+{% if external_account %}
+  {%- assign account_number = '**** ' | append: external_account.last4 -%}
+{% endif %}
+<div class="col-12 border rounded border-light pt-3 bg-light mb-5">
+  <div class="row">
+    <div class="col-10 col-md-11">
+      <h5 class="card-title">External Account</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ external_account.bank_name }} {{ account_number }} {{ external_account.currency | upcase }}</h6>
+    </div>
+    <div class="cal-1 pt-2">
+      {% if external_account != blank %}
+        <a href="#" data-toggle="collapse" data-target=".external_account" class="btn btn-primary">Edit</a>
+      {% endif %}
+    </div>
+  </div>
+
+
+  <fieldset class="row pt-5 bg-white external_account {% if external_account != blank %}collapse{% endif %}" {% if external_account != blank %}disabled{% endif %}>
+    <div class="col-12">
+        <div class="errors alert alert-danger" role="alert"></div>
+        <div class="form-row">
+          <div class="form-group col-md-2">
+            {% include select_field with "Country",
+            value: external_account.country,
+            collection: context.exports.payments.country_list
+            required: true
+            %}
+          </div>
+          <div class="form-group col-md-2">
+            {% include select_field with "Currency",
+            value: external_account.currency,
+            collection: context.exports.payments.currency_list
+            required: true
+            %}
+          </div>
+          <div class="form-group col-md-4">
+            {% include text_field with "Routing Number", value: external_account.routing_number %}
+          </div>
+          <div class="form-group col-md-4">
+            {% include text_field with "Account Number",
+            value: external_account.account_number,
+            placeholder: account_number, required: true
+            %}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {% include text_field with "Account Holder Name", value: external_account.account_holder_name %}
+          </div>
+          <div class="form-group col-md-6">
+            {% parse_json "account_holder_type_options" %}
+            { "individual": "Individual", "company": "Company"}
+            {% endparse_json %}
+            {% include select_field with "Account Holder Type",
+            value: external_account.account_holder_type,
+            collection: account_holder_type_options
+            %}
+          </div>
+        </div>
+    </div>
+  </fieldset>
+</div>
