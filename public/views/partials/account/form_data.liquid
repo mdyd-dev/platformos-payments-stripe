@@ -7,8 +7,8 @@
   {% else %}
     <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully created an accout" />
   {% endif %}
-  <input type="text" name="{{ data_attribute }}[account_token]" id="account-token">
-  <input type="text" name="{{ data_attribute }}[external_account]" data-external-account>
+  <input type="hidden" name="{{ data_attribute }}[account_token]" id="account-token">
+  <input type="hidden" name="{{ data_attribute }}[external_account]" data-external-account>
 
   {% for property in data %}
     <input type="hidden" name="{{ data_attribute}}[{{property.first }}]" value="{{ property.last }}" />

@@ -12,7 +12,10 @@
 {%- endcapture -%}
 <div>
 
-
+{% if data.gateway_id != blank %}
+  {% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_account" %}
+  {% parse_json 'response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
+{% endif %}
 
 {% form html-class: 'account-form' %}
   {%- assign text_field = 'modules/stripe/form/inputs/text' -%}

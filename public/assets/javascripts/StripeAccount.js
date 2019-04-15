@@ -4,45 +4,50 @@ console.log(stripe_pk);
 const myForm = document.querySelector('.account-form');
 myForm.addEventListener('submit', handleForm);
 
+const resolvedPromise = msg => {
+  console.log("RESOLVED PROMISE", msg);
+  return Promise.resolve(msg)
+}
+
 const processExternalAccount = () => {
   let bank_account_container = document.querySelector('.external_account')
   
-  if (!bank_account_container.hasAttribute('disabled')) {
-    let bank_account = {
-      country: bank_account_container.querySelector('[data-country]').value,
-      currency: bank_account_container.querySelector('[data-currency]').value,
-      routing_number: bank_account_container.querySelector('[data-routing-number]').value,
-      account_number: bank_account_container.querySelector('[data-account-number]').value,
-      account_holder_name: bank_account_container.querySelector('[data-account-holder-name]').value,
-      account_holder_type: bank_account_container.querySelector('[data-account-holder-type]').value,
-    }
-    
-    return stripe.createToken('bank_account', bank_account).then(
-      function(result) {
-        if ( result.error ) { 
-          console.log("THEN", result.error)
-          document.querySelector('.external_account .errors').textContent = result.error.message;
-          return Promise.reject()
-        } else {
-          console.log("YAY SETTING TOKEN", result.token.id );
-          document.querySelector('[data-external-account]').value = result.token.id;
-          return Promise.resolve()
-        }
-      }
-    ).catch(
-      function(result) {
-        console.log("CATCH", result)
-        return Promise.reject()
-      }
-    )
+  if (bank_account_container.hasAttribute('disabled')) return resolvedPromise("External Account Disabled");
+
+  let bank_account = {
+    country: bank_account_container.querySelector('[data-country]').value,
+    currency: bank_account_container.querySelector('[data-currency]').value,
+    routing_number: bank_account_container.querySelector('[data-routing-number]').value,
+    account_number: bank_account_container.querySelector('[data-account-number]').value,
+    account_holder_name: bank_account_container.querySelector('[data-account-holder-name]').value,
+    account_holder_type: bank_account_container.querySelector('[data-account-holder-type]').value,
   }
+  
+  return stripe.createToken('bank_account', bank_account).then(
+    function(result) {
+      if ( result.error ) { 
+        console.log("THEN", result.error)
+        document.querySelector('.external_account .errors').textContent = result.error.message;
+        return Promise.reject()
+      } else {
+        console.log("YAY SETTING TOKEN", result.token.id );
+        document.querySelector('[data-external-account]').value = result.token.id;
+        return resolvedPromise("Bank Account Set");
+      }
+    }
+  ).catch(
+    function(result) {
+      console.log("CATCH", result)
+      return Promise.reject();
+    }
+  )
 }
 
 const processIndividual = () => {
   console.log("processing individual account");
   let individualContainer = document.querySelector('.individual')
   
-  if (individualContainer.hasAttribute('disabled')) return Promise.resolve();
+  if (individualContainer.hasAttribute('disabled')) return resolvedPromise("Individual Disabled");
   
   console.log("Individual?");
   return stripe.createToken('account', {
@@ -52,6 +57,7 @@ const processIndividual = () => {
   }).then(function(result) {
     console.log("INDIVIDUAL ACCOUNT result", result);
     document.querySelector('#account-token').value = result.token.id;
+    return resolvedPromise("Individual Token Set");
   }, function(error) {
     console.log("INDIVIDUAL ACCOUNT ERROR result", error);
   });
@@ -60,7 +66,7 @@ const processIndividual = () => {
 const processCompany = () => {
   let companyContainer = document.querySelector('.company')
   
-  if (companyContainer.hasAttribute('disabled')) return Promise.resolve();
+  if (companyContainer.hasAttribute('disabled')) return resolvedPromise("Company Disabled");
 
   let company = {
     name: companyContainer.querySelector('[data-business-name]').value,
@@ -90,6 +96,7 @@ const processCompany = () => {
 const processPersons = () => {
   return new Promise((resolve, reject) => {
     const persons = document.querySelectorAll('.person')
+    if (persons.length == 0 ) return resolve();
 
     for (i = 0; i < persons.length; ++i) {
       let person = persons[i];
@@ -185,10 +192,14 @@ async function handleForm(event) {
   stripePromises.push(processIndividual());
   stripePromises.push(processCompany());
   stripePromises.push(processPersons());
-
-  await Promise.all(stripePromises).then(function(result, person) {
+  
+  console.log("stripePromises", stripePromises);
+  Promise.all(stripePromises).then(function(result) {
     console.log("SUBMITTING");
     myForm.submit();
+  },
+  function(error) {
+    console.log("error");
   })
   .catch( 
     error => { console.log("Error", error) }

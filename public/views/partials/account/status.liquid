@@ -4,7 +4,7 @@
     </div>
   {% endif %}
 
-  {% if response.verification.fields_needed != empty %}
+  {% if response != blank and response.verification.fields_needed != empty %}
     {% parse_json "alert" %}
       {% if response.charges_enabled != true %}
         {

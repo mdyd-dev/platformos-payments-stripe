@@ -4,7 +4,7 @@
 {% for person in persons_response.data %}
   <fieldset class="person border-bottom border-light mb-5">
     {% assign person_attribute = data_attribute | append: '[persons][' | append: forloop.index | append: ']' %} 
-    <input type="text" name="{{ person_attribute}}[token]" data-person-token>
+    <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>
     <input type="hidden" name="{{ person_attribute}}[gateway_id]" value="{{ person.id }}" id="person-token">
     <div class="form-row">
       <div class="form-group col-md-3">
