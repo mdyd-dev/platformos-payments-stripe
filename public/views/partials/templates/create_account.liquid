@@ -1,4 +1,5 @@
 {%- include 'modules/stripe/shared/api_credentials' -%}
+{%- include 'modules/stripe/shared/constants' -%}
 <script>
   const stripe_pk = "{{ context.exports.payments.gateway.public_key }}"
 </script>

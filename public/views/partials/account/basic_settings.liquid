@@ -1,25 +1,29 @@
-{% if data.country == blank %}
-  <div class="fo,first_name,last_namerm-group">
-    <label for="first_name">Country</label>
-    <select name="{{ data_attribute}}[last_name]"  class="form-control" >
-      <option value="US">United States</option>
-      <option value="PL">Poland</option>
-    </select>
-  </div>
-{% endif %}
-
-{% unless data.country %}
-  <div class="form-group">
-    <label for="inputEmail4">Email</label>
-    <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
-  </div>
-{% endunless %}
-
 <span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
 <span class="badge badge-{% if response.charges_enabled == true %}success{% else %}danger{% endif %}">Payments {% if response.charges_enabled == true %}enabled{% else %}disabled{% endif %}</span>
 <h4 class="mt-4 mb-4">
   Account Information
 </h4>
+
+<div class="form-group">
+  {% if data.country == blank %}
+    {% assign country_name = data_attribute | append: "[country]" %}
+    <div class="form-group col-md-2">
+      {% include select_field with "Country",
+      name: country_name,
+      value: response.country,
+      collection: context.exports.payments.country_list
+      required: true
+      %}
+    </div>
+  {% endif %}
+
+  {% if data.email == blank %}
+    <div class="form-group">
+      <label for="inputEmail4">Email</label>
+      <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
+    </div>
+  {% endif %}
+</div>
 
 {% unless data.business_type %}
   <div class="form-group">

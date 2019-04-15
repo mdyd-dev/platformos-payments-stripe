@@ -1,4 +1,3 @@
-{% include 'modules/stripe/shared/constants' %}
 
 {%- assign external_account = response.external_accounts.data.first -%}
 {% if external_account %}
@@ -16,9 +15,10 @@
       {% endif %}
     </div>
   </div>
-
-
-  <fieldset class="row pt-5 bg-white external_account {% if external_account != blank %}collapse{% endif %}" {% if external_account != blank %}disabled{% endif %}>
+{% if external_account != blank or data.country == blank %}
+  {% assign hide_external =  true %}
+{% endif %}
+  <fieldset class="row pt-5 bg-white external_account {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
     <div class="col-12">
         <div class="errors alert alert-danger" role="alert"></div>
         <div class="form-row">

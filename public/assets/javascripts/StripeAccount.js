@@ -117,6 +117,7 @@ const processPersons = () => {
       let idNumber = person.querySelector('[data-id-number]').value
       if (idNumber) {
         stripePerson.person.id_number = idNumber;
+        stripePerson.person.ssn_last_4 = idNumber.slice(-4);
       }
       let dobValue = person.querySelector('[data-date-of-birth]').value
       if (dobValue.length != 0 ) {
