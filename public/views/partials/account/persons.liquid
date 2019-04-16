@@ -35,7 +35,7 @@
         {% else %}
           {% assign date_of_birth = '' %}
         {% endif %}
-        {% include text_field with "Date of Birth", value: date_of_birth, required: true    %}
+        {% include text_field with "Date of Birth", value: date_of_birth, required: true, placeholder: "dd/mm/yyyy"    %}
       </div>
     </div>
     {% include text_field with "Address", value: person.address.line1 %}
