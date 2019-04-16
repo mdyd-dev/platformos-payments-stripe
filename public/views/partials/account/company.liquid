@@ -18,7 +18,7 @@
         {% assign tax_placeholder = 'Provided' %}
         {% assign tax_disabled = true %}
       {% endif %}
-      {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true %}
+      {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
     </div>
   </div>
   {% include text_field with "Address", value: response.legal_entity.address.line1, required: true %}

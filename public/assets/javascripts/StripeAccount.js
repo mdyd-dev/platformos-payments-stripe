@@ -17,12 +17,17 @@ const processExternalAccount = () => {
   let bank_account = {
     country: bank_account_container.querySelector('[data-country]').value,
     currency: bank_account_container.querySelector('[data-currency]').value,
-    routing_number: bank_account_container.querySelector('[data-routing-number]').value,
     account_number: bank_account_container.querySelector('[data-account-number]').value,
     account_holder_name: bank_account_container.querySelector('[data-account-holder-name]').value,
     account_holder_type: bank_account_container.querySelector('[data-account-holder-type]').value,
   }
   
+  let routingNumberInput = bank_account_container.querySelector('[data-routing-number]');
+  if (routingNumberInput) {
+    bank_account.routing_number = routingNumberInput.value
+  }
+  
+  removeEmptyValues(bank_account);
   return stripe.createToken('bank_account', bank_account).then(
     function(result) {
       if ( result.error ) { 
@@ -134,7 +139,9 @@ const processPersons = () => {
       Promise.all( [ frontFilePromise, backFilePromise ] ).then( () => {
         
         removeEmptyValues(stripePerson);
+        console.log("stripePerson", stripePerson);
         stripe.createToken('person', stripePerson).then(
+
           function(person, result) {
             if ( result.error ) {
               console.log("THEN", result.error)
@@ -157,7 +164,7 @@ const processPersons = () => {
 
 const removeEmptyValues = obj => { 
   for (var i in obj) {
-    if (obj[i] === null) {
+    if (obj[i] === null || obj[i].length == 0 ) {
       delete obj[i];
     } else if (typeof obj[i] === 'object') {
       removeEmptyValues(obj[i]);

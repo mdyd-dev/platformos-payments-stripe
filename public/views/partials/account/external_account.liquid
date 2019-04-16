@@ -1,3 +1,10 @@
+{% if response.country == 'NZ' %}
+  {% assign routing_number_required = false %}
+  {% assign col_size = 4 %}
+{% else %}
+  {% assign col_size = 2 %}
+  {% assign routing_number_required = true %}
+{% endif %}
 
 {%- assign external_account = response.external_accounts.data.first -%}
 {% if external_account %}
@@ -23,7 +30,7 @@
     <div class="col-12">
         <div class="errors alert alert-danger" role="alert"></div>
         <div class="form-row">
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-{{ col_size}}">
             {% assign country = external_account.country | default: response.country %}
             {% parse_json "country_list" %}
               { "{{ country }}": "{{ context.exports.payments.country_list[country] }}" }
@@ -37,16 +44,18 @@
           </div>
           {% assign currency = external_account.currency | default: response.default_currency | upcase %}
           {% assign currency_collection = context.exports.payments.country_currency_list[country] %}
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-{{ col_size}}">
             {% include select_field with "Currency",
             value: currency,
             collection: currency_collection,
             required: true
             %}
           </div>
-          <div class="form-group col-md-4">
-            {% include text_field with "Routing Number", value: external_account.routing_number, required: true, country_iso: country %}
-          </div>
+          {% if routing_number_required %}
+            <div class="form-group col-md-4">
+              {% include text_field with "Routing Number", value: external_account.routing_number, required: true, country_iso: country %}
+            </div>
+          {% endif %}
           <div class="form-group col-md-4">
             {% include text_field with "Account Number",
             value: external_account.account_number,

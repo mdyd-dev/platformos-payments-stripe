@@ -9,14 +9,14 @@
 <div class="form-group">
   <label for="input-{{ input }}">{{ 'stripe.account.' | append: text_parameterized | append: country_scope | t}} {% if required %}<span class="text-danger">*</span>{% endif %}</label>
   <input
-         type="text"
-         name="{{ name }}"
-         class="form-control"
-         id="input-{{ input }}"
-         data-{{ input }}
-         value="{{ value }}"
-         placeholder="{{ placeholder }}"
-         {% if required %}required{% endif %}
-         {% if disabled %}disabled{% endif %}
-         >
+    type="text"
+    name="{{ name }}"
+    class="form-control"
+    id="input-{{ input }}"
+    data-{{ input }}
+    value="{{ value }}"
+    placeholder="{{ placeholder }}"
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}
+  >
 </div>

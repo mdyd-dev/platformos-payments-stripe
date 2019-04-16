@@ -9,6 +9,7 @@
         {"message": "{{ response_body.error.message }}"}
       ],
     {%- endif -%}
+    "id": "{{ data.id }}",
     "properties": [
       { "name": "external_id", "value": "{{ data.external_id }}" },
       { "name": "gateway_id", "value": "{{ response_body.id }}" }

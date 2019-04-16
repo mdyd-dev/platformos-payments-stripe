@@ -24,6 +24,12 @@ en:
       business-name: Company Name
       phone: Phone Number
       tax-id: Employer Identification Number
+      tax-id:
+        nz: NZBN
+        us: EIN
+        gb: Companies House Registration Number (CRN)
+        au: Company ACN/ABN - TFN
+        ca: Business Number (Tax ID)
       address: Address
       city: City
       state: State
@@ -34,7 +40,7 @@ en:
       country: Country
       currency: Currency
       routing-number: 
-        en: Routing Number
+        us: Routing Number
         gb: SORT
         au: BSB
         ca: Routing Number

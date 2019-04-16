@@ -1,7 +1,7 @@
 {% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_persons" %}
 {% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
-<h4 class='mb-4'>Representatives</h4>
-{% if "AU" contains response.country %}
+<h4 class='mb-4'>Personal Information</h4>
+{% if "AU,NZ" contains response.country %}
   {% assign id_numner_required = false %}
   {% assign column_size = 4 %}
 {% else %}
