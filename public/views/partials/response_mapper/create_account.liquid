@@ -3,6 +3,11 @@
 {%- endparse_json -%}
 
 {%- if gateway_response.status == 200 -%}
+  {%- assign account_state = 'pending' -%}
+  {%- if response_body.payouts_enabled == true and response_body.charges_enabled == true -%}
+    {%- assign account_state = 'verified' -%}
+  {%- endif -%}
+
   {
     {%- if response_body.error -%}
       "errors": [
@@ -12,7 +17,8 @@
     "id": "{{ data.id }}",
     "properties": [
       { "name": "external_id", "value": "{{ data.external_id }}" },
-      { "name": "gateway_id", "value": "{{ response_body.id }}" }
+      { "name": "gateway_id", "value": "{{ response_body.id }}" },
+      { "name": "state", "value": "{{ account_state }}" }
     ]
   }
 {%- else -%}
