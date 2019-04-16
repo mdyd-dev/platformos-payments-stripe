@@ -1,3 +1,4 @@
+
 {%- include 'modules/stripe/shared/api_credentials' -%}
 {%- include 'modules/stripe/shared/constants' -%}
 <script>
@@ -26,10 +27,12 @@
   {%- include 'modules/stripe/account/status' -%}
   {%- include 'modules/stripe/account/form_data' -%}
   {%- include 'modules/stripe/account/basic_settings' -%}
-  {%- include 'modules/stripe/account/external_account' -%}
-  {%- include 'modules/stripe/account/individual' -%}
-  {%- include 'modules/stripe/account/company' -%}
-  {%- include 'modules/stripe/account/persons' -%}
+  {% if response.country != blank %}
+    {%- include 'modules/stripe/account/external_account' -%}
+    {%- include 'modules/stripe/account/individual' -%}
+    {%- include 'modules/stripe/account/company' -%}
+    {%- include 'modules/stripe/account/persons' -%}
+  {% endif %}
   {%- include 'modules/stripe/account/submit' -%}
 {% endform %}
 

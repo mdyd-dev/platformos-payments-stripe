@@ -4,6 +4,7 @@ en:
     fields_needed:
       external_account: External Account
       legal_entity:
+        type: Account Type
         dob:
           day: "Date of birth - day"
           month: "Date of birth - month"
@@ -32,7 +33,11 @@ en:
       date-of-birth: Date of Birth
       country: Country
       currency: Currency
-      routing-number: Routing Number
+      routing-number: 
+        en: Routing Number
+        gb: SORT
+        au: BSB
+        ca: Routing Number
       account-number: Account Number
       account-holder-name: Account Holder Name
       first-name: First Name

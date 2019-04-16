@@ -1,4 +1,3 @@
-
   <input type="hidden" name="redirect_to" value="{{ config.redirect_to | default: context.location.href }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
@@ -7,6 +6,7 @@
   {% else %}
     <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully created an accout" />
   {% endif %}
+  <input type="hidden" name="{{ data_attribute }}[ip]" value="{{ context.visitor.ip }}">
   <input type="hidden" name="{{ data_attribute }}[account_token]" id="account-token">
   <input type="hidden" name="{{ data_attribute }}[external_account]" data-external-account>
 

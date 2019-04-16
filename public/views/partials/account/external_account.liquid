@@ -15,7 +15,8 @@
       {% endif %}
     </div>
   </div>
-{% if external_account != blank or data.country == blank %}
+
+{% if external_account != blank  %}
   {% assign hide_external =  true %}
 {% endif %}
   <fieldset class="row pt-5 bg-white external_account {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
@@ -23,22 +24,28 @@
         <div class="errors alert alert-danger" role="alert"></div>
         <div class="form-row">
           <div class="form-group col-md-2">
+            {% assign country = external_account.country | default: response.country %}
+            {% parse_json "country_list" %}
+              { "{{ country }}": "{{ context.exports.payments.country_list[country] }}" }
+            {% endparse_json %}
+
             {% include select_field with "Country",
-            value: external_account.country,
-            collection: context.exports.payments.country_list
+            value: country,
+            collection: country_list
             required: true
             %}
           </div>
-          {% assign currency = external_account.currency | upcase %}
+          {% assign currency = external_account.currency | default: response.default_currency | upcase %}
+          {% assign currency_collection = context.exports.payments.country_currency_list[country] %}
           <div class="form-group col-md-2">
             {% include select_field with "Currency",
             value: currency,
-            collection: context.exports.payments.currency_list
+            collection: currency_collection,
             required: true
             %}
           </div>
           <div class="form-group col-md-4">
-            {% include text_field with "Routing Number", value: external_account.routing_number, required: true %}
+            {% include text_field with "Routing Number", value: external_account.routing_number, required: true, country_iso: country %}
           </div>
           <div class="form-group col-md-4">
             {% include text_field with "Account Number",
@@ -52,11 +59,12 @@
             {% include text_field with "Account Holder Name", value: external_account.account_holder_name %}
           </div>
           <div class="form-group col-md-6">
+            {% assign account_holder = external_account.account_holder_type | default: response.legal_entity.type %}
             {% parse_json "account_holder_type_options" %}
             { "individual": "Individual", "company": "Company"}
             {% endparse_json %}
             {% include select_field with "Account Holder Type",
-            value: external_account.account_holder_type,
+            value: account_holder,
             collection: account_holder_type_options
             %}
           </div>

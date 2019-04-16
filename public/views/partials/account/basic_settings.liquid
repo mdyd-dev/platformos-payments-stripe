@@ -5,27 +5,34 @@
 </h4>
 
 <div class="form-group">
-  {% if data.country == blank %}
-    {% assign country_name = data_attribute | append: "[country]" %}
-    <div class="form-group col-md-2">
-      {% include select_field with "Country",
-      name: country_name,
-      value: response.country,
-      collection: context.exports.payments.country_list
-      required: true
-      %}
+  <div class="row">
+    <div class="form-group col-md-6">
+      {% if response.country == blank %}
+        {% assign country_name = data_attribute | append: "[country]" %}
+          {% include select_field with "Country",
+          name: country_name,
+          value: response.country,
+          collection: context.exports.payments.country_list
+          required: true
+          %}
+      {% else %}
+        <b>Account Location: {{ context.exports.payments.country_list[response.country] }}</b>
+      {% endif %}
     </div>
-  {% endif %}
 
-  {% if data.email == blank %}
-    <div class="form-group">
-      <label for="inputEmail4">Email</label>
-      <input type="email" name="{{ data_attribute}}[last_name]" class="form-control" id="inputEmail4" placeholder="Email">
-    </div>
-  {% endif %}
+    {% if data.email == blank %}
+      <div class="form-group">
+        <label for="inputEmail4">Email</label>
+        <input type="email" name="{{ data_attribute}}[email]" class="form-control" id="inputEmail4" placeholder="Email">
+      </div>
+    {% endif %}
+  </div>
 </div>
 
-{% unless data.business_type %}
+{% if data.business_type == blank and response.country != blank %}
+  {% if response.legal_entity.type == blank %}
+    <p>Please select account type. <b>Account type can't be changed after selection</b></p>
+  {% endif %}
   <div class="form-group">
     <div class="form-check form-check-inline">
       <input class="form-check-input"
@@ -33,10 +40,11 @@
              name="{{ data_attribute}}[business_type]"
              id="inlineRadio1"
              value="individual"
+             required
              data-target=".company, .individual"
              data-toggle="collapse"
-             {% if response.legal_entity.type == 'individual' or response.legal_entity.type == blank %}checked{% endif %}
-             {% if data.gateway_id != blank %}disabled{% endif %}>
+             {% if response.legal_entity.type == 'individual' or response.legal_entity.type == blank  %}checked{% endif %}
+             {% if response.legal_entity.type != blank %}disabled{% endif %}>
       <label class="form-check-label" for="inlineRadio1">Individual</label>
     </div>
     <div class="form-check form-check-inline">
@@ -46,10 +54,11 @@
              id="inlineRadio2"
              data-target=".company, .individual"
              data-toggle="collapse"
-             value="Company"
+             value="company"
+             required
              {% if response.legal_entity.type  == 'company' %}checked{% endif %}
-             {% if data.gateway_id != blank %}disabled{% endif %}>
+             {% if response.legal_entity.type != blank %}disabled{% endif %}>
       <label class="form-check-label" for="inlineRadio2">Company</label>
     </div>
   </div>
-{% endunless %}
+{% endif %}

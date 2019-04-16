@@ -37,4 +37,14 @@
   }
 {% endparse_json %}
 
-{% export currency_list, country_list, namespace: "payments"  %}
+{% parse_json "country_currency_list" %}
+  {
+    "AU": { "AUD": "Australian Dollar"},
+    "GB": { "GBP": "British Pound" },
+    "CA": { "USD" : "United States Dollar", "CAD": "Canadian Dollar"  },
+    "US": { "USD": "United States Dollar" }
+  }
+{% endparse_json %}
+
+
+{% export currency_list, country_currency_list, country_list, namespace: "payments"  %}

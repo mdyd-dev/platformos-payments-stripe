@@ -1,11 +1,16 @@
 {% assign text_parameterized = text | downcase | replace: ' ', '-'  %}
 {% assign input = input | default: text_parameterized %}
+{% if country_iso %}
+  {% assign country_scope = '.' | append: country_iso | downcase %}
+{% else %}
+  {% assign country_scope = '' %}
+{% endif %}
 
 <div class="form-group">
-  <label for="input-{{ input }}">{{ 'stripe.account.' | append: text_parameterized | t }}</label>
-  <input 
-         type="text" 
-         name="{{ name }}" 
+  <label for="input-{{ input }}">{{ 'stripe.account.' | append: text_parameterized | append: country_scope | t}} {% if required %}<span class="text-danger">*</span>{% endif %}</label>
+  <input
+         type="text"
+         name="{{ name }}"
          class="form-control"
          id="input-{{ input }}"
          data-{{ input }}

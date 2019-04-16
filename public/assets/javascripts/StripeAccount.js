@@ -12,7 +12,7 @@ const resolvedPromise = msg => {
 const processExternalAccount = () => {
   let bank_account_container = document.querySelector('.external_account')
   
-  if (bank_account_container.hasAttribute('disabled')) return resolvedPromise("External Account Disabled");
+  if (bank_account_container == null || bank_account_container.hasAttribute('disabled')) return resolvedPromise("External Account Disabled");
 
   let bank_account = {
     country: bank_account_container.querySelector('[data-country]').value,
@@ -47,7 +47,7 @@ const processIndividual = () => {
   console.log("processing individual account");
   let individualContainer = document.querySelector('.individual')
   
-  if (individualContainer.hasAttribute('disabled')) return resolvedPromise("Individual Disabled");
+  if (individualContainer == null || individualContainer.hasAttribute('disabled')) return resolvedPromise("Individual Disabled");
   
   console.log("Individual?");
   return stripe.createToken('account', {
@@ -66,7 +66,7 @@ const processIndividual = () => {
 const processCompany = () => {
   let companyContainer = document.querySelector('.company')
   
-  if (companyContainer.hasAttribute('disabled')) return resolvedPromise("Company Disabled");
+  if (companyContainer == null || companyContainer.hasAttribute('disabled')) return resolvedPromise("Company Disabled");
 
   let company = {
     name: companyContainer.querySelector('[data-business-name]').value,
@@ -101,7 +101,7 @@ const processPersons = () => {
     for (i = 0; i < persons.length; ++i) {
       let person = persons[i];
 
-      let stripePerson = { 
+      let stripePerson = {
         person: {
           first_name: person.querySelector('[data-first-name]').value,
           last_name: person.querySelector('[data-last-name]').value,
@@ -113,12 +113,12 @@ const processPersons = () => {
           }
         }
       }
-      
-      let idNumber = person.querySelector('[data-id-number]').value
-      if (idNumber) {
-        stripePerson.person.id_number = idNumber;
-        stripePerson.person.ssn_last_4 = idNumber.slice(-4);
+
+      let idNumberField = person.querySelector('[data-id-number]')
+      if (idNumberField) {
+        stripePerson.person.id_number = idNumberField.value;
       }
+
       let dobValue = person.querySelector('[data-date-of-birth]').value
       if (dobValue.length != 0 ) {
         let dob = dobValue.split('/');
@@ -130,23 +130,40 @@ const processPersons = () => {
 
       let frontFilePromise = setPersonDocument(person, stripePerson, 'front');
       let backFilePromise = setPersonDocument(person, stripePerson, 'back');
-      
+
       Promise.all( [ frontFilePromise, backFilePromise ] ).then( () => {
-        console.log("stripe person", JSON.stringify(stripePerson));
+        
+        removeEmptyValues(stripePerson);
         stripe.createToken('person', stripePerson).then(
           function(person, result) {
-            console.log("Person Token", result.token.id );
-            person.querySelector('[data-person-token]').value = result.token.id;
-            console.log("Resolving PERSONS PROMISE");
-            resolve();
+            if ( result.error ) {
+              console.log("THEN", result.error)
+              person.querySelector('.errors').textContent = result.error.message;
+              reject()
+            } else {
+              console.log("Person Token", result.token.id );
+              person.querySelector('[data-person-token]').value = result.token.id;
+              console.log("Resolving PERSONS PROMISE");
+              resolve();
+            }
           }.bind(null, person)
         );
-      }, 
+      },
       error => { console.log(error) }
       )
     }
   });
 }
+
+const removeEmptyValues = obj => { 
+  for (var i in obj) {
+    if (obj[i] === null) {
+      delete obj[i];
+    } else if (typeof obj[i] === 'object') {
+      removeEmptyValues(obj[i]);
+    }
+  }
+} 
 
 const setPersonDocument = (person, stripePerson, side) => {
   let documentFile = person.querySelector(`[data-${side}-photo-id]`).files[0];

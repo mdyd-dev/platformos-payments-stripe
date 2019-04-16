@@ -1,7 +1,7 @@
 {%- parse_json 'response_body' -%}
   {{ gateway_response.body }}
 {%- endparse_json -%}
-{% log response_body, type: "DELETE ACCOUNT RESPONSE" %}
+{% log data, type: "DELETE ACCOUNT RESPONSE" %}
 {%- if gateway_response.status == 200 -%}
   {
     {%- if response_body.error -%}
