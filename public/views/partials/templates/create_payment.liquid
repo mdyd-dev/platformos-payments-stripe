@@ -6,12 +6,12 @@
 {% form %}
   {% assign data_attribute = form_builder.fields.properties.data.name %}
 
-  <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="You have successfully created payment" />
+  <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value=" {{ config.success_message | default: 'You have successfully created payment' }}" />
   <input type="hidden" name="redirect_to" value="{{ config.redirect_to }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.gateway.name }}" value="{{ gateway }}" />
   <input type="hidden" name="{{ form_builder.fields.properties.request_type.name }}" value="{{ request_type }}" />
   {% for property in data %}
-      <input type="hidden" name="{{ data_attribute }}[{{ property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
+    <input type="hidden" name="{{ data_attribute }}[{{ property.first }}]" value="{{ property.last }}" data-{{ property.first }}="{{ property.last }}" />
   {% endfor %}
   
   {% if data.source == blankl %}
