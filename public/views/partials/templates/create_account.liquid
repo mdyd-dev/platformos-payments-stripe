@@ -15,8 +15,8 @@
 <div>
 
 {% if data.gateway_id != blank %}
-  {% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_account" %}
-  {% parse_json 'response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
+  {% graphql g = "modules/payments/gateway_get", data: data, template: "modules/stripe/get_account" %}
+  {% parse_json stripe_response %}{{ g.api_call_send.response.body }}{% endparse_json %}
 {% endif %}
 
 {% form html-class: 'account-form' %}
@@ -27,7 +27,7 @@
   {%- include 'modules/stripe/account/status' -%}
   {%- include 'modules/stripe/account/form_data' -%}
   {%- include 'modules/stripe/account/basic_settings' -%}
-  {% if response.country != blank %}
+  {% if stripe_response.country != blank %}
     {%- include 'modules/stripe/account/external_account' -%}
     {%- include 'modules/stripe/account/individual' -%}
     {%- include 'modules/stripe/account/company' -%}
@@ -42,3 +42,4 @@
     display: none;
   }
 </style>
+</div>
