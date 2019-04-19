@@ -21,10 +21,9 @@ en:
           state: State
           postal_code: Postal Code
     account:
-      business-name: Company Name
+      business_name: Company Name
       phone: Phone Number
-      tax-id: Employer Identification Number
-      tax-id:
+      tax_id:
         nz: NZBN
         us: EIN
         gb: Companies House Registration Number (CRN)
@@ -34,19 +33,19 @@ en:
       city: City
       state: State
       zip: Postal Code
-      last-name: Last Name
-      id-number: SSN
-      date-of-birth: Date of Birth
+      last_name: Last Name
+      id_number: SSN
+      date_of_birth: Date of Birth
       country: Country
       currency: Currency
-      routing-number: 
+      routing_number:
         us: Routing Number
         gb: SORT
         au: BSB
         ca: Routing Number
-      account-number: Account Number
-      account-holder-name: Account Holder Name
-      first-name: First Name
+      account_number: Account Number
+      account_holder_name: Account Holder Name
+      first_name: First Name
 
 
 

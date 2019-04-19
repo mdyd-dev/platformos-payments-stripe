@@ -6,32 +6,32 @@
       </div>
     </div>
 
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      {% include text_field with "Business Name", value: response.legal_entity.business_name, required: true  %}
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        {% include text_field with "Business Name", value: response.legal_entity.business_name, required: true  %}
+      </div>
+      <div class="form-group col-md-4">
+        {% include text_field with "Phone", value: response.legal_entity.phone_number, required: true %}
+      </div>
+      <div class="form-group col-md-4">
+        {% if response.legal_entity.business_tax_id_provided %}
+          {% assign tax_placeholder = 'Provided' %}
+          {% assign tax_disabled = true %}
+        {% endif %}
+        {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
+      </div>
     </div>
-    <div class="form-group col-md-4">
-      {% include text_field with "Phone", value: response.legal_entity.phone_number, required: true %}
-    </div>
-    <div class="form-group col-md-4">
-      {% if response.legal_entity.business_tax_id_provided %}
-        {% assign tax_placeholder = 'Provided' %}
-        {% assign tax_disabled = true %}
-      {% endif %}
-      {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
+    {% include text_field with "Address", value: response.legal_entity.address.line1, required: true %}
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {% include text_field with "City", value: response.legal_entity.address.city, required: true %}
+      </div>
+      <div class="form-group col-md-4">
+        {% include text_field with "State", value: response.legal_entity.address.state, required: true %}
+      </div>
+      <div class="form-group col-md-2">
+        {% include text_field with "Zip", value: response.legal_entity.address.postal_code, required: true %}
+      </div>
     </div>
   </div>
-  {% include text_field with "Address", value: response.legal_entity.address.line1, required: true %}
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      {% include text_field with "City", value: response.legal_entity.address.city, required: true %}
-    </div>
-    <div class="form-group col-md-4">
-      {% include text_field with "State", value: response.legal_entity.address.state, required: true %}
-    </div>
-    <div class="form-group col-md-2">
-      {% include text_field with "Zip", value: response.legal_entity.address.postal_code, required: true %}
-    </div>
-  </div>
-</div>
 </fieldset>

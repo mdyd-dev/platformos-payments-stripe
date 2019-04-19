@@ -1,5 +1,7 @@
 <span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
+
 <span class="badge badge-{% if response.charges_enabled == true %}success{% else %}danger{% endif %}">Payments {% if response.charges_enabled == true %}enabled{% else %}disabled{% endif %}</span>
+    
 <h4 class="mt-4 mb-4">
   Account Information
 </h4>
@@ -9,12 +11,12 @@
     <div class="form-group col-md-6">
       {% if response.country == blank %}
         {% assign country_name = data_attribute | append: "[country]" %}
-          {% include select_field with "Country",
-          name: country_name,
-          value: response.country,
-          collection: context.exports.payments.country_list
-          required: true
-          %}
+        {% include select_field with "Country",
+        name: country_name,
+        value: response.country,
+        collection: context.exports.payments.country_list
+        required: true
+        %}
       {% else %}
         <b>Account Location: {{ context.exports.payments.country_list[response.country] }}</b>
       {% endif %}

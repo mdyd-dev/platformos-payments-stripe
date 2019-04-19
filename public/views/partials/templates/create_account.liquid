@@ -1,6 +1,6 @@
-
 {%- include 'modules/stripe/shared/api_credentials' -%}
 {%- include 'modules/stripe/shared/constants' -%}
+
 <script>
   const stripe_pk = "{{ context.exports.payments.gateway.public_key }}"
 </script>
@@ -12,7 +12,6 @@
 {%- capture "signature" -%}
   {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
 {%- endcapture -%}
-<div>
 
 {% if data.gateway_id != blank %}
   {% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_account" %}
@@ -27,6 +26,7 @@
   {%- include 'modules/stripe/account/status' -%}
   {%- include 'modules/stripe/account/form_data' -%}
   {%- include 'modules/stripe/account/basic_settings' -%}
+  
   {% if response.country != blank %}
     {%- include 'modules/stripe/account/external_account' -%}
     {%- include 'modules/stripe/account/individual' -%}
