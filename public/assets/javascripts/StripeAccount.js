@@ -1,7 +1,7 @@
 // Assumes you've already included Stripe.js!
 const stripe = Stripe(stripe_pk);
 console.log(stripe_pk);
-const myForm = document.querySelector('.account-form');
+const myForm = document.querySelector('.create_account');
 myForm.addEventListener('submit', handleForm);
 
 const resolvedPromise = msg => {

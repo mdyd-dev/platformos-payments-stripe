@@ -1,4 +1,3 @@
-{%- include 'modules/stripe/shared/api_credentials' -%}
 {%- include 'modules/stripe/shared/constants' -%}
 
 <script>
@@ -9,32 +8,26 @@
 <script src="{{ 'modules/stripe/javascripts/StripeAccount.js' | asset_url }}" defer></script>
 <script src="{{ 'modules/stripe/javascripts/Collapse.js' | asset_url }}" defer></script>
 
-{%- capture "signature" -%}
-  {% include 'modules/payments/shared/calculate_signature', properties: properties, expires_in: expires_in, redirect_to: redirect_to %}
-{%- endcapture -%}
-
 {% if data.gateway_id != blank %}
   {% query_graph "modules/payments/gateway_get", data: data, template: "modules/stripe/get_account" %}
   {% parse_json 'response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
 {% endif %}
 
-{% form html-class: 'account-form' %}
-  {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
-  {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
-  {%- assign data_attribute = form_builder.fields.properties.data.name -%}
+{%- assign text_field = 'modules/stripe/form/inputs/text' -%}
+{%- assign select_field = 'modules/stripe/form/inputs/select' -%}
 
-  {%- include 'modules/stripe/account/status' -%}
-  {%- include 'modules/stripe/account/form_data' -%}
-  {%- include 'modules/stripe/account/basic_settings' -%}
-  {% if response.country != blank %}
-    {%- include 'modules/stripe/account/external_account' -%}
-    {%- include 'modules/stripe/account/individual' -%}
-    {%- include 'modules/stripe/account/company' -%}
-    {%- include 'modules/stripe/account/persons' -%}
-  {% endif %}
-  {%- include 'modules/stripe/account/submit' -%}
-{% endform %}
+{%- include 'modules/stripe/account/status' -%}
+{%- include 'modules/stripe/account/form_data' -%}
+{%- include 'modules/stripe/account/basic_settings' -%}
 
+{% if response.country != blank %}
+  {%- include 'modules/stripe/account/external_account' -%}
+  {%- include 'modules/stripe/account/individual' -%}
+  {%- include 'modules/stripe/account/company' -%}
+  {%- include 'modules/stripe/account/persons' -%}
+{% endif %}
+
+{%- include 'modules/stripe/account/submit' -%}
 
 <style type="text/css" media="all">
   .alert-danger:empty{

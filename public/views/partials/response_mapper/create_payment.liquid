@@ -23,7 +23,8 @@
       { "name": "application_fee_cents", "value": "{{ response_body.application_fee_amount }}" },
       { "name": "destination", "value": "{{ response_body.destination }}" },
       { "name": "transfer_group", "value": "{{ response_body.transfer_group }}" },
-      { "name": "paid_at", "value": "{{ now }}" }
+      { "name": "paid_at", "value": "{{ now }}" },
+    { "name": "state", "value": "{% if response_body.status == 'succeeded' %}Paid{% else %}Failed{% endif %}" }
     ]
   }
 {%- else -%}
