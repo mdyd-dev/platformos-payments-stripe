@@ -1,2 +1,14 @@
 {% execute_query 'modules/stripe/set_constant', name: 'stripe_pk_key', value: '<%= stripe_pk_key =%>' %}
 {% execute_query 'modules/stripe/set_constant', name: 'stripe_sk_key', value: '<%= stripe_sk_key =%>' %}
+
+{% parse_json "data" %}
+  { 
+    "url": "https://{{ context.location.host }}/payments/webhooks",
+    "enabled_events": { 
+      "0": "account.updated", 
+      "1": "charge.refunded"
+    }
+  }
+{% endparse_json %}
+
+{% graphql g = "modules/payments/gateway_create", gateway_template: "modules/stripe/create_webhook_endpoint", data: data %}

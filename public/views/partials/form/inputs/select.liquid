@@ -14,6 +14,7 @@
          placeholder={{ placeholder }}
          {% if required %}required{% endif %}
          {% if disabled %}disabled{% endif %}
+         {% if multiple %}multiple{% endif %}
          >
     {% for option in collection %}
       <option value="{{ option.first }}" {% if option.first == value %}selected{% endif %}>{{ option.last }}</option>
