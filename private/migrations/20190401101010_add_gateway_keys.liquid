@@ -3,7 +3,7 @@
 
 {% parse_json "data" %}
   { 
-    "url": "https://{{ context.location.host }}/payments/webhooks",
+    "url": "https://{{ context.location.host }}/payments/webhooks/listen",
     "enabled_events": { 
       "0": "account.updated", 
       "1": "charge.refunded"
