@@ -20,7 +20,7 @@ headers: >
   {% endif %}
 ---
 
-{%- assign allowed_params = 'currency,description,statement_descriptor,capture,customer,destination,transfer_group,amount,source' | split: ',' -%}
+{%- assign allowed_params = 'application_fee,currency,description,statement_descriptor,capture,customer,destination,transfer_group,amount,source' | split: ',' -%}
 {%- assign request_params = '' | split: "|" -%}
 {%- for var in data -%}
   {%- if var[1] != blank -%}
