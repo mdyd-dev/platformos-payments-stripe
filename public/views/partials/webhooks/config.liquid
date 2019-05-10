@@ -1,0 +1,42 @@
+{% graphql g = 'modules/payments/gateway_get', template: 'modules/stripe/get_webhook_endpoints' %}
+{% parse_json "response" %}{{ g.api_call_send.response.body }}{% endparse_json %}
+
+<div class="mt-4">
+  <h4>List of configured webhook endpoints:</h4>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Endpoints</th>
+      <th>URL</th>
+    </tr>
+    {% for endpoint in response.data  %}
+      <tr>
+        <td>{{ endpoint.id }}</td>
+        <td>
+          <ul>
+            {% for event in endpoint.enabled_events %}
+              <li>
+                {{ event | replace: '*', 'All' }}
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+        <td>{{ endpoint.url }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
+{%- parse_json 'config' -%}
+  {
+    "button": "Pay Now",
+    "require_zip": "true",
+    "redirect_to": "/payments"
+  }
+{%- endparse_json -%}
+
+{%-
+  include_form 'modules/payments/gateway_request_form',
+  request_type: 'create_webhook_endpoint',
+  config: config
+%}

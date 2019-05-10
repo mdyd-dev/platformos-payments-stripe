@@ -1,0 +1,15 @@
+{%- graphql g = 'modules/payments/get_accounts_by_gateway_id', gateway_id: data.id %}
+{%- assign account = g.customizations.results.first %}
+{%- assign account_state = 'pending' -%}
+{%- if data.payouts_enabled == true and data.charges_enabled == true -%}
+  {%- assign account_state = 'verified' -%}
+{%- endif -%}
+
+{% parse_json "account_data" %}
+  {
+    "properties": [
+      { "name": "state", "value": "{{ account_state }}" }
+    ]
+  }
+{% endparse_json %}
+{%- execute_query "modules/payments/update_customization", form: "modules/payments/create_account_form", data: account_data, id: account.id -%}
