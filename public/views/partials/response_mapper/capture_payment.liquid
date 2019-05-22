@@ -1,0 +1,24 @@
+{%- parse_json 'response_body' -%}
+  {{ gateway_response.body }}
+{%- endparse_json -%}
+
+{%- if gateway_response.status == 200 -%}
+
+  {%- assign now = 'now' | to_time | strftime: "%d-%m-%Y %H:%M:%S"  -%}
+  {
+    {%- if response_body.error -%}
+      "errors": [
+        {"message": "{{ response_body.error.message }}"}
+      ],
+    {%- endif -%}
+    "id": "{{ data.payment_id }}",
+    "properties": [
+      { "name": "paid_at", "value": "{% if response_body.captured %}{{ now }}{% endif %}" },
+      { "name": "state", "value": "{% if response_body.status != 'succeeded' %}failed{% else %}{% if response_body.captured %}paid{% else%}authorized{% endif %}{% endif %}" }
+    ]
+  }
+{%- else -%}
+  {
+    "errors": {{ response_body.error.message | json }}
+  }
+{%- endif -%}
