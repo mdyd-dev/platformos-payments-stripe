@@ -1,4 +1,4 @@
-{% graphql g = 'modules/payments/gateway_get', template: 'modules/stripe/get_webhook_endpoints' %}
+{% graphql g = 'modules/payments/gateway_request', template: 'modules/stripe/get_webhook_endpoints' %}
 {% parse_json "response" %}{{ g.api_call_send.response.body }}{% endparse_json %}
 
 <div class="mt-4">
