@@ -29,6 +29,7 @@
 
 {%- parse_json 'config' -%}
   {
+    "request_type": "create_webhook_endpoint",
     "button": "Pay Now",
     "require_zip": "true",
     "redirect_to": "/payments"
@@ -37,6 +38,6 @@
 
 {%-
   include_form 'modules/payments/gateway_request_form',
-  request_type: 'create_webhook_endpoint',
-  config: config
+  config: config,
+  request_type: "create_webhook_endpoint"
 %}
