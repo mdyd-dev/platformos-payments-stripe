@@ -1,0 +1,26 @@
+{%- parse_json 'response_body' -%}
+  {{ gateway_response.body }}
+{%- endparse_json -%}
+
+{%- if gateway_response.status == 200 -%}
+
+  {%- assign now = 'now' | to_time | strftime: "%d-%m-%Y %H:%M:%S"  -%}
+  {
+    {%- if response_body.error -%}
+      "errors": [
+        {"message": "{{ response_body.error.message }}"}
+      ],
+    {%- endif -%}
+    "properties": [
+      { "name": "account_id", "value": "{{ data.account_id }}" },
+      { "name": "amount_cents", "value": "{{ response_body.amount }}" },
+      { "name": "currency", "value": "{{ response_body.currency }}" },
+      { "name": "gateway_id", "value": "{{ response_body.id }}" },
+      { "name": "state", "value": "{% if response_body.status != 'succeeded' %}failed{% else %}{% if response_body.captured %}paid{% else%}authorized{% endif %}{% endif %}" }
+    ]
+  }
+{%- else -%}
+  {
+    "errors": {{ response_body.error.message | json }}
+  }
+{%- endif -%}
