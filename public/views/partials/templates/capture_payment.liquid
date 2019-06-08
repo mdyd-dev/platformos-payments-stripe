@@ -1,7 +1,7 @@
-<input type="hidden" name="{{ form_builder.fields.success_message.name }}" value=" {{ config.success_message | default: 'You have successfully captured payment' }}" />
+<input type="hidden" name="{{ form_builder.fields.success_message.name }}" value="{{ config.success_message | default: 'You have successfully captured payment' }}" />
 
 {% if data.gateway_id == blank %}
-  <p>Please provide required charge id in data object</p> 
+  <p>Please provide required charge id in data object</p>
 {% endif %}
 
 <div class="row">

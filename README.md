@@ -23,10 +23,36 @@ git submodule add https://github.com/mdyd-dev/platformos-payments-stripe modules
 5. Deploy instance.
 6. Make sure enable_sms_and_api_workflow_alerts_on_staging in your instance configuration is set to true
 
+# Contribution
 
-## Request Types
+In the next paragraph you will find the description of all actions already predenied in the module. In case you need to use any other Stripe API endpoint which is not yet defined, please create and Issue or Pull Request.
+
+## Adding new Request Type
+
+In order to add new Request Type please follow the steps:
+
+1. Determine the URL and request attributes for desired [Stripe API](https://stripe.com/docs/api)] call.
+2. Create new file in `modules/stripe/public/notifications/api_call_notifications/[request_type].liquid` directory that match the name with `request_type` e.g. `create_payment` request_type will invoke `create_payment` api_call_notification.
+3. Similar to other API notifications, set the Authorization header, set proper Stripe API endpoint URL as `to` property, and pass the data stored in `data` object to the request
+4. Create form teamplate for your request in `modules/stripe/public/notifications/api_call_notifications/[request_type].liquid`. Please note that this step is needed only if you want to include the form in the page and can be skipped if request_type is used only with GraphQL mutations.
+5. Create `response_mapper`, add `modules/stripe/public/views/partials/templates/[request_type].liquid`. This file defines json object that is passed to `create_customization` GraphQL mutation. Passing `id` attribute will result in `update_customizations` query being called. Please make sure that correspoding CustomModelType and FormConfiguration exists in Payment Module (e.g. `create_refund` request type creates `modules/payments/refund` object with `modules/payments/create_refund_form`).
+
+## Adding new Webhook endpoint
+
+If you need to add new webhook enpoint:
+
+1. In Stripe Dashboard select the event you wish to send. Webhook configuration should be already defined with the [migration](https://github.com/mdyd-dev/platformos-payments-stripe/blob/master/private/migrations/20190401101010_add_gateway_keys.liquid).
+2. Stripe will send requests to [webhook listen page](https://github.com/mdyd-dev/platformos-payments-stripe/blob/master/public/views/pages/webhooks/listen.liquid) where the payload is verified with signature.
+3. Webhook object is passed to the partial `modules/stripe/webhook_processors/[webhook_event_name]`, so you need to create it and invoke desired actions.
+
+
+
+# Request Types
 
 Each `request type` represents different action propagated to Stripe payment gateway through it's [REST API](https://stripe.com/docs/api). In this paragraph you will see what actions are available and you will learn how to configure it.
+
+To learn how to include payment_request_form and what are default configuration options, please read [PlatformOS Payment Module Readme](https://github.com/mdyd-dev/platformos-payments#gatewayruestform-configuration)
+
 
 ### create_customer
 
