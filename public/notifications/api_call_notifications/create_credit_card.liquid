@@ -1,5 +1,5 @@
 ---
-name: create_card
+name: create_credit_card
 to: https://api.stripe.com/v1/customers/{{ data.customer_id }}/sources
 enabled: true
 format: https
@@ -8,7 +8,7 @@ request_type: Post
 callback: >
   {%- assign response_data = response.body | to_hash -%}
   {% if response_data.error %}
-    {%- log response_data.error, type: 'modules/payments/create_card' -%}
+    {%- log response_data.error, type: 'modules/payments/create_credit_card' -%}
   {% endif %}
 headers: >
   {% if data %}
