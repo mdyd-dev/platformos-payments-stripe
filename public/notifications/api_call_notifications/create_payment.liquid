@@ -15,7 +15,8 @@ headers: >
     {%- include 'modules/stripe/shared/api_credentials' -%}
     {
       "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}"
+      "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}",
+      "Idempotency-Key": "{{ data.indempotency_key }}"
     }
   {% endif %}
 ---
