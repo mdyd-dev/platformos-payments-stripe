@@ -70,6 +70,7 @@ For more information see the [Stripe Customer API Example](https://stripe.com/do
     - external_id: used to create a relation between a user and any other object and customer. It is used in GraphQL query in customer lookup.
     - email: optional, customer emails, if not set will be asked to fill in in Stripe modal
     - description: optional, description of a customer
+    - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### create_payment
 
@@ -95,6 +96,7 @@ The `create_payment` request sends a [Stripe Charge API Request](https://stripe.
     - transfer_group: a string that identifies this transaction as part of a group. For details, see [Grouping transactions](https://stripe.com/docs/connect/charges-transfers#grouping-transactions).
     - source: optional, a payment source to be charged, typically a token provided by Stripe.js, but can be other sources. For more information see the [Customer Example](https://github.com/mdyd-dev/platformos-payment-examples/tree/master/modules/customer_example/public) and the implementation of the [create_payment partial](https://github.com/mdyd-dev/platformos-payments/blob/master/public/views/partials/create_payment.liquid)
     - metadata: optional, set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+    - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### capture_payment
 
@@ -105,6 +107,7 @@ The `capture_payment` request will trigger money transfer for an existing uncapt
 
 - data:
   - gateway_id: required, the ID of the Stripe charge object that you want to capture, stored in a `gateway_id` property of the `modules/payments/payment` object.
+  - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### create_refund
 
@@ -121,6 +124,7 @@ The `create_refund` request allows you to refund a charge that has previously be
   - refund_application_fee: Boolean indicating whether the application fee should be refunded when refunding this charge. If a full charge refund is given, the full application fee will be refunded. Otherwise, the application fee will be refunded in an amount proportional to the amount of the charge refunded.
   - reverse_transfer: Boolean indicating whether the transfer should be reversed when refunding this charge. The transfer will be reversed proportionally to the amount being refunded (either the entire or partial amount).
   - metadata: optional, set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+  - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### create_account
 
@@ -134,6 +138,7 @@ create_account is used for account object creation in [Stripe Connect Payments.]
   - external_id: ID that you can use to find a `models/payments/account` object, for example `context.current_user.id`
   - gateway_id: Stripe Account object ID, used for updating an existing account in the multi-step account creation
   - id: ID of the `models/payments/account` object, used for updating an existing account in the multi-step account creation
+  - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### delete_account
 
@@ -154,6 +159,7 @@ create_transfer is used to move money from your Stripe Account Balance to Connec
   - amount: required, a positive integer representing how much to transfer in the smallest currency unit
   - currency: Three-letter ISO currency code, in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
   - metadata: optional, set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+  - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### create_credit_card
 
@@ -163,6 +169,7 @@ Adds a new credit card to the customer.
   - source: credit card token - provided by the Stripe.js component
   - customer_id: Stripe Customer object ID
   - metadata: optional, set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
+  - indempotency_key - uniq string for safely retrying requests without accidentally performing the same operation twice. [Read more](https://stripe.com/docs/api/idempotent_requests)
 
 ### delete_credit_card
 
