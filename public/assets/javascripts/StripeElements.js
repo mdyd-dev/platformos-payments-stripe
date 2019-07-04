@@ -7,7 +7,6 @@ class StripeElements {
     this.configure();
   }
 
-
   configure() {
     // Custom styling can be passed to options when creating an Element.
 
@@ -18,13 +17,13 @@ class StripeElements {
         fontSmoothing: 'antialiased',
         fontSize: '16px',
         '::placeholder': {
-          color: '#aab7c4'
-        }
+          color: '#aab7c4',
+        },
       },
       invalid: {
         color: '#fa755a',
-        iconColor: '#fa755a'
-      }
+        iconColor: '#fa755a',
+      },
     };
 
     // Create an instance of the card Element.
@@ -32,7 +31,7 @@ class StripeElements {
 
     // Add an instance of the card Element into the `card-element` <div>.
     this.card.mount('#card-element');
-    console.log("mounted");
+    console.log('mounted');
 
     this.validateForm();
     this.setupFormCallbacks();
@@ -40,9 +39,8 @@ class StripeElements {
   }
 
   setupFormCallbacks() {
-    this.form.addEventListener('submit', async (event) => {
+    this.form.addEventListener('submit', async event => {
       event.preventDefault();
-
       const {token, error} = await this.stripe.createToken(this.card);
 
       if (error) {
@@ -54,9 +52,8 @@ class StripeElements {
         this.stripeTokenHandler(token);
       }
     });
-
   }
-  
+
   validateForm() {
     this.card.addEventListener('change', ({error}) => {
       const displayError = document.getElementById('card-errors');
@@ -69,16 +66,14 @@ class StripeElements {
   }
 
   submitToken() {
-    this.stripeTokenHandler = (token) => {
+    this.stripeTokenHandler = token => {
       // Insert the token ID into the form so it gets submitted to the server
       this.tokenField.value = token.id;
 
       // Submit the form
       this.form.submit();
-    }
+    };
   }
-
 }
 
 new StripeElements();
-
