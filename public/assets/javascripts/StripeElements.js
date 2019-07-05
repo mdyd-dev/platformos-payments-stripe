@@ -2,7 +2,7 @@ class StripeElements {
   constructor() {
     this.form = document.getElementsByClassName('create_payment')[0];
     this.tokenField = document.querySelector('[data-cc-token]');
-    this.stripe = Stripe('pk_test_2wVNamYYWZOwdUPnByxKxttv');
+    this.stripe = Stripe(stripe_pk);
     this.elements = this.stripe.elements();
     this.configure();
   }
