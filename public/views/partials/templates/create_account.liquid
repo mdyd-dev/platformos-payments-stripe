@@ -16,7 +16,9 @@
 {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
 {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
 
-{%- include 'modules/stripe/account/status' -%}
+{% if data.business_type != blank %}
+  {%- include 'modules/stripe/account/status' -%}
+{% endif %}
 {%- include 'modules/stripe/account/form_data' -%}
 {%- include 'modules/stripe/account/basic_settings' -%}
 
