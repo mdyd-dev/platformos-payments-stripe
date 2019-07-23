@@ -13,10 +13,10 @@
         "person_token": "{{ token }}"
       }
     {% endparse_json %}
-    
+
     {% log person_data, type: "PERSON DATA" %}
 
-    {%- execute_query 'modules/payments/gateway_request', result_name: 'person_response', data: person_data, api_template: gateway_api_template -%}
+    {%- graphql g = 'modules/payments/gateway_request', result_name: 'person_response', data: person_data, api_template: gateway_api_template -%}
     {% log person_response, type: "Person Response" %}
   {% endif %}
 {% endfor %}

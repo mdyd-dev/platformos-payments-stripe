@@ -1,5 +1,5 @@
-{% execute_query 'modules/stripe/set_constant', name: 'stripe_pk_key', value: '<%= stripe_pk_key =%>' %}
-{% execute_query 'modules/stripe/set_constant', name: 'stripe_sk_key', value: '<%= stripe_sk_key =%>' %}
+{% graphql g = 'modules/stripe/set_constant', name: 'stripe_pk_key', value: '<%= stripe_pk_key =%>' %}
+{% graphql g = 'modules/stripe/set_constant', name: 'stripe_sk_key', value: '<%= stripe_sk_key =%>' %}
 
 {% assign gateway_name = params.slug2 %}
 {% export gateway_name, namespace: "payments"  %}

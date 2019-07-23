@@ -12,4 +12,4 @@
     ]
   }
 {% endparse_json %}
-{%- execute_query "modules/payments/update_customization", form: "modules/payments/create_account_form", data: account_data, id: account.id -%}
+{%- graphql g = "modules/payments/update_customization", form: "modules/payments/create_account_form", data: account_data, id: account.id -%}

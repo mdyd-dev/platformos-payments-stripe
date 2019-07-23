@@ -1,4 +1,4 @@
-{% query_graph 'modules/payments/gateway_request', data: data, api_template: "modules/stripe/get_persons" %}
+{% graphql g = 'modules/payments/gateway_request', data: data, api_template: "modules/stripe/get_persons" %}
 {% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
 <h4 class='mb-4'>Personal Information</h4>
 {% if "AU,NZ" contains response.country %}
