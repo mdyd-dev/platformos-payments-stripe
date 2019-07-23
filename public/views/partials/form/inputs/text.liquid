@@ -8,7 +8,7 @@
 {% endif %}
 
 <div class="form-group">
-  <label for="input-{{ input }}">{{ 'stripe.account.' | append: text_underscore | append: country_scope | t}} {% if required %}<span class="text-danger">*</span>{% endif %}</label>
+  <label for="input-{{ input }}">{{ 'modules/stripe.stripe.account.' | append: text_underscore | append: country_scope | t}} {% if required %}<span class="text-danger">*</span>{% endif %}</label>
   <input
     type="text"
     name="{{ name }}"
