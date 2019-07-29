@@ -1,6 +1,6 @@
 <input type="hidden" name="{{ form_builder.fields.success_message.name }}" value=" {{ config.success_message | default: 'You have successfully created payment' }}" />
 
-{% if data.source == blankl %}
+{% if data.source == blank %}
   <script src="https://checkout.stripe.com/checkout.js" defer></script>
   <script src="{{ 'modules/stripe/javascripts/CheckoutPaymentForm.js' | asset_url }}" defer></script>
   <input type="hidden" name="{{ data_attribute }}[source]" value="" data-cc-token />
