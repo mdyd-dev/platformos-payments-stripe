@@ -12,12 +12,13 @@ callback: >
   {% endif %}
 headers: >
   {% if data %}
+    {% log data, type: "DEBUG api templ data" %}
     {%- include 'modules/stripe/shared/api_credentials' -%}
     {
       "Stripe-Account": "{{ data.account_id }}",
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
-      "Idempotency-Key": "{{ data.indempotency_key }}"
+      "Idempotency-Key": "create_person_{{ data.indempotency_key }}"
     }
   {% endif %}
 ---

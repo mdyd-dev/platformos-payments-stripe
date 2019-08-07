@@ -1,5 +1,6 @@
 {% assign data = params.properties_attributes.data %}
 {% log "Processing CALLBACK", type: "DEBUG" %}
+{% log params, type: "DEBUG Callback params" %}
 {% for person_hash in data.persons %}
   {% assign person = person_hash.last %}
   {% assign token = person.token %}
@@ -10,13 +11,15 @@
       {
         "gateway_id": "{{ person.gateway_id }}",
         "account_id": "{{ customization.properties.gateway_id }}",
-        "person_token": "{{ token }}"
+        "person_token": "{{ token }}",
+        "indempotency_key": "{{ indempotency_key }}"
+
       }
     {% endparse_json %}
 
     {% log person_data, type: "PERSON DATA" %}
 
-    {%- graphql g = 'modules/payments/gateway_request', result_name: 'person_response', data: person_data, api_template: gateway_api_template -%}
+    {%- graphql person_response = 'modules/payments/gateway_request', data: person_data, api_template: gateway_api_template -%}
     {% log person_response, type: "Person Response" %}
   {% endif %}
 {% endfor %}
