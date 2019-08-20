@@ -17,6 +17,7 @@ headers: >
     {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
+      "Stripe-Version": "2018-02-28",
       "Idempotency-Key": "{{ data.indempotency_key }}"
     }
   {% endif %}
@@ -36,4 +37,4 @@ headers: >
   {%- endif -%}
 {%- endfor -%}
 {% log request_params, type: "account request params!!!" %}
-{% if data.gateway_id == blank %}type=custom&tos_acceptance[ip]={{ data.ip }}&tos_acceptance[date]={{ 'now' | date: '%s' }}&{% endif %}{{ request_params | join: '&' | html_safe }}
+{% if data.gateway_id == blank %}type=custom&tos_acceptance[ip]={{ data.ip }}{% if data.country == "US" and data.requested_capabilities != blank %}&requested_capabilities[]={{ data.requested_capabilities }}{% endif %}&tos_acceptance[date]={{ 'now' | date: '%s' }}&{% endif %}{{ request_params | join: '&' | html_safe }}
