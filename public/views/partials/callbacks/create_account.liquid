@@ -1,5 +1,4 @@
 {% assign data = params.properties_attributes.data %}
-{% log "Processing CALLBACK", type: "DEBUG" %}
 {% log params, type: "DEBUG Callback params" %}
 {% for person_hash in data.persons %}
   {% assign person = person_hash.last %}
