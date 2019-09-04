@@ -2,10 +2,10 @@
 {% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
 <h4 class='mb-4'>Personal Information</h4>
 {% if "AU,NZ" contains response.country %}
-  {% assign id_numner_required = false %}
+  {% assign id_number_required = false %}
   {% assign column_size = 4 %}
 {% else %}
-  {% assign id_numner_required = true %}
+  {% assign id_number_required = true %}
   {% assign column_size = 3 %}
 {% endif %}
 {% for person in persons_response.data %}
@@ -21,7 +21,7 @@
       <div class="form-group col-md-{{ column_size }}">
         {% include text_field with "Last Name", value: person.last_name, required: true  %}
       </div>
-      {% if id_numner_required %}
+      {% if id_number_required %}
         <div class="form-group col-md-{{ column_size }}">
           {% if person.id_number_provided %}
             {% assign id_placeholder = 'Provided' %}
