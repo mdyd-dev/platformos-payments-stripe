@@ -211,7 +211,7 @@ const processIndividual = () => {
   return stripe
     .createToken('account', {
       business_type: 'individual',
-      individual: {email: 'text@example.com'},
+      individual: {email: individualContainer.dataset.email},
       tos_shown_and_accepted: true,
     })
     .then(

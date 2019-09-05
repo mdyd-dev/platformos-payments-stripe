@@ -1,6 +1,9 @@
 {% graphql g = 'modules/payments/gateway_request', data: data, api_template: "modules/stripe/get_persons" %}
 {% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
-<h4 class='mb-4'>Personal Information</h4>
+{% if persons_response.data != blank %}
+  <h4 class='mb-4'>Personal Information</h4>
+{% endif %}
+
 {% if "AU,NZ" contains response.country %}
   {% assign id_numner_required = false %}
   {% assign column_size = 4 %}
@@ -8,8 +11,9 @@
   {% assign id_numner_required = true %}
   {% assign column_size = 3 %}
 {% endif %}
+
 {% for person in persons_response.data %}
-  <fieldset class="person border-bottom border-light mb-5">
+  <fieldset data-person="{{ person.id }}" data-account="{{ response.id }}" class="border-bottom border-light mb-5">
     <div class="errors alert alert-danger" role="alert"></div>
     {% assign person_attribute = data_attribute | append: '[persons][' | append: forloop.index | append: ']' %}
     <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>

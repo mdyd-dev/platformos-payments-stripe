@@ -1,2 +1,5 @@
-<fieldset class="individual {% if response.legal_entity.type  == 'company' %}collapse{% endif %}" {% if response.legal_entity.type  == 'company'  %}disabled{% endif %}>
+<fieldset
+  data-email="{{ context.current_user.email }}"
+  class="individual {% if response.legal_entity.type  == 'company' %}collapse{% endif %}"
+  {% if response.legal_entity.type  == 'company'  %}disabled{% endif %}>
 </fieldset>
