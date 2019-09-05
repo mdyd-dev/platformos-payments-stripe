@@ -1,7 +1,8 @@
 class StripePerson {
-  constructor(container, resolve) {
+  constructor(container) {
     this.container = container;
-    this.resolve = resolve;
+    this.personId = this.container.dataset.person;
+    this.accountId = this.container.dataset.account;
     this.processInputData();
 
     let frontFilePromise = this.setPersonDocument('front');
@@ -33,15 +34,13 @@ class StripePerson {
   }
 
   savePerson() {
-    let url = '/api/persons/' + this.personId;
-    let method = this.personId ? 'PUT' : 'POST';
-
     const data = new FormData();
-    data.append('person_token', token);
+    data.append('person_token', this.token);
     data.append('account_id', this.accountId);
+    data.append('person_id', this.personId);
 
-    return fetch(url, {
-      method: method,
+    return fetch('/payments/api/persons.json', {
+      method: 'POST',
       body: data,
     });
   }
@@ -188,6 +187,16 @@ const processExternalAccount = () => {
     });
 };
 
+const removeEmptyValues = obj => {
+  for (var i in obj) {
+    if (obj[i] === null || obj[i].length == 0) {
+      delete obj[i];
+    } else if (typeof obj[i] === 'object') {
+      this.removeEmptyValues(obj[i]);
+    }
+  }
+};
+
 const processIndividual = () => {
   console.log('processing individual account');
   let individualContainer = document.querySelector('.individual');
@@ -250,8 +259,8 @@ const processCompany = () => {
 };
 
 const processPersons = () => {
-  const persons = document.querySelectorAll('.person');
-  if (persons.length == 0) return resolve();
+  const persons = document.querySelectorAll('[data-person]');
+  if (persons.length == 0) return Promise.resolve();
   let personPromises = [];
 
   for (i = 0; i < persons.length; ++i) {
@@ -276,7 +285,7 @@ async function handleForm(event) {
     .then(
       function(result) {
         console.log('SUBMITTING');
-        // myForm.submit();
+        myForm.submit();
       },
       function(error) {
         console.log('error');
