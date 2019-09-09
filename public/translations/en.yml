@@ -1,5 +1,12 @@
 en:
   external_account: "External Account:"
+  requirements:
+    individual:
+      address:
+        line1: Address
+        city: City
+        state: State
+        postal_code: Postal Code
   stripe:
     fields_needed:
       external_account: External Account

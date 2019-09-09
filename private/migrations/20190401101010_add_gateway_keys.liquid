@@ -1,12 +1,13 @@
 {% graphql g = 'modules/stripe/set_constant', name: 'stripe_pk_key', value: '<%= stripe_pk_key =%>' %}
 {% graphql g = 'modules/stripe/set_constant', name: 'stripe_sk_key', value: '<%= stripe_sk_key =%>' %}
 
-{% assign gateway_name = params.slug2 %}
+{% assign gateway_name = 'stripe' %}
 {% export gateway_name, namespace: "payments"  %}
 
 {% parse_json "webhook_data" %}
   {
-  "url": "https://{{ context.location.host }}/webhooks/listen",
+    "url": "https://{{ context.location.host }}/webhooks/listen",
+    "connect": "true",
     "enabled_events": {
        "0": "account.updated"
     }

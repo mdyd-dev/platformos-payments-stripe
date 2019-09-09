@@ -19,8 +19,6 @@
         collection: context.exports.payments.country_list
         required: true
         %}
-      {% else %}
-        <b>Account Location: {{ context.exports.payments.country_list[response.country] }}</b>
       {% endif %}
     </div>
 
@@ -34,8 +32,8 @@
 </div>
 
 {% if data.business_type == blank and response.country != blank %}
-  {% if response.legal_entity.type == blank %}
-    <p>Please select account type. <b>Account type can't be changed after selection</b></p>
+  {% if response.business_type  == blank %}
+    <b>Please select account type. <span class="text-danger ml-3">Account type can't be changed after selection</span></b>
   {% endif %}
   <div class="form-group">
     <div class="form-check form-check-inline">
@@ -47,12 +45,12 @@
              required
              data-target=".company, .individual"
              data-toggle="collapse"
-             {% if response.legal_entity.type == 'individual' or response.legal_entity.type == blank  %}checked{% endif %}
-             {% if response.legal_entity.type != blank %}disabled{% endif %}>
+             {% if response.business_type  == 'individual' or response.business_type  == blank  %}checked{% endif %}
+             {% if response.business_type  != blank %}disabled{% endif %}>
       <label class="form-check-label" for="inlineRadio1">Individual</label>
     </div>
     <div class="form-check form-check-inline">
-      <input class="form-check-input"
+      <input class="form-check-input ml-5"
              type="radio"
              name="{{ data_attribute}}[business_type]"
              id="inlineRadio2"
@@ -60,8 +58,8 @@
              data-toggle="collapse"
              value="company"
              required
-             {% if response.legal_entity.type  == 'company' %}checked{% endif %}
-             {% if response.legal_entity.type != blank %}disabled{% endif %}>
+             {% if response.business_type   == 'company' %}checked{% endif %}
+             {% if response.business_type  != blank %}disabled{% endif %}>
       <label class="form-check-label" for="inlineRadio2">Company</label>
     </div>
   </div>

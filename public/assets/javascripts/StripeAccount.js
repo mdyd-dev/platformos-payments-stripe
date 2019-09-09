@@ -1,3 +1,75 @@
+class StripeElements {
+  constructor() {
+    this.form = document.getElementsByClassName('create_account')[0];
+    this.tokenField = document.querySelector('[data-external-account]');
+    this.stripe = Stripe(stripe_pk);
+    this.elements = this.stripe.elements();
+    this.configure();
+  }
+
+  configure() {
+    // Custom styling can be passed to options when creating an Element.
+
+    var style = {
+      base: {
+        color: '#32325d',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4',
+        },
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+      },
+    };
+
+    // Create an instance of the card Element.
+    this.card = this.elements.create('card', {style});
+
+    // Add an instance of the card Element into the `card-element` <div>.
+    this.card.mount('#card-element');
+    console.log('mounted');
+
+    this.validateForm();
+  }
+
+  getToken() {
+    return new Promise((resolve, reject) => {
+      this.stripe
+        .createToken(this.card, {
+          currency: 'usd',
+        })
+        .then(
+          function(result) {
+            if (result.error) {
+              // Inform the customer that there was an error.
+              const errorElement = document.getElementById('card-errors');
+              errorElement.textContent = result.error.message;
+              reject();
+            } else {
+              this.tokenField.value = result.token.id;
+              resolve();
+            }
+          }.bind(this),
+        );
+    });
+  }
+
+  validateForm() {
+    this.card.addEventListener('change', ({error}) => {
+      const displayError = document.getElementById('card-errors');
+      if (error) {
+        displayError.textContent = error.message;
+      } else {
+        displayError.textContent = '';
+      }
+    });
+  }
+}
+
 class StripePerson {
   constructor(container) {
     this.container = container;
@@ -21,7 +93,20 @@ class StripePerson {
                 reject();
               } else {
                 this.token = result.token.id;
-                this.savePerson().then(resolve());
+                this.savePerson()
+                  .then(resp => resp.json())
+                  .then(
+                    function(result) {
+                      if (result.status == 200) {
+                        resolve();
+                      } else {
+                        this.container.querySelector(
+                          '.errors',
+                        ).textContent = JSON.parse(result.body).error.message;
+                        reject();
+                      }
+                    }.bind(this),
+                  );
               }
             }.bind(this),
           );
@@ -99,6 +184,7 @@ class StripePerson {
       person: {
         first_name: this.container.querySelector('[data-first-name]').value,
         last_name: this.container.querySelector('[data-last-name]').value,
+        phone: this.container.querySelector('[data-phone]').value,
         address: {
           line1: this.container.querySelector('[data-address]').value,
           city: this.container.querySelector('[data-city]').value,
@@ -128,11 +214,25 @@ class StripePerson {
 const stripe = Stripe(stripe_pk);
 console.log(stripe_pk);
 const myForm = document.querySelector('.create_account');
+const element = new StripeElements();
 myForm.addEventListener('submit', handleForm);
 
 const resolvedPromise = msg => {
   console.log('RESOLVED PROMISE', msg);
   return Promise.resolve(msg);
+};
+
+const processExternalAccountCard = () => {
+  let debit_fieldset = document.querySelector('.debit_external_account');
+
+  if (debit_fieldset == null || debit_fieldset.hasAttribute('disabled'))
+    return resolvedPromise('External Account Disabled');
+
+  let cc_fieldset = document.querySelector('.cc_fields');
+  if (cc_fieldset == null || cc_fieldset.hasAttribute('disabled'))
+    return resolvedPromise('External Account Disabled');
+
+  return element.getToken();
 };
 
 const processExternalAccount = () => {
@@ -275,6 +375,7 @@ async function handleForm(event) {
 
   let stripePromises = [];
 
+  stripePromises.push(processExternalAccountCard());
   stripePromises.push(processExternalAccount());
   stripePromises.push(processIndividual());
   stripePromises.push(processCompany());
@@ -295,3 +396,59 @@ async function handleForm(event) {
       console.log('Error', error);
     });
 }
+
+const onContent = el => {
+  el.classList.remove('collapse');
+  el.removeAttribute('disabled');
+};
+
+const offContent = el => {
+  el.classList.add('collapse');
+  el.setAttribute('disabled', 'disabled');
+};
+
+const onSwitch = el => el.classList.add('active');
+const offSwitch = el => el.classList.remove('active');
+const toggleRadio = el => {
+  console.log(el);
+  const clicked = el;
+  const id = clicked.dataset.toggleSwitch;
+  const target = clicked.dataset.toggleTarget;
+
+  // Turn all off
+  Array.prototype.slice
+    .call(document.querySelectorAll(`[data-toggle-switch="${id}"]`))
+    .map(offSwitch);
+  Array.prototype.slice
+    .call(document.querySelectorAll(`[data-toggle-target="${id}"]`))
+    .map(offContent);
+
+  // Turn off some
+  onSwitch(clicked);
+  Array.prototype.slice
+    .call(document.querySelectorAll(`[data-toggle-content="${target}"]`))
+    .map(onContent);
+};
+
+Array.prototype.slice
+  .call(document.querySelectorAll('[data-toggle-switch]'))
+  .map(el => {
+    el.addEventListener('change', e => {
+      toggleRadio(e.target);
+    });
+  });
+
+Array.prototype.slice
+  .call(document.querySelectorAll('a[data-toggle-switch]'))
+  .map(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      toggleRadio(e.target);
+    });
+  });
+
+Array.prototype.slice
+  .call(document.querySelectorAll('[data-toggle-switch]:checked'))
+  .map(el => {
+    toggleRadio(el);
+  });
