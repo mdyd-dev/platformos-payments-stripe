@@ -34,9 +34,11 @@
           </li>
         {% endfor%}
         {% for field in response.requirements.currently_due %}
-          <li>
+          {% unless field contains 'person_' %}
+            <li>
             {{ 'stripe.requirements.' | append: field | t }}
           </li>
+          {% endunless %}
         {% endfor %}
     </div>
   {% endif %}

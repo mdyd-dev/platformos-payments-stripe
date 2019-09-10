@@ -112,7 +112,8 @@ class StripePerson {
           );
         },
         error => {
-          console.log(error);
+          console.log('Error person promise', error);
+          reject();
         },
       );
     });
@@ -194,6 +195,15 @@ class StripePerson {
       },
     };
 
+    let companyContainer = document.querySelector('.company:not(:disabled)');
+    if (companyContainer != null) {
+      this.personData.person.relationship = {
+        account_opener: true,
+        director: true,
+        owner: true,
+        percent_ownership: 100,
+      };
+    }
     let idNumberField = this.container.querySelector('[data-id-number]');
     if (idNumberField) {
       this.personData.person.id_number = idNumberField.value;
@@ -311,7 +321,7 @@ const processIndividual = () => {
   )
     return resolvedPromise('Individual Disabled');
 
-  console.log('Individual?');
+  console.log('Indtruetrueividual?');
   return stripe
     .createToken('account', {
       business_type: 'individual',
@@ -320,9 +330,16 @@ const processIndividual = () => {
     })
     .then(
       function(result) {
-        console.log('INDIVIDUAL ACCOUNT result', result);
-        document.querySelector('#account-token').value = result.token.id;
-        return resolvedPromise('Individual Token Set');
+        if (result.error) {
+          const errorElement = (individualContainer.querySelector(
+            '.errors',
+          ).textContent = result.error.message);
+          return Promise.reject();
+        } else {
+          console.log('INDIVIDUAL ACCOUNT result', result);
+          document.querySelector('#account-token').value = result.token.id;
+          return resolvedPromise('Individual Token Set');
+        }
       },
       function(error) {
         console.log('INDIVIDUAL ACCOUNT ERROR result', error);
@@ -395,7 +412,7 @@ const processCompany = () => {
 };
 
 const processPersons = () => {
-  const persons = document.querySelectorAll('[data-person]');
+  const persons = document.querySelectorAll('[data-person]:not(:disabled)');
   if (persons.length == 0) return Promise.resolve();
   let personPromises = [];
 
@@ -429,7 +446,7 @@ async function handleForm(event) {
         event.target.querySelector(
           '[data-stripe-account-submit]',
         ).disabled = false;
-        console.log('error');
+        console.log('error', error);
       },
     )
     .catch(error => {

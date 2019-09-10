@@ -30,6 +30,7 @@ en:
     account:
       business_name: Company Name
       phone: Phone Number
+      email: Email
       tax_id:
         nz: NZBN
         us: EIN
