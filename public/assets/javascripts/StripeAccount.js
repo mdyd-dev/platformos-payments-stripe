@@ -209,6 +209,17 @@ class StripePerson {
       this.personData.person.id_number = idNumberField.value;
     }
 
+    let emailField = this.container.querySelector('[data-email]');
+    if (emailField) {
+      this.personData.person.email = emailField.value;
+    }
+
+    let titleField = this.container.querySelector('[data-title]');
+    if (titleField) {
+      this.personData.person.relationship = {};
+      this.personData.person.relationship.title = titleField.value;
+    }
+
     let dobValue = this.container.querySelector('[data-date-of-birth]').value;
     if (dobValue.length != 0) {
       let dob = dobValue.split('/');
