@@ -244,6 +244,10 @@ const processExternalAccount = () => {
   )
     return resolvedPromise('External Account Disabled');
 
+  let cc_fieldset = document.querySelector('.ba_fields');
+  if (cc_fieldset == null || cc_fieldset.hasAttribute('disabled'))
+    return resolvedPromise('External Account Disabled');
+
   let bank_account = {
     country: bank_account_container.querySelector('[data-country]').value,
     currency: bank_account_container.querySelector('[data-currency]').value,
@@ -311,7 +315,7 @@ const processIndividual = () => {
   return stripe
     .createToken('account', {
       business_type: 'individual',
-      individual: {email: individualContainer.dataset.email},
+      individual: individualData(individualContainer),
       tos_shown_and_accepted: true,
     })
     .then(
@@ -324,6 +328,38 @@ const processIndividual = () => {
         console.log('INDIVIDUAL ACCOUNT ERROR result', error);
       },
     );
+};
+
+const individualData = individualContainer => {
+  let data = {
+    email: individualContainer.dataset.email,
+    first_name: individualContainer.querySelector('[data-first-name]').value,
+    last_name: individualContainer.querySelector('[data-last-name]').value,
+    phone: individualContainer.querySelector('[data-phone]').value,
+    address: {
+      line1: individualContainer.querySelector('[data-address]').value,
+      city: individualContainer.querySelector('[data-city]').value,
+      state: individualContainer.querySelector('[data-state]').value,
+      postal_code: individualContainer.querySelector('[data-zip]').value,
+    },
+  };
+
+  let idNumberField = individualContainer.querySelector('[data-id-number]');
+  if (idNumberField) {
+    data.id_number = idNumberField.value;
+  }
+
+  let dobValue = individualContainer.querySelector('[data-date-of-birth]')
+    .value;
+  if (dobValue.length != 0) {
+    let dob = dobValue.split('/');
+    data.dob = {};
+    if (dob[0] != undefined) data.dob.day = dob[0];
+    if (dob[1] != undefined) data.dob.month = dob[1];
+    if (dob[2] != undefined) data.dob.year = dob[2];
+  }
+
+  return data;
 };
 
 const processCompany = () => {
@@ -372,6 +408,7 @@ const processPersons = () => {
 
 async function handleForm(event) {
   event.preventDefault();
+  event.target.querySelector('[data-stripe-account-submit]').disabled = true;
 
   let stripePromises = [];
 
@@ -389,11 +426,17 @@ async function handleForm(event) {
         myForm.submit();
       },
       function(error) {
+        event.target.querySelector(
+          '[data-stripe-account-submit]',
+        ).disabled = false;
         console.log('error');
       },
     )
     .catch(error => {
       console.log('Error', error);
+      event.target.querySelector(
+        '[data-stripe-account-submit]',
+      ).disabled = false;
     });
 }
 
