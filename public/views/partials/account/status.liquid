@@ -7,7 +7,12 @@
 
   {% if response != blank and response.verification.fields_needed != empty %}
     {% parse_json "alert" %}
-      {% if response.charges_enabled != true %}
+      {% if response.payouts_enabled != true and response.verification.fields_needed == empty and response.requirements.currently_due == empty %}
+        {
+          "type": "info",
+          "msg": "We are validating your account, you will be notified by email when status is changed"
+         }
+      {% elsif response.charges_enabled != true %}
         {
           "type": "danger",
           "msg": "Account payment is currently disabled, please provide the following information so that we can enable your payments."

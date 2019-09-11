@@ -94,24 +94,20 @@ class StripePerson {
                 reject();
               } else {
                 this.token = result.token.id;
-                if (this.individual) {
-                  resolve();
-                } else {
-                  this.savePerson()
-                    .then(resp => resp.json())
-                    .then(
-                      function(result) {
-                        if (result.status == 200) {
-                          resolve();
-                        } else {
-                          this.container.querySelector(
-                            '.errors',
-                          ).textContent = JSON.parse(result.body).error.message;
-                          reject();
-                        }
-                      }.bind(this),
-                    );
-                }
+                this.savePerson()
+                  .then(resp => resp.json())
+                  .then(
+                    function(result) {
+                      if (result.status == 200) {
+                        resolve();
+                      } else {
+                        this.container.querySelector(
+                          '.errors',
+                        ).textContent = JSON.parse(result.body).error.message;
+                        reject();
+                      }
+                    }.bind(this),
+                  );
               }
             }.bind(this),
           );
@@ -190,7 +186,6 @@ class StripePerson {
       person: {
         first_name: this.container.querySelector('[data-first-name]').value,
         last_name: this.container.querySelector('[data-last-name]').value,
-        phone: this.container.querySelector('[data-phone]').value,
         address: {
           line1: this.container.querySelector('[data-address]').value,
           city: this.container.querySelector('[data-city]').value,
@@ -201,21 +196,24 @@ class StripePerson {
     };
 
     let companyContainer = document.querySelector('.company:not(:disabled)');
-    if (companyContainer != null) {
-      this.personData.person.relationship = {
-        account_opener: true,
-        director: true,
-        owner: true,
-        percent_ownership: 100,
-      };
-    }
+    this.personData.person.relationship = {
+      account_opener: true,
+      director: true,
+      owner: true,
+      percent_ownership: 100,
+    };
     let idNumberField = this.container.querySelector('[data-id-number]');
     if (idNumberField) {
       this.personData.person.id_number = idNumberField.value;
     }
 
+    let phoneField = this.container.querySelector('[data-phone]');
+    if (phoneField) {
+      this.personData.person.phone = phoneField.value;
+    }
+
     let ssnLastField = this.container.querySelector('[data-ssn-last-4]');
-    if (ssnLastField) {
+    if (ssnLastField && ssnLastField.value.length == 4) {
       this.personData.person.ssn_last_4 = ssnLastField.value;
     }
 
@@ -234,8 +232,8 @@ class StripePerson {
     if (dobValue.length != 0) {
       let dob = dobValue.split('/');
       this.personData.person.dob = {};
-      if (dob[0] != undefined) this.personData.person.dob.day = dob[0];
-      if (dob[1] != undefined) this.personData.person.dob.month = dob[1];
+      if (dob[0] != undefined) this.personData.person.dob.month = dob[0];
+      if (dob[1] != undefined) this.personData.person.dob.day = dob[1];
       if (dob[2] != undefined) this.personData.person.dob.year = dob[2];
     }
   }
@@ -346,7 +344,7 @@ const processIndividual = () => {
   return stripe
     .createToken('account', {
       business_type: 'individual',
-      individual: individualData(individualContainer),
+      // individual: individualData(individualContainer),
       tos_shown_and_accepted: true,
     })
     .then(
@@ -387,7 +385,7 @@ const individualData = individualContainer => {
   }
 
   let ssnLastField = individualContainer.querySelector('[data-ssn-last-4]');
-  if (ssnLastField) {
+  if (ssnLastField && ssnLastField.value.length == 4) {
     data.ssn_last_4 = ssnLastField.value;
   }
 
@@ -401,8 +399,8 @@ const individualData = individualContainer => {
   if (dobValue.length != 0) {
     let dob = dobValue.split('/');
     data.dob = {};
-    if (dob[0] != undefined) data.dob.day = dob[0];
-    if (dob[1] != undefined) data.dob.month = dob[1];
+    if (dob[0] != undefined) data.dob.month = dob[0];
+    if (dob[1] != undefined) data.dob.day = dob[1];
     if (dob[2] != undefined) data.dob.year = dob[2];
   }
 
@@ -417,7 +415,6 @@ const processCompany = () => {
 
   let company = {
     name: companyContainer.querySelector('[data-business-name]').value,
-    phone: companyContainer.querySelector('[data-phone]').value,
     address: {
       line1: companyContainer.querySelector('[data-address]').value,
       city: companyContainer.querySelector('[data-city]').value,
@@ -425,6 +422,11 @@ const processCompany = () => {
       postal_code: companyContainer.querySelector('[data-zip]').value,
     },
   };
+
+  let phoneField = companyContainer.querySelector('[data-phone]');
+  if (phoneField && phoneField.value.length > 0) {
+    company.phone = phoneField.value;
+  }
 
   let tax_id = companyContainer.querySelector('[data-tax-id]').value;
   if (tax_id.length != 0) {
