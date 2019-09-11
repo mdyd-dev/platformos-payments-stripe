@@ -75,6 +75,7 @@ class StripePerson {
     this.container = container;
     this.personId = this.container.dataset.person;
     this.accountId = this.container.dataset.account;
+    this.individual = this.container.dataset.person == 'individual';
     this.processInputData();
 
     let frontFilePromise = this.setPersonDocument('front');
@@ -93,20 +94,24 @@ class StripePerson {
                 reject();
               } else {
                 this.token = result.token.id;
-                this.savePerson()
-                  .then(resp => resp.json())
-                  .then(
-                    function(result) {
-                      if (result.status == 200) {
-                        resolve();
-                      } else {
-                        this.container.querySelector(
-                          '.errors',
-                        ).textContent = JSON.parse(result.body).error.message;
-                        reject();
-                      }
-                    }.bind(this),
-                  );
+                if (this.individual) {
+                  resolve();
+                } else {
+                  this.savePerson()
+                    .then(resp => resp.json())
+                    .then(
+                      function(result) {
+                        if (result.status == 200) {
+                          resolve();
+                        } else {
+                          this.container.querySelector(
+                            '.errors',
+                          ).textContent = JSON.parse(result.body).error.message;
+                          reject();
+                        }
+                      }.bind(this),
+                    );
+                }
               }
             }.bind(this),
           );
@@ -207,6 +212,11 @@ class StripePerson {
     let idNumberField = this.container.querySelector('[data-id-number]');
     if (idNumberField) {
       this.personData.person.id_number = idNumberField.value;
+    }
+
+    let ssnLastField = this.container.querySelector('[data-ssn-last-4]');
+    if (ssnLastField) {
+      this.personData.person.ssn_last_4 = ssnLastField.value;
     }
 
     let emailField = this.container.querySelector('[data-email]');
@@ -363,7 +373,6 @@ const individualData = individualContainer => {
     email: individualContainer.dataset.email,
     first_name: individualContainer.querySelector('[data-first-name]').value,
     last_name: individualContainer.querySelector('[data-last-name]').value,
-    phone: individualContainer.querySelector('[data-phone]').value,
     address: {
       line1: individualContainer.querySelector('[data-address]').value,
       city: individualContainer.querySelector('[data-city]').value,
@@ -375,6 +384,16 @@ const individualData = individualContainer => {
   let idNumberField = individualContainer.querySelector('[data-id-number]');
   if (idNumberField) {
     data.id_number = idNumberField.value;
+  }
+
+  let ssnLastField = individualContainer.querySelector('[data-ssn-last-4]');
+  if (ssnLastField) {
+    data.ssn_last_4 = ssnLastField.value;
+  }
+
+  let phoneField = individualContainer.querySelector('[data-phone]');
+  if (phoneField && phoneField.value.length > 0) {
+    data.phone = phoneField.value;
   }
 
   let dobValue = individualContainer.querySelector('[data-date-of-birth]')
