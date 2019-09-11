@@ -9,24 +9,26 @@
     {% parse_json "alert" %}
       {% if response.payouts_enabled != true and response.verification.fields_needed == empty and response.requirements.currently_due == empty %}
         {
-          "type": "info",
-          "msg": "We are validating your account, you will be notified by email when status is changed"
-         }
+        "type": "info",
+        "msg": "We are validating your account, you will be notified by email when status is changed"
+        }
       {% elsif response.charges_enabled != true %}
         {
-          "type": "danger",
-          "msg": "Account payment is currently disabled, please provide the following information so that we can enable your payments."
-         }
+        "type": "danger",
+        "msg": "Account payment is currently disabled, please provide the following information so that we can enable your payments."
+        }
       {% elsif response.payouts_enabled != true %}
         {
-          "type": "warning",
-          "msg": "Account payouts is currently disabled, please provide the following information so that we can enable your payoyts."
+        "type": "warning",
+        "msg": "Account payouts is currently disabled, please provide the following information so that we can enable your payoyts."
         }
       {% elsif false %}
         {
-          "type":"info",
-          "msg": "Your account is now enabled for payouts. Please provide the following information at your convenience: "
-         }
+        "type":"info",
+        "msg": "Your account is now enabled for payouts. Please provide the following information at your convenience: "
+        }
+      {% else %}
+        {}
       {% endif %}
     {% endparse_json %}
 
@@ -41,13 +43,13 @@
         {% for field in response.requirements.currently_due %}
           {% unless field contains 'person_' %}
             <li>
-            {{ 'stripe.requirements.' | append: field | t }}
-          </li>
+              {{ 'stripe.requirements.' | append: field | t }}
+            </li>
           {% endunless %}
         {% endfor %}
+      </ul>
     </div>
   {% endif %}
 </div>
-</ul>
 
 
