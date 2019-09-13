@@ -89,8 +89,14 @@ class StripePerson {
           stripe.createToken('person', this.personData).then(
             function(result) {
               if (result.error) {
-                this.container.querySelector('.errors').textContent =
-                  result.error.message;
+                console.log('Error', result.error);
+                var errorMessage = result.error.param.includes('person[dob]')
+                  ? 'Date format required is MM/DD/YYYY'
+                  : result.error.message;
+
+                this.container.querySelector(
+                  '.errors',
+                ).textContent = errorMessage;
                 reject();
               } else {
                 this.token = result.token.id;
