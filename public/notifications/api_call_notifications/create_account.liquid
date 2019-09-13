@@ -22,21 +22,15 @@ headers: >
     }
   {% endif %}
 ---
-{% assign = base_params = 'email,account_token,external_account' %}
-{% assign requested_capabilities = data.requested_capabilities | split: "," %}
-{% if data.gateway_id == blank %}{%- assign base_params = 'country' | append: ',' | append: base_params -%}{% endif %}
-{%- assign allowed_params = base_params | split: ',' -%}
-{% log allowed_params, type: "DEBUG ap" %}
-{% log data, type: "DEBUG data" %}
+{%- assign allowed_params = 'email,account_token,external_account,business_profile,settings,metadata,requested_capabilities,default_currency' | split: ',' -%}
 {%- assign request_params = '' | split: "|" -%}
 {%- for var in data -%}
   {%- if var[1] != blank -%}
-    {% if allowed_params contains var[0] %}
-      {%- capture pair %}{{ var[0] }}={{ var[1] | url_encode }}{% endcapture -%}
-      {%- assign request_params = request_params | add_to_array: pair -%}
+    {%- if allowed_params contains var[0] -%}
+      {%- parse_json "query" -%}{ }{%- endparse_json -%}
+      {%- assign query = query | add_hash_key: var[0], var[1] | querify -%}
+      {%- assign request_params = request_params | add_to_array: query -%}
     {%- endif -%}
   {%- endif -%}
 {%- endfor -%}
-{% log data, type: "account request params!!!" %}
-{% if data.gateway_id == blank %}type=custom&tos_acceptance[ip]={{ data.ip }}{% if data.country == "US" %}{% for cap in requested_capabilities %}&requested_capabilities[]={{ cap }}{% endfor %}{% endif %}&business_profile[mcc]=5941&tos_acceptance[date]={{ 'now' | date: '%s' }}&{% endif %}{{ request_params | join: '&' | html_safe }}&business_profile[url]=www.planetkrkaken.com
-
+{% if data.gateway_id == blank %}country={{ data.country }}&type=custom&tos_acceptance[ip]={{ data.ip }}&tos_acceptance[date]={{ 'now' | date: '%s' }}&{% endif %}{{ request_params | join: '&' | html_safe }}
