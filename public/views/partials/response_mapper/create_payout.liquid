@@ -1,0 +1,30 @@
+{%- parse_json 'response_body' -%}
+  {{ gateway_response.body }}
+{%- endparse_json -%}
+
+{%- if gateway_response.status == 200 -%}
+
+  {%- assign now = 'now' | to_time | strftime: "%d-%m-%Y %H:%M:%S"  -%}
+  {
+    {%- if response_body.error -%}
+      "errors": [
+        {"message": "{{ response_body.error.message }}"}
+      ],
+    {%- endif -%}
+    "properties": [
+      { "name": "external_id", "value": "{{ data.external_id }}" },
+      { "name": "gateway_id", "value": "{{ response_body.id }}" },
+      { "name": "amount_cents", "value": "{{ response_body.amount }}" },
+      { "name": "currency", "value": "{{ response_body.currency }}" },
+      { "name": "description", "value": "{{ response_body.description }}" },
+      { "name": "statement_descriptor", "value": "{{ response_body.statement_descriptor }}" },
+      { "name": "destination", "value": "{{ response_body.destination }}" },
+      { "name": "paid_at", "value": "{% if response_body.captured %}{{ now }}{% endif %}" },
+      { "name": "state", "value": "scheduled" }
+    ]
+  }
+{%- else -%}
+  {
+    "errors": {{ response_body.error.message | json }}
+  }
+{%- endif -%}

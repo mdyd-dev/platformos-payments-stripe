@@ -1,0 +1,39 @@
+---
+name: create_payout
+to: https://api.stripe.com/v1/payouts
+enabled: true
+format: https
+trigger_condition: true
+request_type: Post
+callback: >
+  {%- assign response_data = response.body | to_hash -%}
+  {% if response_data.error %}
+    {%- log response_data.error, type: 'modules/payments/create_payout' -%}
+  {% endif %}
+headers: >
+  {% if data %}
+    {%- include 'modules/stripe/shared/api_credentials' -%}
+    {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
+      "Stripe-Version": "2019-09-09",
+      {% if data.account_id != blank%}
+        "Stripe-Account": "{{ data.account_id }}",
+      {% endif %}
+      "Idempotency-Key": "{{ data.indempotency_key }}"
+    }
+  {% endif %}
+---
+{%- assign allowed_params = 'amount,currency,description,destination,metadata,method,source_type,statement_descriptor' | split: ',' -%}
+{%- assign request_params = '' | split: "|" -%}
+{%- for var in data -%}
+  {%- if var[1] != blank -%}
+    {%- if allowed_params contains var[0] -%}
+      {%- parse_json "query" -%}{ }{%- endparse_json -%}
+      {%- assign query = query | add_hash_key: var[0], var[1] | querify -%}
+      {%- assign request_params = request_params | add_to_array: query -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- log request_params, type: "Payout Params" -%}
+{{ request_params | join: '&' | html_safe }}
