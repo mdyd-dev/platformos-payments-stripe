@@ -332,15 +332,12 @@ const removeEmptyValues = obj => {
 
 const processIndividual = () => {
   console.log('processing individual account');
-  let individualContainer = document.querySelector('.individual');
+  let individualRadio = document.querySelector('[data-individual-account]');
 
-  if (
-    individualContainer == null ||
-    individualContainer.hasAttribute('disabled')
-  )
+  if (!individualRadio.checked || individualRadio.disabled) {
     return resolvedPromise('Individual Disabled');
+  }
 
-  console.log('Indtruetrueividual?');
   return stripe
     .createToken('account', {
       business_type: 'individual',
