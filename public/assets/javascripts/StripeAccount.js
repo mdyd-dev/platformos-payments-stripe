@@ -239,11 +239,12 @@ class StripePerson {
   }
 }
 
-// Assumes you've already included Stripe.js!
 const stripe = Stripe(stripe_pk);
-console.log(stripe_pk);
 const myForm = document.querySelector('.create_account');
-const element = new StripeElements();
+const cardElement = document.querySelector('#card-element');
+if (cardElement) {
+  const element = new StripeElements();
+}
 myForm.addEventListener('submit', handleForm);
 
 const resolvedPromise = msg => {
