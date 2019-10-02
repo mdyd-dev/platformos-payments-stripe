@@ -43,6 +43,7 @@
              id="inlineRadio1"
              value="individual"
              required
+             data-individual-account
              data-toggle-switch="account-type"
              data-toggle-target="individual"
              {% if response.business_type  == 'individual' or response.business_type  == blank  %}checked{% endif %}
@@ -54,6 +55,7 @@
              type="radio"
              name="{{ data_attribute}}[business_type]"
              id="inlineRadio2"
+             data-business-account
              data-toggle-switch="account-type"
              data-toggle-target="company"
              value="company"

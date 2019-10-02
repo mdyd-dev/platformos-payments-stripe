@@ -1,0 +1,42 @@
+<fieldset data-toggle-target="external-account" data-toggle-content="debit-card" class="debit_external_account row bg-white  {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
+  <link rel="stylesheet" href="{{ 'modules/stripe/stylesheets/elements.css' | asset_url }}" />
+
+  {%- assign external_account = response.external_accounts.data.first -%}
+
+  <div class="col-12 pt-3 bg-white mb-4 px-0">
+    <div class="col-10 col-md-11">
+      <h5>Debit Card Details</h5>
+      <hr>
+      <span>Use debit card to receive payouts</span>
+      {% if external_account != blank and external_account.object == "card" %}
+        <h6 class="card-subtitle mb-2 text-muted">
+          <b>Current card: </b>{{ external_account.brand }}, ending {{ external_account.last4 }}
+          <a href="#"
+             data-toggle-switch="cc"
+             data-toggle-content="cc"
+             data-toggle-target="cc_fields"
+             class="btn btn-link">Change Card</a>
+        </h6>
+      {% endif %}
+    </div>
+
+    {% if external_account != blank and external_account.object == "card" %}
+      {% assign hide_external =  true %}
+    {% endif %}
+
+    <fieldset data-toggle-switch="cc" data-toggle-content="cc_fields" data-toggle-target="cc" class="row bg-white cc_fields {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
+      <div class="col-10 col-md-12">
+        <div class="form-group col-md-7 mt-3">
+          <div class="form-group debit_card">
+            <div id="card-element"></div>
+            <div id="card-errors" role="alert"></div>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" data-cc-token />
+      {% if external_account.object == "card" %}
+        <a href="#" data-toggle-switch="cc" data-toggle-target="none" class="btn btn-link">Hide</a>
+      {% endif %}
+    </fieldset>
+  </div>
+</fieldset>

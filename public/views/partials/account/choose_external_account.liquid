@@ -1,0 +1,37 @@
+<div class="mt-5">
+  <div class="mb-2">
+    <b>Choose the method for receiving payouts</b>
+  </div>
+  {% if response.country != blank %}
+    <div class="form-group">
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="external_account_type"
+          id="inlineRadio4"
+          data-toggle-switch="external-account"
+          data-toggle-target="debit-card"
+          value="debit_card"
+          required
+          {% if external_account.object == 'card' or external_account.object == blank %}checked{% endif %}
+          />
+        <label class="form-check-label" for="inlineRadio4">Debit Card</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input ml-5"
+          name="external_account_type"
+          type="radio"
+          id="inlineRadio3"
+          required
+          data-toggle-switch="external-account"
+          data-toggle-target="bank-account"
+          {% if external_account.object == 'bank_account' %}checked{% endif %}
+          />
+        <label class="form-check-label" for="inlineRadio3">Bank Account</label>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
