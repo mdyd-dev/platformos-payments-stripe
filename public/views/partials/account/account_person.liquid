@@ -1,0 +1,122 @@
+<fieldset
+  class="person border-bottom border-light mb-4"
+  data-person="{{ person.id }}"
+  data-account="{{ response.id }}"
+  data-toggle-target="account-type"
+  data-toggle-content="{{ account_type | default: 'individual' }}"
+>
+  {%- if person.verification.status == "verified" %}
+    {% assign disable_person_edits = true %}
+  {%- endif %}
+  {% assign person_attribute = data_attribute | append: '[persons][' | append: index | append: ']' %}
+  <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>
+  <input type="hidden" name="{{ person_attribute}}[gateway_id]" value="{{ person.id }}" id="person-token">
+
+  <div class="row">
+    <div class="col-10 col-md-11">
+      <h5 class="card-title">Personal Information:</h5>
+      <hr>
+    </div>
+  </div>
+
+  <div class="errors alert alert-danger col-md-{{ column_size }}" role="alert">
+    {%- for field in response.requirements.currently_due -%}
+      {%- if field contains 'person_' -%}
+        <li>
+          {{ 'stripe.requirements.' | append: field | replace: person.id, 'individual' | t }}
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-{{ column_size }}">
+      {% include text_field with "First Name", value: person.first_name, placeholder: "First Name", required: true, disabled: disable_person_edits  %}
+    </div>
+    <div class="form-group col-md-{{ column_size }}">
+      {% include text_field with "Last Name", value: person.last_name, placeholder: "Last Name", required: true, disabled: disable_person_edits %}
+    </div>
+
+    <div class="form-group col-md-{{ column_size }}">
+      {% include text_field with "Phone", value: person.phone, placeholder: "Phone", required: false, data_name: "person[phone]"  %}
+    </div>
+
+    {% if person.requirements.currently_due contains 'id_number'  %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% assign id_placeholder = 'SSN' %}
+        {% include text_field with "ID Number", value: person.id_number, placeholder: id_placeholder, required: true %}
+      </div>
+    {% elsif person.requirements.currently_due contains 'id_number' or person.id_number_provided %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% assign id_placeholder = 'Provided' %}
+        {% include text_field with "ID Number", value: person.id_number, placeholder: id_placeholder, disabled: person.id_number_provided, required: true %}
+      </div>
+    {% elsif person.requirements.currently_due contains 'ssn_last_4' or person.ssn_last_4_provided %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% assign id_placeholder = '0000' %}
+        {% if person.ssn_last_4_provided %}
+          {% assign id_placeholder = 'Provided' %}
+        {% endif %}
+        {% include text_field with "SSN Last 4", value: person.ssn_last_4, placeholder: id_placeholder, disabled: person.ssn_last_4_provided, required: true, minlength:"4" maxlength:"4" %}
+      </div>
+     {% endif %}
+
+    {% if person.requirements.currently_due contains 'email' or person.email != blank %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Email", value: person.email, placeholder: "Email", required: true %}
+      </div>
+    {% endif %}
+
+    {% if person.requirements.currently_due contains 'relationship.title' or person.relationship.title != blank %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Title", value: person.relationship.title, placeholder: "Company Title", required: true %}
+      </div>
+    {% endif %}
+
+    <div class="form-group col-md-{{ column_size }}">
+      {% if person.dob.day %}
+        {% assign date_of_birth = person.dob.month | append: '/' | append: person.dob.day | append: '/' | append: person.dob.year %}
+      {% else %}
+        {% assign date_of_birth = '' %}
+      {% endif %}
+      {% if disable_person_edits and date_of_birth != blank %}
+        {% assign person_disabled = true %}
+      {% else %}
+        {% assign person_disabled = false %}
+      {% endif %}
+      {% include text_field with "Date of Birth", value: date_of_birth, required: true, placeholder: "Birth Date - MM/DD/YYYY", disabled: person_disabled, data_name: "person[dob]" %}
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-{{ column_size }}">
+      {% include text_field with "Address", value: person.address.line1, placeholder: "Address" %}
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-{{ column_size }}">
+      {% include text_field with "City", value: person.address.city, placeholder: "City" %}
+    </div>
+    <div class="form-group col-md-{{ column_size }}">
+      {% include text_field with "State", value: person.address.state, placeholder: "State" %}
+    </div>
+    <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Zip", value: person.address.postal_code, placeholder: "Zip" %}
+    </div>
+  </div>
+
+  {% include 'modules/stripe/account/fields/document' with "document-front",
+    value: person.verification.document %}
+
+  {% include 'modules/stripe/account/fields/document' with "document-back",
+    value: person.verification.document_back %}
+   {% if person.requirements.currently_due contains 'verification.additional_document' or person.verification.additional_document or person.verification.additional_document_back%}
+    {%
+      include 'modules/stripe/account/fields/document' with "additional_document-front",
+        value: person.verification.additional_document
+    %}
+    {%
+      include 'modules/stripe/account/fields/document' with "additional_document-back",
+        value: person.verification.additional_document_back
+    %}
+  {% endif %}
+</fieldset>

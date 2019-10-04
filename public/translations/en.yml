@@ -1,5 +1,38 @@
 en:
-  external_account: "External Account:"
+  disabled_reason:
+    fields_needed: Additional verification information is required to enable payout or charge capabilities on this account
+    listed: Account might be on a prohibited persons or companies list (Stripe will investigate and either reject or reinstate the account appropriately)
+    rejected:
+      fraud: Account is rejected due to suspected fraud or illegal activity
+      listed: Account is rejected because it is on a third-party prohibited persons or companies list (such as financial services provider or government)
+      terms_of_service: Account is rejected due to suspected terms of service violations
+      rejected: Account is rejected for another reason
+    under_review: Account is under review by Stripe
+    other: Account is not rejected but is disabled for another reason while being reviewed
+  external_account: External Account
+  legal_entity:
+    type: Account Type
+    dob:
+      day: "Date of birth - day"
+      month: "Date of birth - month"
+      year: "Date of birth - year"
+    first_name: "First Name"
+    last_name: "Last Name"
+    personal_email: "Email"
+    business_tax_id: "Business Tax ID (Employer Identification Number)"
+    ssn_last_4: "Social Security number - last 4 digits"
+    verification:
+      document: Document
+      document_front: Document (front)
+      document_back: Document (back)
+      additional_document: Additional Document
+      additional_document_front: Additional Document (front)
+      additional_document_back:  Additional Document (back)
+    address:
+      line1: Address
+      city: City
+      state: State
+      postal_code: Postal Code
   requirements:
     individual:
       address:
@@ -8,25 +41,6 @@ en:
         state: State
         postal_code: Postal Code
   stripe:
-    fields_needed:
-      external_account: External Account
-      legal_entity:
-        type: Account Type
-        dob:
-          day: "Date of birth - day"
-          month: "Date of birth - month"
-          year: "Date of birth - year"
-        first_name: "First Name"
-        last_name: "Last Name"
-        business_tax_id: "Business Tax ID (Employer Identification Number)"
-        ssn_last_4: "Social Security number - last 4 digits"
-        verification:
-          document: Photo ID
-        address:
-          line1: Address
-          city: City
-          state: State
-          postal_code: Postal Code
     account:
       business_name: Company Name
       phone: Phone Number

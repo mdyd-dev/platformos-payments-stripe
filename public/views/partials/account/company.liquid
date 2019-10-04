@@ -1,36 +1,47 @@
-<fieldset class="company {% if response.legal_entity.type  != 'company' %}collapse{% endif %}" {% if response.legal_entity.type  != 'company'  %}disabled{% endif %}>
-  <div class="col-12 border rounded border-light pt-3 bg-light mb-5">
-    <div class="row mb-3">
+<fieldset
+    data-toggle-target="account-type"
+    data-toggle-content="company"
+    class="company {% if response.business_type  != 'company' %}collapse{% endif %}"
+    {% if response.business_type  != 'company'  %}disabled{% endif %}>
+  <div class="col-12 pt-3 bg-white mb-4 px-0">
+    <div class="row">
       <div class="col-10 col-md-11">
         <h5 class="card-title">Company Details:</h5>
+        <hr>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-7">
+        {% include text_field with "Business Name", value: response.company.name, required: true, placeholder: "Business Name" %}
+      </div>
+      <div class="form-group col-md-7">
+        {% include text_field with "Phone", value: response.company.phone, required: true, placeholder: "Phone" %}
+      </div>
+      <div class="form-group col-md-7">
+        {% assign tax_placeholder = 'Tax ID' %}
+        {% if response.company.tax_id_provided %}
+          {% assign tax_placeholder = 'Provided' %}
+          {% assign tax_disabled = true %}
+        {% endif %}
+        {% include text_field with "Tax ID", value: response.company.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
       </div>
     </div>
 
     <div class="form-row">
-      <div class="form-group col-md-4">
-        {% include text_field with "Business Name", value: response.legal_entity.business_name, required: true  %}
-      </div>
-      <div class="form-group col-md-4">
-        {% include text_field with "Phone", value: response.legal_entity.phone_number, required: true %}
-      </div>
-      <div class="form-group col-md-4">
-        {% if response.legal_entity.business_tax_id_provided %}
-          {% assign tax_placeholder = 'Provided' %}
-          {% assign tax_disabled = true %}
-        {% endif %}
-        {% include text_field with "Tax ID", value: response.legal_entity.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
+      <div class="form-group col-md-7">
+        {% include text_field with "Address", value: response.company.address.line1, required: true, placeholder: "Address" %}
       </div>
     </div>
-    {% include text_field with "Address", value: response.legal_entity.address.line1, required: true %}
+
     <div class="form-row">
-      <div class="form-group col-md-6">
-        {% include text_field with "City", value: response.legal_entity.address.city, required: true %}
+      <div class="form-group col-md-7">
+        {% include text_field with "City", value: response.company.address.city, required: true, placeholder: "City" %}
       </div>
-      <div class="form-group col-md-4">
-        {% include text_field with "State", value: response.legal_entity.address.state, required: true %}
+      <div class="form-group col-md-7">
+        {% include text_field with "State", value: response.company.address.state, required: true, placeholder: "State" %}
       </div>
-      <div class="form-group col-md-2">
-        {% include text_field with "Zip", value: response.legal_entity.address.postal_code, required: true %}
+      <div class="form-group col-md-7">
+        {% include text_field with "Zip", value: response.company.address.postal_code, required: true, placeholder: "Zip" %}
       </div>
     </div>
   </div>

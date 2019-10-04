@@ -4,6 +4,11 @@ class StripeElements {
     this.tokenField = document.querySelector('[data-external-account]');
     this.stripe = Stripe(stripe_pk);
     this.elements = this.stripe.elements();
+
+    this.cardElement = document.querySelector('#card-element');
+    if (typeof this.cardElement == 'undefined' || this.cardElement == null) {
+      return;
+    }
     this.configure();
   }
 
@@ -77,20 +82,38 @@ class StripePerson {
     this.accountId = this.container.dataset.account;
     this.individual = this.container.dataset.person == 'individual';
     this.processInputData();
+    this.clearErrors();
 
-    let frontFilePromise = this.setPersonDocument('front');
-    let backFilePromise = this.setPersonDocument('back');
+    const documentInputs = document.querySelectorAll(
+      '[data-document]:not(:disabled)',
+    );
+    let documentPromises = [];
+
+    for (i = 0; i < documentInputs.length; ++i) {
+      documentPromises.push(
+        this.setPersonDocument(documentInputs[i].dataset.document),
+      );
+    }
 
     return new Promise((resolve, reject) => {
-      Promise.all([frontFilePromise, backFilePromise]).then(
+      Promise.all(documentPromises).then(
         () => {
           this.removeEmptyValues(this.personData);
           console.log('this.personData', this.personData);
           stripe.createToken('person', this.personData).then(
             function(result) {
               if (result.error) {
+                console.log('Person Error', result.error);
+                let inputField = this.container.querySelector(
+                  `[data-name="${result.error.param.match(/person\[\w*\]/)}"]`,
+                );
+                if (typeof inputField != 'undefined' && inputField != null) {
+                  inputField.classList.add('is-invalid');
+                }
                 this.container.querySelector('.errors').textContent =
                   result.error.message;
+
+                this.container.querySelector('.errors').scrollIntoView();
                 reject();
               } else {
                 this.token = result.token.id;
@@ -120,6 +143,14 @@ class StripePerson {
     });
   }
 
+  clearErrors() {
+    var elems = this.container.querySelectorAll('.is-invalid');
+
+    [].forEach.call(elems, function(el) {
+      el.classList.remove('is-invalid');
+    });
+  }
+
   savePerson() {
     const data = new FormData();
     data.append('person_token', this.token);
@@ -132,23 +163,36 @@ class StripePerson {
     });
   }
 
-  setPersonDocument(side) {
-    let documentFile = this.container.querySelector(`[data-${side}-photo-id]`)
-      .files[0];
+  setPersonDocument(documentData) {
+    let documentFile = this.container.querySelector(
+      `[data-document="${documentData}"]`,
+    ).files[0];
     if (documentFile == undefined) return Promise.resolve();
 
-    return this.processFile(documentFile, side);
+    return this.processFile(documentFile, documentData);
   }
 
-  setDocumentToken(side, token) {
-    console.log('Setting document token', token);
+  setDocumentToken(documentData, token) {
+    console.log('Setting document token', documentData, token);
+    var [documentType, documentSide] = documentData.split('-');
+
     if (this.personData.person.verification == undefined) {
-      this.personData.person.verification = {document: {}};
+      this.personData.person.verification = {};
     }
-    this.personData.person.verification.document[side] = token;
+
+    if (this.personData.person.verification['document'] == undefined) {
+      this.personData.person.verification['document'] = {};
+    }
+    if (
+      this.personData.person.verification['additional_document'] == undefined
+    ) {
+      this.personData.person.verification['additional_document'] = {};
+    }
+
+    this.personData.person.verification[documentType][documentSide] = token;
   }
 
-  processFile(file, side) {
+  processFile(file, documentData) {
     console.log('Processing file with', stripe._apiKey);
     const data = new FormData();
     data.append('file', file);
@@ -164,7 +208,7 @@ class StripePerson {
         .then(fileResponse => fileResponse.json())
         .then(
           function(json) {
-            this.setDocumentToken(side, json.id);
+            this.setDocumentToken(documentData, json.id);
             resolve();
           }.bind(this),
         );
@@ -242,9 +286,7 @@ class StripePerson {
 const stripe = Stripe(stripe_pk);
 const myForm = document.querySelector('.create_account');
 const cardElement = document.querySelector('#card-element');
-if (cardElement) {
-  const element = new StripeElements();
-}
+const element = new StripeElements();
 myForm.addEventListener('submit', handleForm);
 
 const resolvedPromise = msg => {
@@ -334,6 +376,9 @@ const removeEmptyValues = obj => {
 const processIndividual = () => {
   console.log('processing individual account');
   let individualRadio = document.querySelector('[data-individual-account]');
+  if (typeof individualRadio == 'undefined' || individualRadio == null) {
+    return resolvedPromise('Individual Disabled');
+  }
 
   if (!individualRadio.checked || individualRadio.disabled) {
     return resolvedPromise('Individual Disabled');
@@ -436,8 +481,17 @@ const processCompany = () => {
       company: company,
       tos_shown_and_accepted: true,
     })
-    .then(function(result, person) {
-      document.querySelector('#account-token').value = result.token.id;
+    .then(function(result) {
+      if (result.error) {
+        const errorElement = (companyContainer.querySelector(
+          '.errors',
+        ).textContent = result.error.message);
+        return Promise.reject();
+      } else {
+        console.log('Company result', result);
+        document.querySelector('#account-token').value = result.token.id;
+        return resolvedPromise('Business Token Set');
+      }
     });
 };
 
@@ -469,7 +523,7 @@ async function handleForm(event) {
   Promise.all(stripePromises)
     .then(
       function(result) {
-        console.log('SUBMITTING');
+        console.log('SUBMITING');
         myForm.submit();
       },
       function(error) {

@@ -16,6 +16,7 @@
     id="input-{{ input }}"
     data-{{ input }}
     value="{{ value }}"
+    {% if data_name %}data-name="{{ data_name }}"{% endif %}
     placeholder="{{ placeholder }}"
     {% if required %}required{% endif %}
     {% if disabled %}disabled{% endif %}

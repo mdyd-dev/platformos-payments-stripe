@@ -1,7 +1,7 @@
 <div>
   {% if response.verification.disabled_reason %}
     <div class="alert alert-danger" role="alert">
-      {{ response.verification.disabled_reason }}
+      {{ "modules/stripe/disabled_reason." | append: response.verification.disabled_reason | t }}
     </div>
   {% endif %}
 
@@ -31,19 +31,18 @@
         {}
       {% endif %}
     {% endparse_json %}
-
     <div class="alert alert-{{ alert.type }}" role="alert">
       <p>{{ alert.msg }}</p>
       <ul class='mt-3'>
         {% for field_needed in response.verification.fields_needed %}
           <li>
-            {{ 'modules/stripe.stripe.fields_needed.' | append: field_needed | t }}
+            {{ 'modules/stripe/' | append: field_needed | t }}
           </li>
         {% endfor%}
         {% for field in response.requirements.currently_due %}
           {% unless field contains 'person_' %}
             <li>
-              {{ 'stripe.requirements.' | append: field | t }}
+              {{ 'modules/stripe/requirements.' | append: field | t }}
             </li>
           {% endunless %}
         {% endfor %}

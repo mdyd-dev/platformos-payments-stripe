@@ -1,76 +1,91 @@
-{% if response.country == 'NZ' %}
-  {% assign routing_number_required = false %}
-  {% assign col_size = 4 %}
-{% else %}
-  {% assign col_size = 2 %}
-  {% assign routing_number_required = true %}
-{% endif %}
+<fieldset
+  data-toggle-target="external-account"
+  data-toggle-content="bank-account"
+  class="row bg-white external_account">
 
-{%- assign external_account = response.external_accounts.data.first -%}
-{% if external_account %}
-  {%- assign account_number = '**** ' | append: external_account.last4 -%}
-{% endif %}
-<div class="col-12 border rounded border-light pt-3 bg-light mb-5">
-  <div class="row">
+  {% assign col_size = 7 %}
+  {% if 'NZ|US|GB' contains response.country %}
+    {% assign routing_number_required = true %}
+  {% else %}
+    {% assign routing_number_required = false %}
+  {% endif %}
+
+  {%- assign external_account = response.external_accounts.data.first -%}
+  {%- assign account_number = 'Account Number' -%}
+  {% if external_account != blank and external_account.object == "bank_account" %}
+    {%- assign account_number = '**** ' | append: external_account.last4 -%}
+  {% endif %}
+  <div class="col-12 pt-3 bg-white mb-4 px-0">
     <div class="col-10 col-md-11">
-      <h5 class="card-title">External Bank Account Details</h5>
-      <h6 class="card-subtitle mb-2 text-muted">{{ external_account.bank_name }} {{ account_number }} {{ external_account.currency | upcase }}</h6>
-    </div>
-    <div class="cal-1 pt-2">
-      {% if external_account != blank %}
-        <a href="#" data-toggle="collapse" data-target=".external_account" class="btn btn-primary">Edit</a>
+      <h5>Bank Account Details</h5>
+      <hr>
+      <span>Use bank account to receive payouts</span>
+      {% if external_account != blank and external_account.object == "bank_account" %}
+        <h6 class="card-subtitle mb-2 text-muted">{{ external_account.bank_name }} {{ account_number }} {{ external_account.currency | upcase }}
+          <a href="#"
+             data-toggle-switch
+             data-toggle-target="bank-account-fields"
+             class="btn btn-link">Edit</a></h6>
       {% endif %}
     </div>
-  </div>
 
-{% if external_account != blank  %}
-  {% assign hide_external =  true %}
-{% endif %}
-  <fieldset class="row pt-5 bg-white external_account {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
-    <div class="col-12">
+    {% if external_account.object == "bank_account" %}
+      {% assign hide_external =  true %}
+    {% endif %}
+    <fieldset
+      data-toggle-target="bank-fields"
+      data-toggle-content="bank-account-fields" class="ba_fields {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
+      <div class="col-12">
         <div class="errors alert alert-danger" role="alert"></div>
         <div class="form-row">
           <div class="form-group col-md-{{ col_size}}">
-            {% assign country = external_account.country | default: response.country %}
+            {% assign country = response.country %}
             {% parse_json "country_list" %}
               { "{{ country }}": "{{ context.exports.payments.country_list[country] }}" }
             {% endparse_json %}
-
-            {% include select_field with "Country",
-            value: country,
-            collection: country_list
-            required: true
-            %}
+            {% if country_list.size == 1 %}
+              <input type="hidden" data-country value="{{ country_list.first.first }}" />
+            {% else %}
+              {% include select_field with "Country",
+              value: country,
+              collection: country_list
+              required: true
+              %}
+            {% endif %}
           </div>
           {% assign currency = external_account.currency | default: response.default_currency | upcase %}
           {% assign currency_collection = context.exports.payments.country_currency_list[country] %}
-          <div class="form-group col-md-{{ col_size}}">
-            {% include select_field with "Currency",
-            value: currency,
-            collection: currency_collection,
-            required: true
-            %}
-          </div>
-          {% if routing_number_required %}
-            <div class="form-group col-md-4">
-              {% include text_field with "Routing Number", value: external_account.routing_number, required: true, country_iso: country %}
+          {% if currency_collection.size == 1 %}
+            <input type="hidden" data-currency value="{{ currency_collection.first.first }}" />
+          {% else %}
+            <div class="form-group col-md-{{ col_size}} hide-block">
+              {% include select_field with "Currency",
+              value: currency,
+              collection: currency_collection,
+              required: true
+              %}
             </div>
           {% endif %}
-          <div class="form-group col-md-4">
+          {% if routing_number_required %}
+            <div class="form-group col-md-{{ col_size}}">
+              {% include text_field with "Routing Number", value: external_account.routing_number, required: true, placeholder: "Routing Number", country_iso: country %}
+            </div>
+          {% endif %}
+          <div class="form-group col-md-{{ col_size}}">
             {% include text_field with "Account Number",
             value: external_account.account_number,
             placeholder: account_number, required: true
             %}
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            {% include text_field with "Account Holder Name", value: external_account.account_holder_name %}
+        <div class="form-row pb-3">
+          <div class="form-group col-md-{{ col_size}}">
+            {% include text_field with "Account Holder Name", value: external_account.account_holder_name, placeholder: "Account Holder Name" %}
           </div>
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-{{ col_size}}">
             {% assign account_holder = external_account.account_holder_type | default: response.legal_entity.type %}
             {% parse_json "account_holder_type_options" %}
-            { "individual": "Individual", "company": "Company"}
+              { "individual": "Individual", "company": "Company"}
             {% endparse_json %}
             {% include select_field with "Account Holder Type",
             value: account_holder,
@@ -78,6 +93,15 @@
             %}
           </div>
         </div>
-    </div>
-  </fieldset>
-</div>
+      </div>
+      {% if external_account.object == "bank_account" %}
+        <a href="#"
+           data-toggle-switch="bank-fields"
+           data-toggle-target="none"
+           class="btn btn-link"
+          >Hide
+        </a>
+      {% endif %}
+    </fieldset>
+  </div>
+</fieldset>

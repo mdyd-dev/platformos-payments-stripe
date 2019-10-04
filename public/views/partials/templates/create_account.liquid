@@ -15,16 +15,18 @@
 
 {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
 {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
+{%- assign external_account = response.external_accounts.data.first -%}
 
-{% if data.business_type != blank %}
+{% if external_account != blank %}
   {%- include 'modules/stripe/account/status' -%}
 {% endif %}
 {%- include 'modules/stripe/account/form_data' -%}
 {%- include 'modules/stripe/account/basic_settings' -%}
 
 {% if response.country != blank %}
+  {%- include 'modules/stripe/account/choose_external_account' -%}
   {%- include 'modules/stripe/account/external_account' -%}
-  {%- include 'modules/stripe/account/individual' -%}
+  {%- include 'modules/stripe/account/external_account_debit' -%}
   {%- include 'modules/stripe/account/company' -%}
   {%- include 'modules/stripe/account/persons' -%}
 {% endif %}

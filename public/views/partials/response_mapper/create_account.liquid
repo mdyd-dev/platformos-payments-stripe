@@ -18,7 +18,8 @@
     "properties": [
       { "name": "external_id", "value": "{{ data.external_id }}" },
       { "name": "gateway_id", "value": "{{ response_body.id }}" },
-      { "name": "state", "value": "{{ account_state }}" }
+      { "name": "state", "value": "{{ account_state }}" },
+      { "name": "queued", "value": "false" }
     ]
   }
 {%- else -%}

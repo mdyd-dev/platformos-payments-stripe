@@ -1,71 +1,21 @@
 {% graphql g = 'modules/payments/gateway_request', data: data, api_template: "modules/stripe/get_persons" %}
 {% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
-{% if persons_response.data != blank %}
-  <h4 class='mb-4'>Personal Information</h4>
-{% endif %}
 
-{% if "AU,NZ" contains response.country %}
+{% if "AU,NZ,US" contains response.country %}
   {% assign id_number_required = false %}
-  {% assign column_size = 4 %}
+  {% assign column_size = 7 %}
 {% else %}
   {% assign id_number_required = true %}
-  {% assign column_size = 3 %}
+  {% assign column_size = 7 %}
 {% endif %}
+<div class="col-12 pt-3 bg-white mb-4 px-0">
+  {% if persons_response.data.first != blank %}
+    {% for person in persons_response.data %}
+      {% include 'modules/stripe/account/account_person', person: person, index: forloop.index %}
+    {% endfor %}
+  {% else %}
+    {%- include 'modules/stripe/account/account_person' -%}
+    {%- include 'modules/stripe/account/account_person', account_type: "company" -%}
+  {% endif %}
+</div>
 
-{% for person in persons_response.data %}
-  <fieldset data-person="{{ person.id }}" data-account="{{ response.id }}" class="border-bottom border-light mb-5">
-    <div class="errors alert alert-danger" role="alert"></div>
-    {% assign person_attribute = data_attribute | append: '[persons][' | append: forloop.index | append: ']' %}
-    <input type="hidden" name="{{ person_attribute}}[token]" data-person-token>
-    <input type="hidden" name="{{ person_attribute}}[gateway_id]" value="{{ person.id }}" id="person-token">
-    <div class="form-row">
-      <div class="form-group col-md-{{ column_size }}">
-        {% include text_field with "First Name", value: person.first_name, required: true  %}
-      </div>
-      <div class="form-group col-md-{{ column_size }}">
-        {% include text_field with "Last Name", value: person.last_name, required: true  %}
-      </div>
-      {% if id_number_required %}
-        <div class="form-group col-md-{{ column_size }}">
-          {% if person.id_number_provided %}
-            {% assign id_placeholder = 'Provided' %}
-          {% endif %}
-          {% include text_field with "ID Number", value: person.id_number, placeholder: id_placeholder, disabled: person.id_number_provided, required: true %}
-        </div>
-       {% endif %}
-      <div class="form-group col-md-{{ column_size }}">
-        {% if person.dob.day %}
-          {% assign date_of_birth = person.dob.day | append: '/' | append: person.dob.month | append: '/' | append: person.dob.year %}
-        {% else %}
-          {% assign date_of_birth = '' %}
-        {% endif %}
-        {% include text_field with "Date of Birth", value: date_of_birth, required: true, placeholder: "dd/mm/yyyy"    %}
-      </div>
-    </div>
-    {% include text_field with "Address", value: person.address.line1 %}
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {% include text_field with "City", value: person.address.city %}
-      </div>
-      <div class="form-group col-md-4">
-        {% include text_field with "State", value: person.address.state %}
-      </div>
-      <div class="form-group col-md-2">
-        {% include text_field with "Zip", value: person.address.postal_code %}
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {% assign photo_id = forloop.index | append: "_front_photo" %}
-        <label for="{{ photo_id }}">Photo ID (Front)</label><br/>
-        <input type="file" id="{{ photo_id }}" data-front-photo-id  accept=".jpeg,.jpg,.png">
-      </div>
-      <div class="form-group col-md-6">
-        {% assign photo_id = forloop.index | append: "_back_photo" %}
-        <label for="{{ photo_id }}">Photo ID (Back)</label><br/>
-        <input type="file" id="{{ photo_id }}" data-back-photo-id  accept=".jpeg,.jpg,.png">
-      </div>
-    </div>
-  </fieldset>
-
-{% endfor %}

@@ -1,0 +1,80 @@
+  {% assign person_attribute = data_attribute | append: '[persons][' | append: index | append: ']' %}
+  <fieldset
+    class="person border-bottom border-light mb-4"
+    data-person="{{ person.id }}"
+    data-account="{{ response.id }}"
+    data-toggle-target="account-type"
+    data-toggle-content="company">
+    <div class="row">
+      <div class="col-10 col-md-11">
+        <h5 class="card-title">Personal Information:</h5>
+        <hr>
+      </div>
+    </div>
+    <div class="errors alert alert-danger" role="alert"></div>
+    <div class="form-row">
+    {% if person.verification.status == "verified" %}
+      {% assign disable_person_edits = true %}
+    {% endif %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "First Name", value: person.first_name, placeholder: "First Name", required: true, disabled: disable_person_edits  %}
+      </div>
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Last Name", value: person.last_name, placeholder: "Last Name", required: true, disabled: disable_person_edits %}
+      </div>
+
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Phone", value: person.phone, placeholder: "Phone", required: false  %}
+      </div>
+      {% if person.requirements.currently_due contains 'ssn_last_4' %}
+        {% assign id_number_required = true %}
+      {% elsif person.requirements.currently_due contains 'id_number' %}
+        {% assign id_number_required = true %}
+      {% endif %}
+      {% if id_number_required %}
+        <div class="form-group col-md-{{ column_size }}">
+          {% assign id_placeholder = 'SSN' %}
+          {% if person.id_number_provided %}
+            {% assign id_placeholder = 'Provided' %}
+          {% endif %}
+          {% include text_field with "ID Number", value: person.id_number, placeholder: id_placeholder, disabled: person.id_number_provided, required: true %}
+        </div>
+       {% endif %}
+      <div class="form-group col-md-{{ column_size }}">
+        {% if person.dob.day %}
+          {% assign date_of_birth = person.dob.day | append: '/' | append: person.dob.month | append: '/' | append: person.dob.year %}
+        {% else %}
+          {% assign date_of_birth = '' %}
+        {% endif %}
+        {% include text_field with "Date of Birth", value: date_of_birth, required: true, placeholder: "Birth Date - MM/DD/YYYY" %}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Address", value: person.address.line1, placeholder: "Address" %}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "City", value: person.address.city, placeholder: "City" %}
+      </div>
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "State", value: person.address.state, placeholder: "State" %}
+      </div>
+      <div class="form-group col-md-{{ column_size }}">
+        {% include text_field with "Zip", value: person.address.postal_code, placeholder: "Zip" %}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-{{ column_size }}">
+        {% assign photo_id = forloop.index | append: "_front_photo" %}
+        <label for="{{ photo_id }}">Photo ID (Front)</label><br/>
+        <input type="file" id="{{ photo_id }}" data-front-photo-id  accept=".jpeg, .jpg, .png">
+      </div>
+      <div class="form-group col-md-{{ column_size }}">
+        {% assign photo_id = forloop.index | append: "_back_photo" %}
+        <label for="{{ photo_id }}">Photo ID (Back)</label><br/>
+        <input type="file" id="{{ photo_id }}" data-back-photo-id  accept=".jpeg, .jpg, .png">
+      </div>
+    </div>
+  </fieldset>

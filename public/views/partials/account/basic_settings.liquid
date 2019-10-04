@@ -1,3 +1,5 @@
+{% assign account_type = resposne.business_type | default: response.legal_entity.type %}
+
 {% if config.hide_account_status != 'true' %}
   <span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
 
@@ -32,37 +34,41 @@
 </div>
 
 {% if data.business_type == blank and response.country != blank %}
-  {% if response.business_type  == blank %}
+  {% if account_type  == blank %}
     <b>Please select account type. <span class="text-danger ml-3">Account type can't be changed after selection</span></b>
   {% endif %}
   <div class="form-group">
     <div class="form-check form-check-inline">
-      <input class="form-check-input"
-             type="radio"
-             name="{{ data_attribute}}[business_type]"
-             id="inlineRadio1"
-             value="individual"
-             required
-             data-individual-account
-             data-toggle-switch="account-type"
-             data-toggle-target="individual"
-             {% if response.business_type  == 'individual' or response.business_type  == blank  %}checked{% endif %}
-             {% if response.business_type  != blank %}disabled{% endif %}>
+      <input
+        class="form-check-input"
+        type="radio"
+        name="{{ data_attribute}}[business_type]"
+        id="inlineRadio1"
+        value="individual"
+        required
+        data-individual-account
+        data-toggle-switch="account-type"
+        data-toggle-target="individual"
+        {% if account_type == 'individual' or account_type  == blank %}checked{% endif %}
+        {% if account_type  != blank %}disabled{% endif %}
+       >
       <label class="form-check-label" for="inlineRadio1">Individual</label>
     </div>
     <div class="form-check form-check-inline">
-      <input class="form-check-input ml-5"
-             type="radio"
-             name="{{ data_attribute}}[business_type]"
-             id="inlineRadio2"
-             data-business-account
-             data-toggle-switch="account-type"
-             data-toggle-target="company"
-             value="company"
-             required
-             {% if response.business_type   == 'company' %}checked{% endif %}
-             {% if response.business_type  != blank %}disabled{% endif %}>
-      <label class="form-check-label" for="inlineRadio2">Company</label>
+      <input
+        class="form-check-input ml-5"
+        type="radio"
+        name="{{ data_attribute}}[business_type]"
+        id="inlineRadio2"
+        data-business-account
+        data-toggle-switch="account-type"
+        data-toggle-target="company"
+        value="company"
+        required
+        {% if account_type == 'company' %}checked{% endif %}
+        {% if account_type != blank %}disabled{% endif %}
+      >
+     <label class="form-check-label" for="inlineRadio2">Company</label>
     </div>
   </div>
 {% endif %}

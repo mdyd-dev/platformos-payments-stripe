@@ -1,9 +1,36 @@
 {% parse_json "country_list" %}
   {
     "AU": "Australia",
+    "AT": "Austria",
+    "BE": "Belgium",
     "CA": "Canada",
+    "DK": "Denmark",
+    "EE": "Estonia",
+    "FI": "Finland",
+    "FR": "France",
+    "DE": "Germany",
+    "GR": "Greece",
     "GB": "Great Britan",
+    "HK": "Hong Kong",
+    "IE": "Ireland",
+    "IT": "Italy",
+    "JP": "Japan",
+    "LV": "Latvia",
+    "LT": "Lithuania",
+    "LU": "Luxembourg",
+    "MY": "Malaysia PREVIEW",
+    "MX": "Mexico PREVIEW",
+    "NL": "Netherlands",
     "NZ": "New Zealand",
+    "NO": "Norway",
+    "PL": "Poland",
+    "PT": "Portugal",
+    "SG": "Singapore",
+    "SK": "Slovakia",
+    "SI": "Slovenia",
+    "ES": "Spain",
+    "SE": "Sweden",
+    "CH": "Switzerland",
     "US": "United States"
   }
 {% endparse_json %}
@@ -39,13 +66,38 @@
 
 {% parse_json "country_currency_list" %}
   {
-    "AU": { "AUD": "Australian Dollar"},
-    "NZ": { "NZD": "New Zealand Dollar"},
-    "GB": { "GBP": "British Pound" },
-    "CA": { "USD" : "United States Dollar", "CAD": "Canadian Dollar"  },
-    "US": { "USD": "United States Dollar" }
+  "AU": { "AUD": "Australian Dollar"},
+  "NZ": { "NZD": "New Zealand Dollar"},
+  "GB": { "GBP": "British Pound" },
+  "CA": { "USD" : "United States Dollar", "CAD": "Canadian Dollar"  },
+  "US": { "USD": "United States Dollar" },
+  "AT": {"EUR": "Euro"},
+  "BE": {"EUR": "Euro"},
+  "ES": {"EUR": "Euro"},
+  "FR": {"EUR": "Euro"},
+  "DE": {"EUR": "Euro"},
+  "IT": {"EUR": "Euro"},
+  "NL": {"EUR": "Euro"},
+  "PT": {"EUR": "Euro"},
+  "GR": {"EUR": "Euro"},
+  "IE": {"EUR": "Euro"},
+  "NO": {"EUR": "Euro"},
+  "LU": {"EUR": "Euro"},
+  "EE": {"EUR": "Euro"},
+  "FI": {"EUR": "Euro"},
+  "LV": {"EUR": "Euro"},
+  "LT": {"EUR": "Euro"},
+  "SK": {"EUR": "Euro"},
+  "SI": {"EUR": "Euro"},
+  "SE": {"SEK": "Swedish Krona"},
+  "DK": {"DKK": "Danish Krone"},
+  "SG": {"SGD": "Singapore Dollar"},
+  "MX": {"MXN": "Mexican Peso"},
+  "CH": {"CHF": "Swiss Franc"},
+  "JP": {"JPY": "Japanese Yen"},
+  "PL": {"PLN": "Polish Złoty"},
+  "MY": {"MYR": "Malaysian Ringgit"},
+  "HK": {"HKD": "Hong Kong Dollar"}
   }
 {% endparse_json %}
-
-
 {% export currency_list, country_currency_list, country_list, namespace: "payments"  %}
