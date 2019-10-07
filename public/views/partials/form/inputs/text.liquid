@@ -1,23 +1,35 @@
-{% assign text_parameterized = text | downcase | replace: ' ', '-'  %}
-{% assign text_underscore = text | downcase | replace: ' ', '_'  %}
-{% assign input = input | default: text_parameterized %}
+{% assign input_id = input_id | default: text | replace: "_", "-" %}
 {% if country_iso %}
   {% assign country_scope = '.' | append: country_iso | downcase %}
 {% else %}
   {% assign country_scope = '' %}
 {% endif %}
 
+{% assign label = 'modules/stripe/account.' | append: text | append: country_scope | t %}
+
+{% if placeholder != blank %}
+  {% assign _placeholder = placeholder %}
+{% else %}
+  {% assign _placeholder = 'modules/stripe/account.placeholder.' | append: text | append: country_scope | t %}
+{% endif %}
+
 <div class="form-group">
-  <label for="input-{{ input }}">{{ 'modules/stripe/stripe.account.' | append: text_underscore | append: country_scope | t }} {% if required %}<span class="text-danger">*</span>{% endif %}</label>
+  <label for="input-{{ input_id }}">
+    {{ label }} {% if required %}
+                  <span class="text-danger">*</span>
+                {% endif %}
+  </label>
+
   <input
     type="text"
     name="{{ name }}"
     class="form-control"
-    id="input-{{ input }}"
-    data-{{ input }}
+    id="input-{{ input_id }}"
+    data-{{ input_id }}
     value="{{ value }}"
+    {% if _placeholder %}placeholder="{{ _placeholder }}"{% endif %}
     {% if data_name %}data-name="{{ data_name }}"{% endif %}
-    placeholder="{{ placeholder }}"
+    {% if pattern %}pattern="{{ pattern }}"{% endif %}
     {% if required %}required{% endif %}
     {% if disabled %}disabled{% endif %}
   >

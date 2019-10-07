@@ -1,6 +1,7 @@
 <div class="form-row">
   <div class="form-group col-md-{{ column_size }}">
     {% assign document_id = forloop.index | append: document %}
+
     <label for="{{ document_id }}">
       {{ "modules/stripe/legal_entity.verification." | append: document | replace: "-", "_" | t  }}
     </label><br/>

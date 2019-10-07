@@ -1,16 +1,22 @@
 {%- graphql g = 'modules/payments/get_accounts_by_gateway_id', gateway_id: data.id %}
 {%- assign account = g.customizations.results.first %}
-{%- assign account_state = 'pending' -%}
-{%- if data.payouts_enabled == true and data.charges_enabled == true -%}
-  {%- assign account_state = 'verified' -%}
-{%- endif -%}
+{% if account.id == blank %}
+  {% assign error_message = "account: " | append: data.id | append: "do not exist." %}
+  {% log error_message, type: "ERROR" %}
+{% else %}
+  {%- assign account_state = 'pending' -%}
+  {%- if data.payouts_enabled == true and data.charges_enabled == true -%}
+    {%- assign account_state = 'verified' -%}
+  {%- endif -%}
 
-{% parse_json "account_data" %}
-  {
-    "properties": [
-      { "name": "state", "value": "{{ account_state }}" }
-    ]
-  }
-{% endparse_json %}
-{%- graphql g = "modules/payments/update_customization", form: "modules/payments/webhook_update_account_form", data: account_data, id: account.id -%}
-{% log g, type: "WEBHOOK UPDATED" %}
+  {% parse_json "account_data" %}
+    {
+      "properties": [
+        { "name": "data", "value": "{{ data | json | replace: '"', '\"' }}" },
+        { "name": "state", "value": "{{ account_state }}" }
+      ]
+    }
+  {% endparse_json %}
+  {%- graphql g = "modules/payments/update_customization", form: "modules/payments/webhook_update_account_form", data: account_data, id: account.id -%}
+  {% log g, type: "WEBHOOK UPDATED" %}
+{% endif %}

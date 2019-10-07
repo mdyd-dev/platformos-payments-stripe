@@ -1,3 +1,5 @@
+{% assign company = response.legal_entity %}
+
 <fieldset
     data-toggle-target="account-type"
     data-toggle-content="company"
@@ -12,36 +14,35 @@
     </div>
     <div class="form-row">
       <div class="form-group col-md-7">
-        {% include text_field with "Business Name", value: response.company.name, required: true, placeholder: "Business Name" %}
+        {% include text_field with "business_name", value: company.business_name, required: true %}
       </div>
       <div class="form-group col-md-7">
-        {% include text_field with "Phone", value: response.company.phone, required: true, placeholder: "Phone" %}
+        {% include text_field with "phone", value: company.phone_number, required: true %}
       </div>
       <div class="form-group col-md-7">
-        {% assign tax_placeholder = 'Tax ID' %}
-        {% if response.company.tax_id_provided %}
+        {% if company.business_tax_id_provided %}
           {% assign tax_placeholder = 'Provided' %}
           {% assign tax_disabled = true %}
         {% endif %}
-        {% include text_field with "Tax ID", value: response.company.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
+        {% include text_field with "tax_id", value: company.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group col-md-7">
-        {% include text_field with "Address", value: response.company.address.line1, required: true, placeholder: "Address" %}
+        {% include text_field with "address" value: company.address.line1, required: true %}
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group col-md-7">
-        {% include text_field with "City", value: response.company.address.city, required: true, placeholder: "City" %}
+        {% include text_field with "city", value: company.address.city, required: true  %}
       </div>
       <div class="form-group col-md-7">
-        {% include text_field with "State", value: response.company.address.state, required: true, placeholder: "State" %}
+        {% include text_field with "state", value: company.address.state, required: true %}
       </div>
       <div class="form-group col-md-7">
-        {% include text_field with "Zip", value: response.company.address.postal_code, required: true, placeholder: "Zip" %}
+        {% include text_field with "zip", value: company.address.postal_code, required: true %}
       </div>
     </div>
   </div>

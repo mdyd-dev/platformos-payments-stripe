@@ -8,33 +8,52 @@
 <script src="{{ 'modules/stripe/javascripts/StripeAccount.js' | asset_url }}" defer></script>
 <script src="{{ 'modules/stripe/javascripts/Collapse.js' | asset_url }}" defer></script>
 
-{% if data.gateway_id != blank %}
-  {% graphql g = 'modules/payments/gateway_request', data: data, api_template: "modules/stripe/get_account" %}
-  {% parse_json 'response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
+{% graphql g = "modules/payments/get_accounts_by_external_id", external_id: context.current_user.id %}
+{%- assign account = g.customizations.results.last -%}
+{% capture unblocked %}{%- include 'modules/stripe/account/unblock_account' -%}{% endcapture %}
+
+{% if account.queued == "true" and unblocked != "true" %}
+  <div class="alert alert-info">
+    We are processing your request.<br/>
+    You will be notified by email about your account status changes.
+    Alternatively you can <a href="{{ context.location.href }}">refresh page</a> in few seconds.
+  </div>
+{% else %}
+
+  {% parse_json 'response' %}{{ account.data }}{% endparse_json %}
+  {% parse_json 'error' %}{{ account.last_error }}{% endparse_json %}
+
+  {% if error.message %}
+    <div class="alert alert-danger" role="alert">
+      {{ error.message }}
+    </div>
+  {% endif %}
+
+
+  {%- assign text_input_class = "form-group col-md-7" -%}
+  {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
+  {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
+  {%- assign external_account = response.external_accounts.data.first -%}
+
+  {% if external_account != blank %}
+    {%- include 'modules/stripe/account/status' -%}
+  {% endif %}
+  {%- include 'modules/stripe/account/form_data' -%}
+  {%- include 'modules/stripe/account/basic_settings' -%}
+
+  {% if response.country != blank %}
+    {%- include 'modules/stripe/account/choose_external_account' -%}
+    {%- include 'modules/stripe/account/external_account' -%}
+    {%- include 'modules/stripe/account/external_account_debit' -%}
+    {%- include 'modules/stripe/account/company' -%}
+    {%- include 'modules/stripe/account/persons' -%}
+  {% endif %}
+
+  {%- include 'modules/stripe/account/submit' -%}
+
+  <style type="text/css" media="all">
+    .alert-danger:empty{
+      display: none;
+    }
+  </style>
 {% endif %}
-
-{%- assign text_field = 'modules/stripe/form/inputs/text' -%}
-{%- assign select_field = 'modules/stripe/form/inputs/select' -%}
-{%- assign external_account = response.external_accounts.data.first -%}
-
-{% if external_account != blank %}
-  {%- include 'modules/stripe/account/status' -%}
-{% endif %}
-{%- include 'modules/stripe/account/form_data' -%}
-{%- include 'modules/stripe/account/basic_settings' -%}
-
-{% if response.country != blank %}
-  {%- include 'modules/stripe/account/choose_external_account' -%}
-  {%- include 'modules/stripe/account/external_account' -%}
-  {%- include 'modules/stripe/account/external_account_debit' -%}
-  {%- include 'modules/stripe/account/company' -%}
-  {%- include 'modules/stripe/account/persons' -%}
-{% endif %}
-
-{%- include 'modules/stripe/account/submit' -%}
-
-<style type="text/css" media="all">
-  .alert-danger:empty{
-    display: none;
-  }
-</style>

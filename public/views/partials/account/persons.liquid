@@ -1,21 +1,8 @@
-{% graphql g = 'modules/payments/gateway_request', data: data, api_template: "modules/stripe/get_persons" %}
-{% parse_json 'persons_response' %}{{ g.api_call_send.response.body }}{% endparse_json %}
-
-{% if "AU,NZ,US" contains response.country %}
-  {% assign id_number_required = false %}
-  {% assign column_size = 7 %}
-{% else %}
-  {% assign id_number_required = true %}
-  {% assign column_size = 7 %}
-{% endif %}
 <div class="col-12 pt-3 bg-white mb-4 px-0">
-  {% if persons_response.data.first != blank %}
-    {% for person in persons_response.data %}
-      {% include 'modules/stripe/account/account_person', person: person, index: forloop.index %}
-    {% endfor %}
+  {% if account.persons.first != blank %}
+    {% include 'modules/stripe/account/person' with account.persons %}
   {% else %}
-    {%- include 'modules/stripe/account/account_person' -%}
-    {%- include 'modules/stripe/account/account_person', account_type: "company" -%}
+    {%- include 'modules/stripe/account/person' -%}
   {% endif %}
 </div>
 

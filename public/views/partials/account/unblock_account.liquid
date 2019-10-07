@@ -1,0 +1,14 @@
+{%- assign five_minutes_ago = 'now' | add_to_time: -5, 'm' -%}
+{%- if account.queued and account.updated_at < five_minutes_ago -%}
+  {%- assign object_id = params.properties_attributes.data.id -%}
+  {%- if account.id != blank -%}
+    {%- parse_json "object_data" -%}
+      { "properties": [ { "name": "queued", "value": "false" } ]}
+    {%- endparse_json -%}
+    {%- graphql g = "modules/payments/update_customization",
+      data: object_data,
+      id: account.id
+    -%}
+    true
+  {%- endif -%}
+{%- endif -%}

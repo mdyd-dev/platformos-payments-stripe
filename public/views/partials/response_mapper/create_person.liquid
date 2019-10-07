@@ -3,11 +3,6 @@
 {%- endparse_json -%}
 
 {%- if gateway_response.status == 200 -%}
-  {%- assign account_state = 'pending' -%}
-  {%- if response_body.payouts_enabled == true and response_body.charges_enabled == true -%}
-    {%- assign account_state = 'verified' -%}
-  {%- endif -%}
-
   {
     "id": "{{ data.id }}",
     "properties": [

@@ -77,8 +77,10 @@ class StripeElements {
 
 class StripePerson {
   constructor(container) {
+    console.log('Processing Person');
     this.container = container;
     this.personId = this.container.dataset.person;
+    this.personGatewayId = this.container.dataset.personGatewayId;
     this.accountId = this.container.dataset.account;
     this.individual = this.container.dataset.person == 'individual';
     this.processInputData();
@@ -156,6 +158,7 @@ class StripePerson {
     data.append('person_token', this.token);
     data.append('account_id', this.accountId);
     data.append('person_id', this.personId);
+    data.append('person_gateway_id', this.personGatewayId);
 
     return fetch('/payments/api/persons.json', {
       method: 'POST',
@@ -349,11 +352,13 @@ const processExternalAccount = () => {
         console.log('THEN', result.error);
         document.querySelector('.external_account .errors').textContent =
           result.error.message;
+        document.querySelector('.external_account .errors').scrollIntoView();
         return Promise.reject();
       } else {
         console.log('YAY SETTING TOKEN', result.token.id);
         document.querySelector('[data-external-account]').value =
           result.token.id;
+
         return resolvedPromise('Bank Account Set');
       }
     })

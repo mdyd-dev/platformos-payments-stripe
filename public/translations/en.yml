@@ -19,8 +19,12 @@ en:
     first_name: "First Name"
     last_name: "Last Name"
     personal_email: "Email"
+    personal_phone_number: "Phone Number"
+    personal_id_number: "Id Number"
     business_tax_id: "Business Tax ID (Employer Identification Number)"
     ssn_last_4: "Social Security number - last 4 digits"
+    relationship:
+      title: "Title"
     verification:
       document: Document
       document_front: Document (front)
@@ -28,6 +32,11 @@ en:
       additional_document: Additional Document
       additional_document_front: Additional Document (front)
       additional_document_back:  Additional Document (back)
+    personal_address:
+      line1: Address
+      city: City
+      state: State
+      postal_code: Postal Code
     address:
       line1: Address
       city: City
@@ -40,35 +49,126 @@ en:
         city: City
         state: State
         postal_code: Postal Code
-  stripe:
-    account:
+      phone: Phone
+      email: Email
+      title: Title
+      ssn_last_4: SSN Last 4
+  account:
+    business_name: Company Name
+    phone: Phone Number
+    email: Email
+    title: Title
+    ssn_last_4: SSN Last 4
+    tax_id:
+      at: UID
+      au: ABN
+      be: n° TVA
+      ca: BN / NE
+      ch: MWST/TVA/IVA
+      de: USt-IdNr.
+      dk: CVR
+      ee: KMKR
+      es: NIF (CIF)
+      fi: ALV nro / Momsnummer
+      fr: n° TVA
+      gb: Companies House Registration Number (CRN)
+      gr: ΑΦΜ
+      hk: Tax ID
+      ie: VAT or CBL
+      it: P.IVA
+      jp: Tax ID
+      lt: PVM kodas
+      lu: No. TVA
+      lv: PVN
+      mx: RFC
+      nl: Btw-nr.
+      no: Orgnr
+      nz: NZBN
+      pl: NIP
+      pt: NIF or NIPC
+      se: Momsnr.
+      sg: Tax ID
+      si: ID za DDV
+      sk: IČ DPH
+      us: EIN
+    address: Address
+    city: City
+    state: State
+    zip: Postal Code
+    last_name: Last Name
+    id_number: SSN
+    date_of_birth: Date of Birth
+    country: Country
+    currency: Currency
+    routing_number:
+      us: Routing Number
+      gb: SORT
+      au: BSB
+      ca: Routing Number
+    account_number: Account Number
+    account_number_iban: Account Number (IBAN Format)
+    account_holder_name: Account Holder Name
+    first_name: First Name
+    placeholder:
       business_name: Company Name
       phone: Phone Number
       email: Email
       title: Title
+      ssn_last_4: SSN Last 4
       tax_id:
         nz: NZBN
         us: EIN
         gb: Companies House Registration Number (CRN)
         au: Company ACN/ABN - TFN
         ca: Business Number (Tax ID)
+        pl: NIP
       address: Address
       city: City
       state: State
       zip: Postal Code
       last_name: Last Name
       id_number: SSN
-      date_of_birth: Date of Birth
+      date_of_birth: MM/DD/YYYY
       country: Country
       currency: Currency
       routing_number:
-        us: Routing Number
-        gb: SORT
-        au: BSB
-        ca: Routing Number
+        at: UID
+        au: ABN
+        be: n° TVA
+        ca: BN / NE
+        ch: MWST/TVA/IVA
+        de: USt-IdNr.
+        dk: CVR
+        ee: KMKR
+        es: NIF (CIF)
+        fi: ALV nro / Momsnummer
+        fr: n° TVA
+        gb: Companies House Registration Number (CRN)
+        gr: ΑΦΜ
+        hk: Tax ID
+        ie: VAT or CBL
+        it: P.IVA
+        jp: Tax ID
+        lt: PVM kodas
+        lu: No. TVA
+        lv: PVN
+        mx: RFC
+        nl: Btw-nr.
+        no: Orgnr
+        nz: NZBN
+        pl: NIP
+        pt: NIF or NIPC
+        se: Momsnr.
+        sg: Tax ID
+        si: ID za DDV
+        sk: IČ DPH
+        us: EIN
       account_number: Account Number
+      account_number_iban: Account Number (IBAN Format)
       account_holder_name: Account Holder Name
       first_name: First Name
+
+
 
 
 

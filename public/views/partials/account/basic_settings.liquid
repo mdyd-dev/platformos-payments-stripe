@@ -1,4 +1,4 @@
-{% assign account_type = resposne.business_type | default: response.legal_entity.type %}
+{% assign account_type = response.business_type | default: response.legal_entity.type %}
 
 {% if config.hide_account_status != 'true' %}
   <span class="badge badge-{% if response.payouts_enabled == true %}success{% else %}danger{% endif %}">Payouts {% if response.payouts_enabled == true %}enabled{% else %}disabled{% endif %}</span>
