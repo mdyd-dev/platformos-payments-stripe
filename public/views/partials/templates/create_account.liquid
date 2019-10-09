@@ -31,8 +31,8 @@
     </div>
   {% endif %}
 
-  {%- assign text_field = config.input.text | default: "modules/stripe/form/inputs/text" -%}
-  {%- assign select_field = config.input.select | default: "modules/stripe/form/inputs/select" -%}
+  {%- assign text_field = config.text_input | default: "modules/stripe/form/inputs/text" -%}
+  {%- assign select_field = config.select_input | default: "modules/stripe/form/inputs/select" -%}
   {%- assign external_account = response.external_accounts.data.first -%}
 
   {% if external_account != blank %}
