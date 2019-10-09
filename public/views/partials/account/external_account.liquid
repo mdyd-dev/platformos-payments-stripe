@@ -40,68 +40,58 @@
       <div class="col-12">
         <div class="errors alert alert-danger" role="alert"></div>
         <div class="form-row">
-          <div class="{{ text_input_class }}">
-            {% assign country = response.country %}
-            {% parse_json "country_list" %}
-              { "{{ country }}": "{{ context.exports.payments.country_list[country] }}" }
-            {% endparse_json %}
-            {% if country_list.size == 1 %}
-              <input type="hidden" data-country value="{{ country_list.first.first }}" />
-            {% else %}
-              {% include select_field with "Country",
-              value: country,
-              collection: country_list
-              required: true
-              %}
-            {% endif %}
-          </div>
+          {% assign country = response.country %}
+          {% parse_json "country_list" %}
+            { "{{ country }}": "{{ context.exports.payments.country_list[country] }}" }
+          {% endparse_json %}
+          {% if country_list.size == 1 %}
+            <input type="hidden" data-country value="{{ country_list.first.first }}" />
+          {% else %}
+            {% include select_field with "Country",
+            value: country,
+            collection: country_list
+            required: true
+            %}
+          {% endif %}
           {% assign currency = external_account.currency | default: response.default_currency | upcase %}
           {% assign currency_collection = context.exports.payments.country_currency_list[country] %}
           {% if currency_collection.size == 1 %}
             <input type="hidden" data-currency value="{{ currency_collection.first.first }}" />
           {% else %}
-            <div class="{{ text_input_class }} hide-block">
-              {% include select_field with "Currency",
+            {% include select_field with "Currency",
               value: currency,
               collection: currency_collection,
               required: true
-              %}
-            </div>
+            %}
           {% endif %}
           {% if routing_number_required %}
-            <div class="{{ text_input_class }}">
-              {% include text_field with "routing_number", value: external_account.routing_number, required: true, placeholder: "Routing Number", country_iso: country %}
-            </div>
+            {% include text_field with "routing_number", value: external_account.routing_number, required: true, placeholder: "Routing Number", country_iso: country %}
           {% endif %}
           {% if countries_with_iban contains response.country %}
             {% assign account_label = "account_number_iban" %}
           {% else %}
             {% assign account_label = "account_number" %}
           {% endif %}
-          <div class="{{ text_input_class }}">
-            {% include text_field with account_label,
+
+          {% include text_field with account_label,
             input_id: 'account_number',
             value: external_account.account_number,
             required: true
-            %}
-          </div>
+          %}
         </div>
         <div class="form-row pb-3">
-          <div class="{{ text_input_class }}">
-            {% include text_field with "account_holder_name",
-              value: external_account.account_holder_name,
-              %}
-          </div>
-          <div class="{{ text_input_class }}">
-            {% assign account_holder = external_account.account_holder_type | default: response.legal_entity.type %}
-            {% parse_json "account_holder_type_options" %}
-              { "individual": "Individual", "company": "Company"}
-            {% endparse_json %}
-            {% include select_field with "Account Holder Type",
+          {% include text_field with "account_holder_name",
+            value: external_account.account_holder_name,
+          %}
+
+          {% assign account_holder = external_account.account_holder_type | default: response.legal_entity.type %}
+          {% parse_json "account_holder_type_options" %}
+            { "individual": "Individual", "company": "Company"}
+          {% endparse_json %}
+          {% include select_field with "Account Holder Type",
             value: account_holder,
             collection: account_holder_type_options
-            %}
-          </div>
+          %}
         </div>
       </div>
       {% if external_account.object == "bank_account" %}

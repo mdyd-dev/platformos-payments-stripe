@@ -31,32 +31,21 @@
   </div>
 
   <div class="form-row">
-    <div class="{{ text_input_class }}">
-      {% include text_field with "first_name", value: person_data.first_name, required: true, disabled: disable_person_edits  %}
-    </div>
-    <div class="{{ text_input_class }}">
-      {% include text_field with "last_name", value: person_data.last_name, required: true, disabled: disable_person_edits %}
-    </div>
-
-    <div class="{{ text_input_class }}">
-      {% include text_field with "phone", value: person_data.phone, required: false, data_name: "person[phone]"  %}
-    </div>
+    {% include text_field with "first_name", value: person_data.first_name, required: true, disabled: disable_person_edits  %}
+    {% include text_field with "last_name", value: person_data.last_name, required: true, disabled: disable_person_edits %}
+    {% include text_field with "phone", value: person_data.phone, required: false, data_name: "person[phone]"  %}
 
     {% if person_data.requirements.currently_due contains 'id_number'  %}
-      <div class="{{ text_input_class }}">
-        {% assign id_placeholder = 'SSN' %}
-        {% include text_field with 'id_number', value: person_data.id_number, placeholder: id_placeholder, required: true %}
-      </div>
+      {% assign id_placeholder = 'SSN' %}
+      {% include text_field with 'id_number', value: person_data.id_number, placeholder: id_placeholder, required: true %}
     {% elsif person_data.requirements.currently_due contains 'id_number' or person_data.id_number_provided %}
-      <div class="{{ text_input_class }}">
-        {% assign id_placeholder = 'Provided' %}
-        {% include text_field with "id_number",
-          value: person_data.id_number,
-          placeholder: id_placeholder,
-          disabled: person_data.id_number_provided,
-          required: true
-        %}
-      </div>
+      {% assign id_placeholder = 'Provided' %}
+      {% include text_field with "id_number",
+        value: person_data.id_number,
+        placeholder: id_placeholder,
+        disabled: person_data.id_number_provided,
+        required: true
+      %}
     {% elsif person_data.requirements.currently_due contains 'ssn_last_4' or person_data.ssn_last_4_provided %}
       <div class="{{ text_input_class }}">
         {% assign id_placeholder = '0000' %}
@@ -68,46 +57,32 @@
      {% endif %}
 
     {% if person_data.requirements.currently_due contains 'email' or person_data.email != blank %}
-      <div class="{{ text_input_class }}">
-        {% include text_field with "email", value: person_data.email, required: true %}
-      </div>
+      {% include text_field with "email", value: person_data.email, required: true %}
     {% endif %}
 
     {% if person_data.requirements.currently_due contains 'relationship.title' or person_data.relationship.title != blank %}
-      <div class="{{ text_input_class }}">
-        {% include text_field with "title", value: person_data.relationship.title, required: true %}
-      </div>
+      {% include text_field with "title", value: person_data.relationship.title, required: true %}
     {% endif %}
 
-    <div class="{{ text_input_class }}">
-      {% if person_data.dob.day %}
-        {% assign date_of_birth = person_data.dob.month | append: '/' | append: person_data.dob.day | append: '/' | append: person_data.dob.year %}
-      {% else %}
-        {% assign date_of_birth = '' %}
-      {% endif %}
-      {% if disable_person_edits and date_of_birth != blank %}
-        {% assign person_disabled = true %}
-      {% else %}
-        {% assign person_disabled = false %}
-      {% endif %}
-      {% include text_field with "date_of_birth", value: date_of_birth, required: true, disabled: person_disabled, data_name: "person[dob]", pattern: "\d+\/\d+/\d+" %}
-    </div>
+    {% if person_data.dob.day %}
+      {% assign date_of_birth = person_data.dob.month | append: '/' | append: person_data.dob.day | append: '/' | append: person_data.dob.year %}
+    {% else %}
+      {% assign date_of_birth = '' %}
+    {% endif %}
+    {% if disable_person_edits and date_of_birth != blank %}
+      {% assign person_disabled = true %}
+    {% else %}
+      {% assign person_disabled = false %}
+    {% endif %}
+    {% include text_field with "date_of_birth", value: date_of_birth, required: true, disabled: person_disabled, data_name: "person[dob]", pattern: "\d+\/\d+/\d+" %}
   </div>
   <div class="form-row">
-    <div class="{{ text_input_class }}">
-      {% include text_field with "address", value: person_data.address.line1 %}
-    </div>
+    {% include text_field with "address", value: person_data.address.line1 %}
   </div>
   <div class="form-row">
-    <div class="{{ text_input_class }}">
-      {% include text_field with "city", value: person_data.address.city %}
-    </div>
-    <div class="{{ text_input_class }}">
-      {% include text_field with "state", value: person_data.address.state %}
-    </div>
-    <div class="{{ text_input_class }}">
-        {% include text_field with "zip", value: person_data.address.postal_code %}
-    </div>
+    {% include text_field with "city", value: person_data.address.city %}
+    {% include text_field with "state", value: person_data.address.state %}
+    {% include text_field with "zip", value: person_data.address.postal_code %}
   </div>
 
   {% include 'modules/stripe/account/fields/document' with "document-front",

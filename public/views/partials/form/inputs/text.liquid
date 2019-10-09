@@ -13,11 +13,11 @@
   {% assign _placeholder = 'modules/stripe/account.placeholder.' | append: text | append: country_scope | t %}
 {% endif %}
 
-<div class="form-group">
+<div class="form-group col-md-7 col-sm-12">
   <label for="input-{{ input_id }}">
     {{ label }} {% if required %}
-                  <span class="text-danger">*</span>
-                {% endif %}
+      <span class="text-danger">*</span>
+    {% endif %}
   </label>
 
   <input

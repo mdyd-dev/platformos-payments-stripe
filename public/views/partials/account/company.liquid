@@ -14,44 +14,30 @@
     </div>
 
     <div class="form-row">
-      <div class="{{ text_input_class }}">
-        {% assign company_name = company.name | default: company.business_name %}
-        {% include text_field with "business_name", value: company_name, required: true %}
-      </div>
-      <div class="{{ text_input_class }}">
-        {% assign phone_number = company.phone_number | default: company.phone %}
-        {% include text_field with "phone", value: phone_number, required: true %}
-      </div>
-      <div class="{{ text_input_class }}">
-        {% if company.business_tax_id_provided %}
-          {% assign tax_placeholder = 'Provided' %}
-          {% assign tax_disabled = true %}
-        {% endif %}
+      {% assign company_name = company.name | default: company.business_name %}
+      {% include text_field with "business_name", value: company_name, required: true %}
+      {% assign phone_number = company.phone_number | default: company.phone %}
+      {% include text_field with "phone", value: phone_number, required: true %}
+      {% if company.business_tax_id_provided %}
+        {% assign tax_placeholder = 'Provided' %}
+        {% assign tax_disabled = true %}
+      {% endif %}
 
-        {% include text_field with "tax_id",
-          value: company.tax_id,
-          placeholder: tax_placeholder,
-          disabled: tax_disabled, required: true,
-          country_iso: response.country
-        %}
-      </div>
+      {% include text_field with "tax_id",
+        value: company.tax_id,
+        placeholder: tax_placeholder,
+        disabled: tax_disabled, required: true,
+        country_iso: response.country
+      %}
     </div>
 
     <div class="form-row">
-      <div class="{{ text_input_class }}">
-        {% include text_field with "company.address.line1" value: company.address.line1, required: true %}
-      </div>
+      {% include text_field with "company.address.line1" value: company.address.line1, required: true %}
     </div>
     <div class="form-row">
-      <div class="{{ text_input_class }}">
-        {% include text_field with "company.address.city", value: company.address.city, required: true  %}
-      </div>
-      <div class="{{ text_input_class }}">
-        {% include text_field with "company.address.state", value: company.address.state, required: true %}
-      </div>
-      <div class="{{ text_input_class }}">
-        {% include text_field with "company.address.postal_code", value: company.address.postal_code, required: true %}
-      </div>
+      {% include text_field with "company.address.city", value: company.address.city, required: true  %}
+      {% include text_field with "company.address.state", value: company.address.state, required: true %}
+      {% include text_field with "company.address.postal_code", value: company.address.postal_code, required: true %}
     </div>
 
     <div class="form-row">

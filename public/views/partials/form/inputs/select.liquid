@@ -2,7 +2,7 @@
 {% assign text_parameterized = text | slugify  %}
 {% assign input = input | default: text_parameterized %}
 
-<div class="form-group">
+<div class="form-group col-md-7 col-sm-12">
   <label for="input-{{ input }}">{{ text }}</label>
   <select
          type="text"

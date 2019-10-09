@@ -22,7 +22,6 @@
     Alternatively you can <a href="{{ context.location.href }}">refresh page</a> in few seconds.
   </div>
 {% else %}
-
   {% parse_json 'response' %} {% if account.data == blank  %}{} {% else %} {{ account.data }} {% endif %}  {% endparse_json %}
   {% parse_json 'error' %} {% if account.last_error == blank  %}{} {% else %} {{ account.last_error }} {% endif %}  {% endparse_json %}
 
@@ -32,9 +31,8 @@
     </div>
   {% endif %}
 
-  {%- assign text_input_class = "form-group col-md-7 col-sm-12" -%}
-  {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
-  {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
+  {%- assign text_field = config.input.text | default: "modules/stripe/form/inputs/text" -%}
+  {%- assign select_field = config.input.select | default: "modules/stripe/form/inputs/select" -%}
   {%- assign external_account = response.external_accounts.data.first -%}
 
   {% if external_account != blank %}
