@@ -1,4 +1,47 @@
 en:
+  verification: &verification
+    document: Document
+    document_front: Document (front)
+    document_back: Document (back)
+    additional_document: Additional Document
+    additional_document_front: Additional Document (front)
+    additional_document_back:  Additional Document (back)
+    company_document: Company verification document
+  tax_ids: &tax_ids
+    at: UID
+    au: ABN
+    be: n° TVA
+    ca: BN / NE
+    ch: MWST/TVA/IVA
+    de: USt-IdNr.
+    dk: CVR
+    ee: KMKR
+    es: NIF (CIF)
+    fi: ALV nro / Momsnummer
+    fr: n° TVA
+    gb: Companies House Registration Number (CRN)
+    gr: ΑΦΜ
+    hk: Tax ID
+    ie: VAT or CBL
+    it: P.IVA
+    jp: Tax ID
+    lt: PVM kodas
+    lu: No. TVA
+    lv: PVN
+    mx: RFC
+    nl: Btw-nr.
+    no: Orgnr
+    nz: NZBN
+    pl: NIP
+    pt: NIF or NIPC
+    se: Momsnr.
+    sg: Tax ID
+    si: ID za DDV
+    sk: IČ DPH
+    us: EIN
+  relationship:
+    title: "Company Title"
+    director: "Company Director"
   disabled_reason:
     fields_needed: Additional verification information is required to enable payout or charge capabilities on this account
     listed: Account might be on a prohibited persons or companies list (Stripe will investigate and either reject or reinstate the account appropriately)
@@ -24,14 +67,9 @@ en:
     business_tax_id: "Business Tax ID (Employer Identification Number)"
     ssn_last_4: "Social Security number - last 4 digits"
     relationship:
-      title: "Title"
-    verification:
-      document: Document
-      document_front: Document (front)
-      document_back: Document (back)
-      additional_document: Additional Document
-      additional_document_front: Additional Document (front)
-      additional_document_back:  Additional Document (back)
+      title: "Company Title"
+      director: "Company Director"
+    verification: *verification
     personal_address:
       line1: Address
       city: City
@@ -53,44 +91,23 @@ en:
       email: Email
       title: Title
       ssn_last_4: SSN Last 4
+      verification: *verification
   account:
+    account_number: Account Number
+    account_number_iban: Account Number (IBAN Format)
+    account_holder_name: Account Holder Name
+    company:
+      address:
+        line1: Address
+        city: City
+        state: State
+        postal_code: Postal Code
     business_name: Company Name
     phone: Phone Number
     email: Email
     title: Title
     ssn_last_4: SSN Last 4
-    tax_id:
-      at: UID
-      au: ABN
-      be: n° TVA
-      ca: BN / NE
-      ch: MWST/TVA/IVA
-      de: USt-IdNr.
-      dk: CVR
-      ee: KMKR
-      es: NIF (CIF)
-      fi: ALV nro / Momsnummer
-      fr: n° TVA
-      gb: Companies House Registration Number (CRN)
-      gr: ΑΦΜ
-      hk: Tax ID
-      ie: VAT or CBL
-      it: P.IVA
-      jp: Tax ID
-      lt: PVM kodas
-      lu: No. TVA
-      lv: PVN
-      mx: RFC
-      nl: Btw-nr.
-      no: Orgnr
-      nz: NZBN
-      pl: NIP
-      pt: NIF or NIPC
-      se: Momsnr.
-      sg: Tax ID
-      si: ID za DDV
-      sk: IČ DPH
-      us: EIN
+    tax_id: *tax_ids
     address: Address
     city: City
     state: State
@@ -102,26 +119,25 @@ en:
     currency: Currency
     routing_number:
       us: Routing Number
+      hk: Routing Number
+      jp: Routing Number
       gb: SORT
       au: BSB
       ca: Routing Number
-    account_number: Account Number
-    account_number_iban: Account Number (IBAN Format)
-    account_holder_name: Account Holder Name
+      si: Routing Number
     first_name: First Name
     placeholder:
+      company:
+        address:
+          line1: Address
+          city: City
+          state: State
+          postal_code: Postal Code
       business_name: Company Name
       phone: Phone Number
       email: Email
       title: Title
       ssn_last_4: SSN Last 4
-      tax_id:
-        nz: NZBN
-        us: EIN
-        gb: Companies House Registration Number (CRN)
-        au: Company ACN/ABN - TFN
-        ca: Business Number (Tax ID)
-        pl: NIP
       address: Address
       city: City
       state: State
@@ -131,44 +147,16 @@ en:
       date_of_birth: MM/DD/YYYY
       country: Country
       currency: Currency
-      routing_number:
-        at: UID
-        au: ABN
-        be: n° TVA
-        ca: BN / NE
-        ch: MWST/TVA/IVA
-        de: USt-IdNr.
-        dk: CVR
-        ee: KMKR
-        es: NIF (CIF)
-        fi: ALV nro / Momsnummer
-        fr: n° TVA
-        gb: Companies House Registration Number (CRN)
-        gr: ΑΦΜ
-        hk: Tax ID
-        ie: VAT or CBL
-        it: P.IVA
-        jp: Tax ID
-        lt: PVM kodas
-        lu: No. TVA
-        lv: PVN
-        mx: RFC
-        nl: Btw-nr.
-        no: Orgnr
-        nz: NZBN
-        pl: NIP
-        pt: NIF or NIPC
-        se: Momsnr.
-        sg: Tax ID
-        si: ID za DDV
-        sk: IČ DPH
-        us: EIN
       account_number: Account Number
       account_number_iban: Account Number (IBAN Format)
       account_holder_name: Account Holder Name
       first_name: First Name
-
-
-
-
-
+      routing_number:
+        us: Routing Number
+        hk: Routing Number
+        jp: Routing Number
+        gb: SORT
+        au: BSB
+        ca: Routing Number
+        si: Routing Number
+      tax_id: *tax_ids

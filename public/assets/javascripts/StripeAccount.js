@@ -4,6 +4,7 @@ class StripeElements {
     this.tokenField = document.querySelector('[data-external-account]');
     this.stripe = Stripe(stripe_pk);
     this.elements = this.stripe.elements();
+    this.currency = document.querySelector('[data-card-currency]').value;
 
     this.cardElement = document.querySelector('#card-element');
     if (typeof this.cardElement == 'undefined' || this.cardElement == null) {
@@ -45,7 +46,8 @@ class StripeElements {
     return new Promise((resolve, reject) => {
       this.stripe
         .createToken(this.card, {
-          currency: 'usd',
+          currency: this.currency,
+          default_for_currency: true,
         })
         .then(
           function(result) {
@@ -86,15 +88,14 @@ class StripePerson {
     this.processInputData();
     this.clearErrors();
 
-    const documentInputs = document.querySelectorAll(
+    const documentInputs = this.container.querySelectorAll(
       '[data-document]:not(:disabled)',
     );
     let documentPromises = [];
 
     for (i = 0; i < documentInputs.length; ++i) {
-      documentPromises.push(
-        this.setPersonDocument(documentInputs[i].dataset.document),
-      );
+      let documentData = documentInputs[i].dataset.document;
+      documentPromises.push(this.setPersonDocument(documentData));
     }
 
     return new Promise((resolve, reject) => {
@@ -175,6 +176,16 @@ class StripePerson {
     return this.processFile(documentFile, documentData);
   }
 
+  setCompanyDocument(documentData) {
+    let companyContainer = document.querySelector('.company:not(:disabled)');
+    let documentFile = companyContainer.querySelector(
+      `[data-document="${documentData}"]`,
+    ).files[0];
+    if (documentFile == undefined) return Promise.resolve();
+
+    return this.processFile(documentFile, documentData);
+  }
+
   setDocumentToken(documentData, token) {
     console.log('Setting document token', documentData, token);
     var [documentType, documentSide] = documentData.split('-');
@@ -199,7 +210,11 @@ class StripePerson {
     console.log('Processing file with', stripe._apiKey);
     const data = new FormData();
     data.append('file', file);
-    data.append('purpose', 'identity_document');
+    if (documentData.includes('company')) {
+      data.append('purpose', 'additional_verification');
+    } else {
+      data.append('purpose', 'identity_document');
+    }
     console.log('REQUEST', data);
 
     return new Promise((resolve, reject) => {
@@ -288,9 +303,11 @@ class StripePerson {
 
 const stripe = Stripe(stripe_pk);
 const myForm = document.querySelector('.create_account');
-const cardElement = document.querySelector('#card-element');
-const element = new StripeElements();
 myForm.addEventListener('submit', handleForm);
+
+const cardElement = document.querySelector('#card-element');
+const element =
+  cardElement != null && cardElement != undefined ? new StripeElements() : null;
 
 const resolvedPromise = msg => {
   console.log('RESOLVED PROMISE', msg);
@@ -308,6 +325,29 @@ const processExternalAccountCard = () => {
     return resolvedPromise('External Account Disabled');
 
   return element.getToken();
+};
+
+const slugify = string => {
+  if (string == undefined) {
+    return;
+  }
+  const a =
+    'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
+  const b =
+    'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnooooooooprrsssssttuuuuuuuuuwxyyzzz------';
+  const p = new RegExp(a.split('').join('|'), 'g');
+
+  return string
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/\[+/g, '-') // Replace [ with -
+    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+    .replace(/&/g, '-and-') // Replace & with 'and'
+    .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, ''); // Trim - from end of text
 };
 
 const processExternalAccount = () => {
@@ -463,11 +503,16 @@ const processCompany = () => {
 
   let company = {
     name: companyContainer.querySelector('[data-business-name]').value,
+    directors_provided: true,
     address: {
-      line1: companyContainer.querySelector('[data-address]').value,
-      city: companyContainer.querySelector('[data-city]').value,
-      state: companyContainer.querySelector('[data-state]').value,
-      postal_code: companyContainer.querySelector('[data-zip]').value,
+      line1: companyContainer.querySelector('[data-company-address-line1]')
+        .value,
+      city: companyContainer.querySelector('[data-company-address-city]').value,
+      state: companyContainer.querySelector('[data-company-address-state]')
+        .value,
+      postal_code: companyContainer.querySelector(
+        '[data-company-address-postal-code]',
+      ).value,
     },
   };
 
@@ -478,6 +523,7 @@ const processCompany = () => {
 
   let tax_id = companyContainer.querySelector('[data-tax-id]').value;
   if (tax_id.length != 0) {
+    console.log('Setting tax id', tax_id);
     company.tax_id = tax_id;
   }
   return stripe
@@ -512,39 +558,109 @@ const processPersons = () => {
   return Promise.all(personPromises);
 };
 
+const getAccountStatus = accountId => {
+  fetch(`/payments/api/account/${accountId}.json`)
+    .then(function(response) {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then(function(account) {
+      if (account.queued == 'true') {
+        setTimeout(function() {
+          getAccountStatus(accountId);
+        }, 1000);
+      } else if (
+        account.last_error.length > 0 &&
+        account.last_error != 'null'
+      ) {
+        let accountError = JSON.parse(account.last_error);
+
+        console.log('slugify(accountError.param)', slugify(accountError.param));
+        let inputField = myForm.querySelector(
+          `[data-${slugify(accountError.param)}]`,
+        );
+
+        if (typeof inputField != 'undefined' && inputField != null) {
+          inputField.classList.add('is-invalid');
+        }
+
+        myForm.querySelector('.account-errors').textContent =
+          accountError.message;
+
+        myForm.querySelector('.account-errors').scrollIntoView();
+        myForm.querySelector('[data-stripe-account-submit]').disabled = false;
+        myForm.querySelector('#cover-spin').style.display = 'none';
+      } else {
+        console.log('All good - reloading');
+        location.href = location.href;
+      }
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+};
+
 async function handleForm(event) {
   event.preventDefault();
+  document.querySelector('#cover-spin').style.display = 'block';
   event.target.querySelector('[data-stripe-account-submit]').disabled = true;
 
   let stripePromises = [];
-
   stripePromises.push(processExternalAccountCard());
   stripePromises.push(processExternalAccount());
   stripePromises.push(processIndividual());
   stripePromises.push(processCompany());
-  stripePromises.push(processPersons());
 
-  console.log('stripePromises', stripePromises);
   Promise.all(stripePromises)
-    .then(
-      function(result) {
-        console.log('SUBMITING');
-        myForm.submit();
-      },
-      function(error) {
-        event.target.querySelector(
-          '[data-stripe-account-submit]',
-        ).disabled = false;
-        console.log('error', error);
-      },
-    )
-    .catch(error => {
-      console.log('Error', error);
-      event.target.querySelector(
-        '[data-stripe-account-submit]',
-      ).disabled = false;
-    });
+    .then(function() {
+      stripePromises.push(processPersons());
+
+      Promise.all(stripePromises)
+        .then(submitAccount, handleError)
+        .catch(handleError);
+    }, handleError)
+    .catch(handleError);
 }
+
+const handleError = error => {
+  document.querySelector('[data-stripe-account-submit]').disabled = false;
+  document.querySelector('#cover-spin').style.display = 'none';
+  console.log('error', error);
+};
+
+const submitAccount = result => {
+  const data = new URLSearchParams();
+
+  for (const pair of new FormData(myForm)) {
+    data.append(pair[0], pair[1]);
+  }
+
+  fetch('/api/customizations', {
+    method: 'post',
+    body: data,
+  })
+    .then(function(response) {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then(function(response) {
+      const accountIdInput = myForm.querySelector('[data-default-data-id]');
+      if (accountIdInput && accountIdInput.value.length > 0) {
+        const accountId = accountIdInput.value;
+        getAccountStatus(accountId);
+      } else {
+        location.href = location.href;
+      }
+    })
+    .catch(function(error) {
+      console.log('SUBMITING');
+      console.log(error);
+    });
+};
 
 const onContent = el => {
   el.classList.remove('collapse');
@@ -559,7 +675,6 @@ const offContent = el => {
 const onSwitch = el => el.classList.add('active');
 const offSwitch = el => el.classList.remove('active');
 const toggleRadio = el => {
-  console.log(el);
   const clicked = el;
   const id = clicked.dataset.toggleSwitch;
   const target = clicked.dataset.toggleTarget;

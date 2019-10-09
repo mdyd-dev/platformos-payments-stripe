@@ -33,4 +33,5 @@ headers: >
     {%- endif -%}
   {%- endif -%}
 {%- endfor -%}
+{% log request_params, type: "DEBUG_request_params" %}
 {% if data.gateway_id == blank %}country={{ data.country }}&type=custom&tos_acceptance[ip]={{ data.ip }}&tos_acceptance[date]={{ 'now' | date: '%s' }}&{% endif %}{{ request_params | join: '&' | html_safe }}

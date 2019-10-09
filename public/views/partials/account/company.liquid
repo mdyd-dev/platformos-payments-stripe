@@ -1,10 +1,10 @@
-{% assign company = response.legal_entity %}
+{% assign company = response.legal_entity | default: response.company %}
 
 <fieldset
     data-toggle-target="account-type"
     data-toggle-content="company"
-    class="company {% if response.business_type  != 'company' %}collapse{% endif %}"
-    {% if response.business_type  != 'company'  %}disabled{% endif %}>
+    class="company {% if response.business_type != 'company' %}collapse{% endif %}"
+    {% if response.business_type  != 'company' %}disabled{% endif %}>
   <div class="col-12 pt-3 bg-white mb-4 px-0">
     <div class="row">
       <div class="col-10 col-md-11">
@@ -12,38 +12,54 @@
         <hr>
       </div>
     </div>
+
     <div class="form-row">
-      <div class="form-group col-md-7">
-        {% include text_field with "business_name", value: company.business_name, required: true %}
+      <div class="{{ text_input_class }}">
+        {% assign company_name = company.name | default: company.business_name %}
+        {% include text_field with "business_name", value: company_name, required: true %}
       </div>
-      <div class="form-group col-md-7">
-        {% include text_field with "phone", value: company.phone_number, required: true %}
+      <div class="{{ text_input_class }}">
+        {% assign phone_number = company.phone_number | default: company.phone %}
+        {% include text_field with "phone", value: phone_number, required: true %}
       </div>
-      <div class="form-group col-md-7">
+      <div class="{{ text_input_class }}">
         {% if company.business_tax_id_provided %}
           {% assign tax_placeholder = 'Provided' %}
           {% assign tax_disabled = true %}
         {% endif %}
-        {% include text_field with "tax_id", value: company.tax_id, placeholder: tax_placeholder, disabled: tax_disabled, required: true, country_iso: response.country  %}
+
+        {% include text_field with "tax_id",
+          value: company.tax_id,
+          placeholder: tax_placeholder,
+          disabled: tax_disabled, required: true,
+          country_iso: response.country
+        %}
       </div>
     </div>
 
     <div class="form-row">
-      <div class="form-group col-md-7">
-        {% include text_field with "address" value: company.address.line1, required: true %}
+      <div class="{{ text_input_class }}">
+        {% include text_field with "company.address.line1" value: company.address.line1, required: true %}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="{{ text_input_class }}">
+        {% include text_field with "company.address.city", value: company.address.city, required: true  %}
+      </div>
+      <div class="{{ text_input_class }}">
+        {% include text_field with "company.address.state", value: company.address.state, required: true %}
+      </div>
+      <div class="{{ text_input_class }}">
+        {% include text_field with "company.address.postal_code", value: company.address.postal_code, required: true %}
       </div>
     </div>
 
     <div class="form-row">
-      <div class="form-group col-md-7">
-        {% include text_field with "city", value: company.address.city, required: true  %}
-      </div>
-      <div class="form-group col-md-7">
-        {% include text_field with "state", value: company.address.state, required: true %}
-      </div>
-      <div class="form-group col-md-7">
-        {% include text_field with "zip", value: company.address.postal_code, required: true %}
-      </div>
+      {% if response.verification.fields_needed contains "legal_entity.company_verification.document" %}
+        {% include 'modules/stripe/account/fields/document' with "company-document",
+        value: company.company_verification.document
+        %}
+      {% endif %}
     </div>
   </div>
 </fieldset>

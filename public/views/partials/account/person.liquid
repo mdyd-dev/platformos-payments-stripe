@@ -24,7 +24,7 @@
     {%- for field in response.requirements.currently_due -%}
       {%- if field contains 'person_' -%}
         <li>
-          {{ 'stripe.requirements.' | append: field | replace: person_data.id, 'individual' | t }}
+          {{ 'modules/stripe/requirements.' | append: field | replace: person_data.id, 'individual' | t }}
         </li>
       {%- endif -%}
     {%- endfor -%}
@@ -63,7 +63,7 @@
         {% if person_data.ssn_last_4_provided %}
           {% assign id_placeholder = 'Provided' %}
         {% endif %}
-        {% include text_field with "SSN Last 4", value: person_data.ssn_last_4, placeholder: id_placeholder, disabled: person_data.ssn_last_4_provided, required: true, minlength:"4" maxlength:"4" %}
+        {% include text_field with "ssn_last_4", value: person_data.ssn_last_4, placeholder: id_placeholder, disabled: person_data.ssn_last_4_provided, required: true, minlength:"4" maxlength:"4" %}
       </div>
      {% endif %}
 
@@ -111,11 +111,13 @@
   </div>
 
   {% include 'modules/stripe/account/fields/document' with "document-front",
-    value: person_data.verification.document %}
+    value: person_data.verification.document
+  %}
 
   {% include 'modules/stripe/account/fields/document' with "document-back",
-    value: person_data.verification.document_back %}
-   {% if person_data.requirements.currently_due contains 'verification.additional_document' or person_data.verification.additional_document or person_data.verification.additional_document_back%}
+    value: person_data.verification.document_back
+  %}
+  {% if person_data.requirements.currently_due contains 'verification.additional_document' or person_data.verification.additional_document or person_data.verification.additional_document_back%}
     {%
       include 'modules/stripe/account/fields/document' with "additional_document-front",
         value: person_data.verification.additional_document

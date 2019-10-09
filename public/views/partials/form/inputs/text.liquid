@@ -1,4 +1,4 @@
-{% assign input_id = input_id | default: text | replace: "_", "-" %}
+{% assign input_id = input_id | default: text | slugify %}
 {% if country_iso %}
   {% assign country_scope = '.' | append: country_iso | downcase %}
 {% else %}

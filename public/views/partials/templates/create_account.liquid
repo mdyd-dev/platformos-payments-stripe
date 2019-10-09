@@ -4,6 +4,9 @@
   const stripe_pk = "{{ context.exports.payments.gateway.public_key }}"
 </script>
 
+<link rel="stylesheet" href="{{ 'modules/stripe/stylesheets/loader.css' | asset_url }}" />
+<div id="cover-spin"></div>
+
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{{ 'modules/stripe/javascripts/StripeAccount.js' | asset_url }}" defer></script>
 <script src="{{ 'modules/stripe/javascripts/Collapse.js' | asset_url }}" defer></script>
@@ -20,8 +23,8 @@
   </div>
 {% else %}
 
-  {% parse_json 'response' %}{{ account.data }}{% endparse_json %}
-  {% parse_json 'error' %}{{ account.last_error }}{% endparse_json %}
+  {% parse_json 'response' %} {% if account.data == blank  %}{} {% else %} {{ account.data }} {% endif %}  {% endparse_json %}
+  {% parse_json 'error' %} {% if account.last_error == blank  %}{} {% else %} {{ account.last_error }} {% endif %}  {% endparse_json %}
 
   {% if error.message %}
     <div class="alert alert-danger" role="alert">
@@ -29,8 +32,7 @@
     </div>
   {% endif %}
 
-
-  {%- assign text_input_class = "form-group col-md-7" -%}
+  {%- assign text_input_class = "form-group col-md-7 col-sm-12" -%}
   {%- assign text_field = 'modules/stripe/form/inputs/text' -%}
   {%- assign select_field = 'modules/stripe/form/inputs/select' -%}
   {%- assign external_account = response.external_accounts.data.first -%}
