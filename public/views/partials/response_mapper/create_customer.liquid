@@ -9,8 +9,6 @@
       ],
     {%- endif -%}
     "properties": [
-      { "name": "email", "value": "{{ data.email }}" },
-      { "name": "description", "value": "{{ data.description }}" },
       { "name": "external_id", "value": "{{ data.external_id }}" },
       { "name": "gateway_id", "value": "{{ response_body.id }}" },
       { "name": "source", "value": "{{ response_body.default_source }}" },
@@ -18,8 +16,7 @@
       { "name": "card_brand", "value": "{{ response_body.sources.data[0].brand }}" },
       { "name": "card_exp_month", "value": "{{ response_body.sources.data[0].exp_month }}" },
       { "name": "card_exp_year", "value": "{{ response_body.sources.data[0].exp_year }}" },
-      { "name": "card_last4", "value": "{{ response_body.sources.data[0].last4 }}" },
-      { "name": "skip_credit_card_creation", "value": "false" }
+      { "name": "card_last4", "value": "{{ response_body.sources.data[0].last4 }}" }
     ]
   }
 {%- else -%}
