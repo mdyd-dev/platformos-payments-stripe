@@ -1,6 +1,6 @@
 <fieldset
-  data-toggle-target="external-account"
-  data-toggle-content="bank-account"
+  data-toggle-stripe-target="external-account"
+  data-toggle-stripe-content="bank-account"
   class="row bg-white external_account">
 
   {% assign countries_with_routing = 'US|HK|AU|BR|CA|JP|GB|MX|SG' | split: "|" %}
@@ -24,8 +24,8 @@
       {% if external_account != blank and external_account.object == "bank_account" %}
         <h6 class="card-subtitle mb-2 text-muted">{{ external_account.bank_name }} {{ account_number }} {{ external_account.currency | upcase }}
           <a href="#"
-             data-toggle-switch
-             data-toggle-target="bank-account-fields"
+             data-toggle-stripe-switch
+             data-toggle-stripe-target="bank-account-fields"
              class="btn btn-link">Edit</a></h6>
       {% endif %}
     </div>
@@ -35,8 +35,8 @@
     {% endif %}
 
     <fieldset
-      data-toggle-target="bank-fields"
-      data-toggle-content="bank-account-fields" class="ba_fields {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
+      data-toggle-stripe-target="bank-fields"
+      data-toggle-stripe-content="bank-account-fields" class="ba_fields {% if hide_external %}hidden collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
       <div class="col-12">
         <div class="errors alert alert-danger" role="alert"></div>
         <div class="form-row">
@@ -96,8 +96,8 @@
       </div>
       {% if external_account.object == "bank_account" %}
         <a href="#"
-           data-toggle-switch="bank-fields"
-           data-toggle-target="none"
+           data-toggle-stripe-switch="bank-fields"
+           data-toggle-stripe-target="none"
            class="btn btn-link"
           >Hide
         </a>

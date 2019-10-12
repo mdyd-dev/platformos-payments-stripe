@@ -664,38 +664,51 @@ const submitAccount = result => {
 
 const onContent = el => {
   el.classList.remove('collapse');
+  el.classList.remove('hidden');
   el.removeAttribute('disabled');
 };
 
 const offContent = el => {
   el.classList.add('collapse');
+  el.classList.add('hidden');
   el.setAttribute('disabled', 'disabled');
 };
 
-const onSwitch = el => el.classList.add('active');
-const offSwitch = el => el.classList.remove('active');
+const onSwitch = el => {
+  el.classList.add('active');
+  console.log('checked', el);
+  el.checked = true;
+};
+
+const offSwitch = el => {
+  el.classList.remove('active');
+  console.log('checked', el);
+  el.checked = false;
+};
+
 const toggleRadio = el => {
   const clicked = el;
-  const id = clicked.dataset.toggleSwitch;
-  const target = clicked.dataset.toggleTarget;
+  const id = clicked.dataset.toggleStripeSwitch;
+  const target = clicked.dataset.toggleStripeTarget;
 
+  console.log(id);
   // Turn all off
   Array.prototype.slice
-    .call(document.querySelectorAll(`[data-toggle-switch="${id}"]`))
+    .call(document.querySelectorAll(`[data-toggle-stripe-switch="${id}"]`))
     .map(offSwitch);
   Array.prototype.slice
-    .call(document.querySelectorAll(`[data-toggle-target="${id}"]`))
+    .call(document.querySelectorAll(`[data-toggle-stripe-target="${id}"]`))
     .map(offContent);
 
   // Turn off some
   onSwitch(clicked);
   Array.prototype.slice
-    .call(document.querySelectorAll(`[data-toggle-content="${target}"]`))
+    .call(document.querySelectorAll(`[data-toggle-stripe-content="${target}"]`))
     .map(onContent);
 };
 
 Array.prototype.slice
-  .call(document.querySelectorAll('[data-toggle-switch]'))
+  .call(document.querySelectorAll('[data-toggle-stripe-switch]'))
   .map(el => {
     el.addEventListener('change', e => {
       toggleRadio(e.target);
@@ -703,7 +716,7 @@ Array.prototype.slice
   });
 
 Array.prototype.slice
-  .call(document.querySelectorAll('a[data-toggle-switch]'))
+  .call(document.querySelectorAll('a[data-toggle-stripe-switch]'))
   .map(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
@@ -712,7 +725,7 @@ Array.prototype.slice
   });
 
 Array.prototype.slice
-  .call(document.querySelectorAll('[data-toggle-switch]:checked'))
+  .call(document.querySelectorAll('[data-toggle-stripe-switch]:checked'))
   .map(el => {
     toggleRadio(el);
   });

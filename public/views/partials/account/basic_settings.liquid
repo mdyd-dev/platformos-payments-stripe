@@ -47,8 +47,8 @@
         value="individual"
         required
         data-individual-account
-        data-toggle-switch="account-type"
-        data-toggle-target="individual"
+        data-toggle-stripe-switch="account-type"
+        data-toggle-stripe-target="individual"
         {% if account_type == 'individual' or account_type  == blank %}checked{% endif %}
         {% if account_type  != blank %}disabled{% endif %}
        >
@@ -61,8 +61,8 @@
         name="{{ data_attribute}}[business_type]"
         id="inlineRadio2"
         data-business-account
-        data-toggle-switch="account-type"
-        data-toggle-target="company"
+        data-toggle-stripe-switch="account-type"
+        data-toggle-stripe-target="company"
         value="company"
         required
         {% if account_type == 'company' %}checked{% endif %}

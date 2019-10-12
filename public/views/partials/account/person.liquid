@@ -4,7 +4,7 @@
   data-person="{{ person.id }}"
   data-person-gateway-id="{{ person_data.id }}"
   data-account="{{ response.id }}"
-  data-toggle-content="{{ account_type | default: 'individual' }}"
+  data-toggle-stripe-content="{{ account_type | default: 'individual' }}"
 >
   {%- if person_data.verification.status == "verified" %}
     {% assign disable_person_edits = true %}

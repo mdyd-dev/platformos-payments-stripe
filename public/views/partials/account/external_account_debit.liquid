@@ -1,5 +1,5 @@
 {% if response.country != blank and response.country == "US" %}
-  <fieldset data-toggle-target="external-account" data-toggle-content="debit-card" class="debit_external_account row bg-white  {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
+  <fieldset data-toggle-stripe--epirts-epirtstarget="external-account" data-toggle--epirtscontent="debit-card" class="debit_external_account row bg-white  {% if hide_external %}hidden collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
     <link rel="stylesheet" href="{{ 'modules/stripe/stylesheets/elements.css' | asset_url }}" />
 
     {%- assign external_account = response.external_accounts.data.first -%}
@@ -13,9 +13,9 @@
           <h6 class="card-subtitle mb-2 text-muted">
             <b>Current card: </b>{{ external_account.brand }}, ending {{ external_account.last4 }}
             <a href="#"
-               data-toggle-switch="cc"
-               data-toggle-content="cc"
-               data-toggle-target="cc_fields"
+               data-toggle-stripe-switch="cc"
+               data-toggle-stripe-content="cc"
+               data-toggle-stripe-target="cc_fields"
                class="btn btn-link">Change Card</a>
           </h6>
         {% endif %}
@@ -25,7 +25,7 @@
         {% assign hide_external =  true %}
       {% endif %}
 
-      <fieldset data-toggle-switch="cc" data-toggle-content="cc_fields" data-toggle-target="cc" class="row bg-white cc_fields {% if hide_external %}collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
+      <fieldset data-toggle-stripe-switch="cc" data-toggle-stripe-content="cc_fields" data-toggle-stripe-target="cc" class="row bg-white cc_fields {% if hide_external %}hidden collapse{% endif %}" {% if hide_external %}disabled{% endif %}>
         <div class="col-10 col-md-12">
 
           {% assign country = response.country %}
@@ -52,7 +52,7 @@
         </div>
         <input type="hidden" data-cc-token />
         {% if external_account.object == "card" %}
-          <a href="#" data-toggle-switch="cc" data-toggle-target="none" class="btn btn-link">Hide</a>
+          <a href="#" data-toggle-stripe-switch="cc" data-toggle-stripe-target="none" class="btn btn-link">Hide</a>
         {% endif %}
       </fieldset>
     </div>
