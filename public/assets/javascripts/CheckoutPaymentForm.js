@@ -2,17 +2,19 @@ class CheckoutPaymentForm {
   constructor() {
     this.initialize(); // get all the config options from html
     this.configure(); // configure widget
-    console.log(typeof(this.stripeCheckoutButton));
+    console.log(typeof this.stripeCheckoutButton);
     if (this.stripeCheckoutButton != null) {
-      this.stripeCheckoutButton.addEventListener("click", this.open.bind(this));
-    } else { 
+      this.stripeCheckoutButton.addEventListener('click', this.open.bind(this));
+    } else {
       this.open(); // show when everything is ready
     }
   }
 
   initialize() {
     this.addCardContainer = document.querySelector('[data-add-new-card]');
-    this.stripeCheckoutButton = document.querySelector('[data-stripe-checkout-button]');
+    this.stripeCheckoutButton = document.querySelector(
+      '[data-stripe-checkout-button]',
+    );
     this.form = this.addCardContainer.closest('form');
 
     /* Stripe configuration data */
@@ -44,7 +46,7 @@ class CheckoutPaymentForm {
         this.tokenField.value = token.id;
 
         this.form.submit();
-      }
+      },
     });
   }
 
@@ -55,10 +57,9 @@ class CheckoutPaymentForm {
       description: this.stripeDescription,
       panelLabel: this.stripeButtonLabel,
       zipCode: this.requireZip == 'true',
-      email: this.stripeEmail
+      email: this.stripeEmail,
     });
   }
 }
 
 new CheckoutPaymentForm();
-
