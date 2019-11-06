@@ -1,9 +1,9 @@
 {% assign company = response.legal_entity | default: response.company %}
 
 <fieldset
-    data-toggle-target="account-type"
-    data-toggle-content="company"
-    class="company {% if response.business_type != 'company' %}collapse{% endif %}"
+    data-toggle-stripe-target="account-type"
+    data-toggle-stripe-content="company"
+    class="company {% if response.business_type != 'company' %}hidden collapse{% endif %}"
     {% if response.business_type  != 'company' %}disabled{% endif %}>
   <div class="col-12 pt-3 bg-white mb-4 px-0">
     <div class="row">

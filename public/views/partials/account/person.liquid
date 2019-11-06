@@ -6,6 +6,7 @@
   data-person="{{ person.id }}"
   data-person-gateway-id="{{ person_data.id }}"
   data-account="{{ response.id }}"
+  data-toggle-stripe-content="{{ account_type | default: 'individual' }}"
   {% if external_account == blank %}
     disabled
   {% endif %}
