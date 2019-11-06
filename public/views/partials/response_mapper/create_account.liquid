@@ -1,6 +1,8 @@
+{% log "parsing response "%}
 {%- parse_json 'response_body' -%}
   {{ gateway_response.body }}
 {%- endparse_json -%}
+{% log "end parsing response "%}
 
 {%- if gateway_response.status == 200 -%}
   {%- assign account_state = 'pending' -%}

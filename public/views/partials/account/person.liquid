@@ -1,10 +1,14 @@
 {% parse_json person_data %}{{ person.data }}{% endparse_json %}
 <fieldset
-  class="person border-bottom border-light mb-4"
+  class="person border-bottom border-light mb-4 {% if external_account == blank %}
+ collapse
+{% endif %}"
   data-person="{{ person.id }}"
   data-person-gateway-id="{{ person_data.id }}"
   data-account="{{ response.id }}"
-  data-toggle-content="{{ account_type | default: 'individual' }}"
+  {% if external_account == blank %}
+    disabled
+  {% endif %}
 >
   {%- if person_data.verification.status == "verified" %}
     {% assign disable_person_edits = true %}
@@ -47,13 +51,11 @@
         required: true
       %}
     {% elsif person_data.requirements.currently_due contains 'ssn_last_4' or person_data.ssn_last_4_provided %}
-      <div class="{{ text_input_class }}">
         {% assign id_placeholder = '0000' %}
         {% if person_data.ssn_last_4_provided %}
           {% assign id_placeholder = 'Provided' %}
         {% endif %}
         {% include text_field with "ssn_last_4", value: person_data.ssn_last_4, placeholder: id_placeholder, disabled: person_data.ssn_last_4_provided, required: true, minlength:"4" maxlength:"4" %}
-      </div>
      {% endif %}
 
     {% if person_data.requirements.currently_due contains 'email' or person_data.email != blank %}
