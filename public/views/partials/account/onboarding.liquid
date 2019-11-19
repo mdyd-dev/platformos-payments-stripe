@@ -51,10 +51,10 @@
 
   <div class="border rounded bg-gs-soft-grey px-8 py-6 mb-4" data-test="information">
     <p class="text-gs-red" role="alert">
-    Thank you for adding payout account. <a href="/payments/merchant">Back</a>
+    Thank you for adding payout account.
     </p>
   </div>
-
+  <a class="btn btn-green" href="/payments/account">Back</a>
 {% elsif account.id == blank  %}
     <a href="https://connect.stripe.com/express/oauth/authorize?redirect_uri={{ redirect_uri }}&client_id=ca_FhREeg9lNvnX9VxIOi69jcUveUdWc8Bc&state={{ state }}" class="btn btn-green">Connect with Stripe</a>
   {% endif %}
@@ -88,7 +88,7 @@
     "request_type": "delete_account",
     "button": "Delete Account",
     "button_class": "btn btn-grey",
-    "success_path": "/payments/merchant"
+    "success_path": "/payments/account"
   }
 {%- endparse_json -%}
 
