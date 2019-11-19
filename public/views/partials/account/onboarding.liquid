@@ -1,0 +1,102 @@
+{% assign gateway_name = 'stripe' %}
+{% export gateway_name, namespace: "payments"  %}
+
+{% graphql g = "modules/payments/get_accounts_by_external_id", external_id: context.current_user.id %}
+{% assign account = g.customizations.results.last %}
+{% assign state = "somestring" %}
+
+{% assign redirect_uri = "https://" | append: context.location.host | append: context.location.href | append: '/success' %}
+
+{% if params.slug3 == "failure" and account.id == blank %}
+  <div class="border rounded bg-gs-soft-grey px-8 py-6 mb-4" data-test="information">
+    <p class="text-gs-red" role="alert">
+      Error adding payout account.
+    </p>
+  </div>
+{% elsif params.slug3 == "success" and params.state == state and account.id == blank %}
+  {% parse_json 'data' %}
+    {
+      "client_secret": "sk_test_62gXMK2fvXpyv81Z4jkle5Wt00Y1HgfNFu",
+      "code": "{{ params.code }}",
+      "grant_type": "authorization_code"
+    }
+  {% endparse_json %}
+
+  {%- graphql response = 'modules/payments/gateway_request',
+    data: data,
+    api_template: "modules/stripe/connect_account"
+  -%}
+  {% parse_json response_body %}
+    {{ response.api_call_send.response.body }}
+  {% endparse_json %}
+
+  {% parse_json account_data %}
+  {
+    "properties": [
+      { "name": "external_id", "value": "{{ current_user.id }}" },
+      { "name": "gateway_id", "value": "{{ response_body.stripe_user_id }}" },
+      { "name": "state", "value": "pending" },
+      { "name": "queued", "value": "false" }
+    ]
+  }
+  {% endparse_json %}
+
+  {% if account.id != blank %}
+   {%- graphql c = "modules/shippo/update_customization", form: 'modules/payments/create_account_form', data: account_data, id: account.id -%}
+   {%- assign customization = c.customization_update %}
+  {% else %}
+   {%- graphql c = "modules/shippo/create_customization", form: 'modules/payments/create_account_form', data: account_data -%}
+   {%- assign customization = c.customization_create %}
+  {% endif %}
+
+  <div class="border rounded bg-gs-soft-grey px-8 py-6 mb-4" data-test="information">
+    <p class="text-gs-red" role="alert">
+    Thank you for adding payout account. <a href="/payments/merchant">Back</a>
+    </p>
+  </div>
+
+{% elsif account.id == blank  %}
+    <a href="https://connect.stripe.com/express/oauth/authorize?redirect_uri={{ redirect_uri }}&client_id=ca_FhREeg9lNvnX9VxIOi69jcUveUdWc8Bc&state={{ state }}" class="btn btn-green">Connect with Stripe</a>
+  {% endif %}
+
+  {% if account.id != blank  %}
+
+  {% parse_json account_data %}
+    {
+      "gateway_id": "{{ account.gateway_id }}"
+    }
+  {% endparse_json %}
+
+  {%- graphql g_link = 'modules/payments/gateway_request',
+    data: account_data,
+    api_template: "modules/stripe/account_login_link"
+  -%}
+  {% parse_json link_body %}{{  g_link.api_call_send.response.body }}{% endparse_json %}
+  <p class="w-full">
+  <a class="btn btn-green" target="_blank" rel="noopener" href="{{ link_body.url }}">Stripe Account Dashboard</a>
+  </p>
+  <p class="w-full">
+{%- parse_json 'data' -%}
+  {
+    "id": "{{ account.id }}",
+    "gateway_id": "{{ account.gateway_id }}"
+  }
+{%- endparse_json -%}
+
+{%- parse_json 'config' -%}
+  {
+    "request_type": "delete_account",
+    "button": "Delete Account",
+    "button_class": "btn btn-grey",
+    "success_path": "/payments/merchant"
+  }
+{%- endparse_json -%}
+
+{%-
+  include_form 'modules/payments/gateway_request_form',
+  config: config,
+  data: data
+%}
+  </p>
+
+{% endif %}
