@@ -42,10 +42,10 @@
   {% endparse_json %}
 
   {% if account.id != blank %}
-   {%- graphql c = "modules/shippo/update_customization", form: 'modules/payments/create_account_form', data: account_data, id: account.id -%}
+   {%- graphql c = "modules/payments/update_customization", form: 'modules/payments/create_account_form', data: account_data, id: account.id -%}
    {%- assign customization = c.customization_update %}
   {% else %}
-   {%- graphql c = "modules/shippo/create_customization", form: 'modules/payments/create_account_form', data: account_data -%}
+   {%- graphql c = "modules/payments/create_customization", form: 'modules/payments/create_account_form', data: account_data -%}
    {%- assign customization = c.customization_create %}
   {% endif %}
 
