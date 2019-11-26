@@ -16,7 +16,7 @@
 {% elsif params.slug3 == "success" and params.state == state and account.id == blank %}
   {% parse_json 'data' %}
     {
-      "client_secret": "sk_test_62gXMK2fvXpyv81Z4jkle5Wt00Y1HgfNFu",
+      "client_secret": "{{ context.constants.stripe_client_id }}",
       "code": "{{ params.code }}",
       "grant_type": "authorization_code"
     }
