@@ -16,7 +16,7 @@
 {% elsif params.slug3 == "success" and params.state == state and account.id == blank %}
   {% parse_json 'data' %}
     {
-      "client_secret": "{{ context.constants.stripe_client_id }}",
+      "client_secret": "{{ context.constants.stripe_sk_key }}",
       "code": "{{ params.code }}",
       "grant_type": "authorization_code"
     }
@@ -56,7 +56,7 @@
   </div>
   <a class="btn btn-green" href="/payments/account">Back</a>
 {% elsif account.id == blank  %}
-    <a href="https://connect.stripe.com/express/oauth/authorize?redirect_uri={{ redirect_uri }}&client_id=ca_FhREeg9lNvnX9VxIOi69jcUveUdWc8Bc&state={{ state }}" class="btn btn-green">Connect with Stripe</a>
+  <a href="https://connect.stripe.com/express/oauth/authorize?redirect_uri={{ redirect_uri }}&client_id={{ context.constants.stripe_client_id }}&state={{ state }}" class="btn btn-green">Connect with Stripe</a>
   {% endif %}
 
   {% if account.id != blank  %}
