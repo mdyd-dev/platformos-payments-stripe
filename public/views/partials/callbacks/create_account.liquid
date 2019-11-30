@@ -1,5 +1,5 @@
 {% assign data = params.properties_attributes.data %}
-{% log params, type: "DEBUG Callback params" %}
+{% comment %}{% log params, type: "DEBUG Callback params" %}{% endcomment %}
 {% for person_hash in data.persons %}
   {% assign person = person_hash.last %}
   {% assign token = person.token %}
@@ -16,9 +16,9 @@
       }
     {% endparse_json %}
 
-    {% log person_data, type: "PERSON DATA" %}
+    {% comment %}{% log person_data, type: "PERSON DATA" %}{% endcomment %}
 
     {%- graphql person_response = 'modules/payments/gateway_request', data: person_data, api_template: gateway_api_template -%}
-    {% log person_response, type: "Person Response" %}
+    {% comment %}{% log person_response, type: "Person Response" %}{% endcomment %}
   {% endif %}
 {% endfor %}

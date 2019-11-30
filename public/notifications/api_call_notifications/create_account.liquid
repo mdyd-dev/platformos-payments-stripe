@@ -12,7 +12,7 @@ callback: >
   {% endif %}
 headers: >
   {% if data %}
-  {% log data, type: "DEBUG data header" %}
+  {% comment %}{% log data, type: "DEBUG data header" %}{% endcomment %}
     {%- include 'modules/stripe/shared/api_credentials' -%}
     {
       "Content-Type": "application/x-www-form-urlencoded",

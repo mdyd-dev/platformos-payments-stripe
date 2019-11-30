@@ -13,4 +13,4 @@
   }
 {% endparse_json %}
 {%- graphql g = "modules/payments/update_customization", form: "modules/payments/webhook_update_account_form", data: account_data, id: account.id -%}
-{% log g, type: "WEBHOOK UPDATED" %}
+{% comment %}{% log g, type: "WEBHOOK UPDATED" %}{% endcomment %}

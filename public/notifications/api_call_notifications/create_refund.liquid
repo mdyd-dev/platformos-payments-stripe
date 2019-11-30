@@ -36,5 +36,5 @@ headers: >
     {%- endif -%}
   {%- endif -%}
 {%- endfor -%}
-{% log request_params, type: "REQUEST PARAMS.........." %}
+{% comment %}{% log request_params, type: "REQUEST PARAMS.........." %}{% endcomment %}
 {{ request_params | join: '&' | html_safe }}

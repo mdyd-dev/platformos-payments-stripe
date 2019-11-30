@@ -20,5 +20,5 @@ headers: >
     }
   {% endif %}
 ---
-{% log data, type: "data" %}
+{% comment %}{% log data, type: "data" %}{% endcomment %}
 {% if data.email %}email={{ data.email }}&{% endif %}description={{ data.description | url_encode }}&source={{ data.source }}{% for data in data.metadata %}&metdata[{{ data[0] }}]={{ data[1] | url_encode }}{% endfor %}

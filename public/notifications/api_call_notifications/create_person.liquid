@@ -12,7 +12,7 @@ callback: >
   {% endif %}
 headers: >
   {% if data %}
-    {% log data, type: "DEBUG api templ data" %}
+    {% comment %}{% log data, type: "DEBUG api templ data" %}{% endcomment %}
     {%- include 'modules/stripe/shared/api_credentials' -%}
     {
       "Stripe-Account": "{{ data.account_id }}",
@@ -31,5 +31,5 @@ headers: >
     {%- endif -%}
   {%- endif -%}
 {%- endfor -%}
-{% log request_params, type: "Request Params" %}
+{% comment %}{% log request_params, type: "Request Params" %}{% endcomment %}
 {{ request_params | join: '&' | html_safe }}
