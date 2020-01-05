@@ -21,4 +21,4 @@ headers: >
   {% endif %}
 ---
 {% log data, type: "data" %}
-{% if data.email %}email={{ data.email }}&{% endif %}description={{ data.description | url_encode }}&source={{ data.source }}{% for data in data.metadata %}&metdata[{{ data[0] }}]={{ data[1] | url_encode }}{% endfor %}
+{% if data.email %}email={{ data.email | url_encode }}&{% endif %}description={{ data.description | url_encode }}&source={{ data.source | url_encode }}{% for data in data.metadata %}&metdata[{{ data[0] }}]={{ data[1] | url_encode }}{% endfor %}
