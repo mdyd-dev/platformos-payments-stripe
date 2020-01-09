@@ -56,11 +56,14 @@
   </div>
   <a class="btn btn-green" href="/payments/account">Back</a>
 {% elsif account.id == blank  %}
-  <a href="https://connect.stripe.com/express/oauth/authorize?redirect_uri={{ redirect_uri }}&client_id={{ context.constants.stripe_client_id }}&state={{ state }}" class="btn btn-green">Connect with Stripe</a>
-  {% endif %}
+  <a
+    href="https://connect.stripe.com/express/oauth/authorize?redirect_uri={{ redirect_uri }}&client_id={{ context.constants.stripe_client_id }}&state={{ state }}&suggested_capabilities[]=card_payments&suggested_capabilities[]=transfers"
+    class="btn btn-green">
+    Connect with Stripe
+  </a>
+{% endif %}
 
-  {% if account.id != blank  %}
-
+{% if account.id != blank  %}
   {% parse_json account_data %}
     {
       "gateway_id": "{{ account.gateway_id }}"
@@ -76,27 +79,27 @@
   <a class="btn btn-green" target="_blank" rel="noopener" href="{{ link_body.url }}">Stripe Account Dashboard</a>
   </p>
   <p class="w-full">
-{%- parse_json 'data' -%}
-  {
-    "id": "{{ account.id }}",
-    "gateway_id": "{{ account.gateway_id }}"
-  }
-{%- endparse_json -%}
+    {%- parse_json 'data' -%}
+      {
+        "id": "{{ account.id }}",
+        "gateway_id": "{{ account.gateway_id }}"
+      }
+    {%- endparse_json -%}
 
-{%- parse_json 'config' -%}
-  {
-    "request_type": "delete_account",
-    "button": "Delete Account",
-    "button_class": "btn btn-grey",
-    "success_path": "/payments/account"
-  }
-{%- endparse_json -%}
+    {%- parse_json 'config' -%}
+      {
+        "request_type": "delete_account",
+        "button": "Delete Account",
+        "button_class": "btn btn-grey",
+        "success_path": "/payments/account"
+      }
+    {%- endparse_json -%}
 
-{%-
-  include_form 'modules/payments/gateway_request_form',
-  config: config,
-  data: data
-%}
+    {%-
+      include_form 'modules/payments/gateway_request_form',
+      config: config,
+      data: data
+    %}
   </p>
 
 {% endif %}
