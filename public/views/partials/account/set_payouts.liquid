@@ -1,0 +1,36 @@
+{% log account_id, type: 'set_payouts' %}
+{% log gateway_id, type: 'set_payouts' %}
+{%- if context.environment == 'production' -%}
+  {% assign delay_days = 30 %}
+{% else %}
+  {% assign delay_days = 1 %}
+{% endif %}
+
+{%- parse_json 'data' -%}
+  {
+    "gateway_id": "{{ gateway_id }}",
+    "settings": {
+      "payouts": {
+        "schedule": {
+          "delay_days": {{ delay_days }}
+        }
+      }
+    }
+
+  }
+{%- endparse_json -%}
+
+{% if data.indempotency_key == blank %}
+  {%- assign indempotency_key = 20 | random_string -%}
+  {%- assign data = data | add_hash_key: "indempotency_key", indempotency_key -%}
+{% endif %}
+
+{%- graphql response = 'modules/payments/gateway_request',
+  data: data,
+  api_template: "modules/stripe/create_account"
+-%}
+{% parse_json response_body %}
+  {{ response.api_call_send.response.body }}
+{% endparse_json %}
+
+{% log response_body, 'set_payouts' %}

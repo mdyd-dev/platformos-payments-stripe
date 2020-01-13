@@ -42,11 +42,14 @@
   {% endparse_json %}
 
   {% if account.id != blank %}
-   {%- graphql c = "modules/payments/update_customization", form: 'modules/payments/create_account_form', data: account_data, id: account.id -%}
-   {%- assign customization = c.customization_update %}
+    {%- graphql c = "modules/payments/update_customization", form: 'modules/payments/create_account_form', data: account_data, id: account.id -%}
+    {%- assign customization = c.customization_update %}
   {% else %}
-   {%- graphql c = "modules/payments/create_customization", form: 'modules/payments/create_account_form', data: account_data -%}
-   {%- assign customization = c.customization_create %}
+    {%- graphql c = "modules/payments/create_customization", form: 'modules/payments/create_account_form', data: account_data -%}
+    {%- assign customization = c.customization_create %}
+    {% background source_name: "set_payouts", account_id: account.id, gateway_id: response_body.stripe_user_id %}
+      {% include 'modules/stripe/account/set_payouts', account_id: account_id, gateway_id: gateway_id %}
+    {% endbackground %}
   {% endif %}
 
   <div class="border rounded bg-gs-soft-grey px-8 py-6 mb-4" data-test="information">
@@ -76,7 +79,7 @@
   -%}
   {% parse_json link_body %}{{  g_link.api_call_send.response.body }}{% endparse_json %}
   <p class="w-full">
-  <a class="btn btn-green" target="_blank" rel="noopener" href="{{ link_body.url }}">Stripe Account Dashboard</a>
+    <a class="btn btn-green" target="_blank" rel="noopener" href="{{ link_body.url }}">Stripe Account Dashboard</a>
   </p>
   <p class="w-full">
     {%- parse_json 'data' -%}
