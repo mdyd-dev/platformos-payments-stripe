@@ -78,6 +78,9 @@
     api_template: "modules/stripe/account_login_link"
   -%}
   {% parse_json link_body %}{{  g_link.api_call_send.response.body }}{% endparse_json %}
+  <h4 class="w-full">
+    Verification: <strong>{{ account.state }}</strong>
+  </h4>
   <p class="w-full">
     <a class="btn btn-green" target="_blank" rel="noopener" href="{{ link_body.url }}">Stripe Account Dashboard</a>
   </p>
