@@ -3,7 +3,7 @@
 {%- if context.environment == 'production' -%}
   {% assign delay_days = 30 %}
 {% else %}
-  {% assign delay_days = 1 %}
+  {% assign delay_days = 2 %}
 {% endif %}
 
 {%- parse_json 'data' -%}
