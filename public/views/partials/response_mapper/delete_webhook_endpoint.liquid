@@ -1,0 +1,20 @@
+{%- parse_json 'response_body' -%}
+  {{ gateway_response.body }}
+{%- endparse_json -%}
+{% log response_body, type: "RESPONSE BODY........" %}
+{%- if gateway_response.status == 200 -%}
+  {
+    {%- if response_body.error -%}
+      "errors": [
+        {"message": "{{ response_body.error.message }}"}
+      ],
+    {%- endif -%}
+    "properties": [
+      { "name": "gateway_id", "value": "{{ response_body.id }}" }
+    ]
+  }
+{%- else -%}
+  {
+    "errors": {{ response_body.error.message | json }}
+  }
+{%- endif -%}
