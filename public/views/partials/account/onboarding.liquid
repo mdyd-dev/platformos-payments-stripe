@@ -97,7 +97,8 @@
         "request_type": "delete_account",
         "button": "Delete Account",
         "button_class": "btn btn-grey",
-        "success_path": "/payments/account"
+        "success_path": "/payments/account",
+        "async_callback": {{ delete_account_async_callback | json }}
       }
     {%- endparse_json -%}
 
