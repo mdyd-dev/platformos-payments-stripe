@@ -1,0 +1,17 @@
+{% comment %}
+  Required params:
+    gateway_id: Stripe user id
+{% endcomment %}
+
+{% parse_json request_data %}
+  {
+    "stripe_user_id" : "{{ gateway_id }}"
+  }
+{% endparse_json %}
+
+{%- graphql g = 'modules/stripe/create_express_account_link', data: request_data -%}
+{% assign response_body = g.api_call_send.response.body | to_hash %}
+{{ response_body.url }}
+
+{% assign express_account_url = response_body.url %}
+{% export express_account_url, namespace: "payments"  %}

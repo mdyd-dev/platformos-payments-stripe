@@ -1,0 +1,12 @@
+{% comment %}
+  Required params:
+    redirect_to: url to redirect after account created
+{% endcomment %}
+<div class="d-flex flex-column align-items-center justify-content-center mt-5">
+  <img class="d-block" src="{{ 'pOS-logo.svg' | asset_url }}" alt="platformOS" width="64" height="64">
+  <p class="mb-0 h5 mt-4 pos-error">Oops! Something went wrong...</p>
+  <div class="d-flex align-items-center mt-3">
+    <p class="mb-0 h5">Your</p>  <img class="d-block stripe-logo-inline" src="{{ 'stripe-logo-slate.svg' | asset_url }}" alt="platformOS" height="33"/> <p class="mb-0 h5">account has not been created.</p>
+  </div>
+  <p class="mt-5"><a class="ml-2 btn btn-success" href="{{ redirect_to }}">Go back to Partner Portal</a></p>
+</div>

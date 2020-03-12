@@ -1,0 +1,33 @@
+{% comment %}
+  Required params:
+    customer_id: external (partner portal) id of customer
+    redirect_to: url to redirect after account created
+{% endcomment %}
+{% include 'modules/stripe/account/get_salt' %}
+{% assign salt = context.exports.payments.express_oauth_salt %}
+
+{% assign state_value = customer_id | compute_hmac: salt | append: '--' | append: customer_id | append: '--' | append: redirect_to %}
+
+{% if force_express %}
+  {% assign state_value = state_value | append: '--force_express'  %}
+{% endif %}
+
+{% comment %} See more on: https://stripe.com/docs/connect/express-accounts#integrating-oauth {% endcomment %}
+{% assign client_id = context.constants.stripe_client_id  %}
+
+{% comment %} Url that user will be redirected to after filling account data in Stripe {% endcomment %}
+{% assign redirect_uri = 'https://' | append: context.location.host | append: '/stripe-connect-account'  %}
+{% assign options = '&suggested_capabilities[]=transfers' %}
+
+{% assign oauth_link_value = 'https://connect.stripe.com/express/oauth/authorize?redirect_uri='
+  | append: redirect_uri
+  | append: '&client_id='
+  | append: client_id
+  | append: '&state='
+  | append: state_value
+  | append: options
+%}
+
+<p style="overflow-wrap: break-word;">{{ oauth_link_value }}</p>
+{% assign express_oauth_url = oauth_link_value %}
+{% export express_oauth_url, namespace: "payments"  %}

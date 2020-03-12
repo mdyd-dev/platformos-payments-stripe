@@ -1,0 +1,14 @@
+mutation create_express_account_link($data: HashObject) {
+  api_call_send(
+    data: $data
+    template: { name: "modules/stripe/create_express_account_link" }
+  ) {
+    response {
+      status
+      body
+    }
+    errors {
+      message
+    }
+  }
+}

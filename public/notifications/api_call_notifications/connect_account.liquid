@@ -1,0 +1,39 @@
+---
+name: connect_account
+to: https://connect.stripe.com/oauth/token
+enabled: true
+format: https
+trigger_condition: true
+request_type: Post
+callback: >
+  {%- assign response_data = response.body | to_hash -%}
+  {% if response_data.error %}
+    {%- log response_data.error, type: 'modules/stripe/connect_account' -%}
+  {% endif %}
+headers: >
+  {%- include 'modules/stripe/shared/api_credentials' -%}
+  {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
+    "Stripe-Version": "2020-03-02"
+  }
+---
+{%- assign allowed_params = 'code,grant_type' | split: ',' -%}
+{%- assign request_params = '' | split: "|" -%}
+{%- for var in data -%}
+  {%- if var[1] != blank -%}
+    {%- if var[0] == 'assert_capabilities' and var[1].size > 0 -%}
+      {% log var[1], type: "Assert Capabilities" %}
+      {% assign capability_hash = var[1] | to_hash %}
+      {% for capability in capability_hash %}
+        {%- capture pair %}assert_capabilities[]={{ capability | url_encode }}{% endcapture -%}
+        {%- assign request_params = request_params | add_to_array: pair -%}
+      {% endfor %}
+    {% elsif allowed_params contains var[0] %}
+      {%- capture pair %}{{ var[0] }}={{ var[1] | url_encode }}{% endcapture -%}
+      {%- assign request_params = request_params | add_to_array: pair -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{% log request_params | join: '&' | html_safe, type: "REQUEST PARAMS.........." %}
+{{ request_params | join: '&' | html_safe }}

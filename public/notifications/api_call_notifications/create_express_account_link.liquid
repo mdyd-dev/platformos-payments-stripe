@@ -1,0 +1,20 @@
+---
+name: create_express_account_link
+to: https://api.stripe.com/v1/accounts/{{ data.stripe_user_id }}/login_links
+enabled: true
+format: https
+trigger_condition: true
+request_type: post
+callback: >
+  {%- assign response_data = response.body | to_hash -%}
+  {% if response_data.error %}
+    {%- log response_data.error, type: 'modules/stripe_payments/create_express_account_link' -%}
+  {% endif %}
+headers: >
+  {%- include 'modules/stripe/shared/api_credentials' -%}
+  {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
+    "Stripe-Version": "2020-03-02"
+  }
+---

@@ -1,0 +1,34 @@
+{% comment %}
+  Required params:
+    account: account object
+{% endcomment %}
+
+{% if account.properties.state == 'pending' %}
+    {% assign type = 'custom_account_verification' %}
+{% else %}
+    {% assign type = 'custom_account_update' %}
+{% endif %}
+
+{% assign success_redirect_uri = 'https://' | append: context.location.host | append: '/update-result-page/success?redirect_to=' | append: params.redirect_to %}
+{% comment %} {% assign success_redirect_uri = params.redirect_to %} {% endcomment %}
+{% assign fail_redirect_uri = 'https://' | append: context.location.host | append: '/update-result-page/fail?redirect_to=' | append: params.redirect_to %}
+
+{% parse_json request_data %}
+    {
+    "account" : "{{ account.gateway_id }}",
+    "failure_url" : "{{ fail_redirect_uri }}",
+    "success_url" : "{{ success_redirect_uri }}",
+    "type" : "{{ type }}",
+    "collect" : "eventually_due"
+    }
+{% endparse_json %}
+
+{%- graphql g = 'modules/stripe/create_account_link', data: request_data -%}
+{% assign response_body = g.api_call_send.response.body | to_hash %}
+
+{% if response_body.error %}
+  {% log response_body.error.message, type: "[modules/stripe/public/views/partials/account/get_custom_account_link]"  %}
+{% endif %}
+
+{% assign custom_account_url = response_body.url %}
+{% export custom_account_url, namespace: "payments"  %}

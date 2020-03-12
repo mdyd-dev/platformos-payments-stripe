@@ -1,0 +1,29 @@
+{% comment %}
+  Required params:
+    code: stripe one use code to create and connect Express Account
+{% endcomment %}
+
+{% parse_json request_data %}
+  {
+    "code" : "{{ code }}",
+    "grant_type" : "authorization_code",
+    "assert_capabilities" : ["transfers"]
+  }
+{% endparse_json %}
+{% comment %}
+  This "assert_capabilities" : ["transfers"] doesn't seem to work. Need to verify capabilities with another api call (request_capability).
+  TODO: ask Stripe why it doesn't work
+{% endcomment %}
+
+{%- graphql g = 'modules/stripe/connect_account', data: request_data -%}
+{% assign response_body = g.api_call_send.response.body | to_hash %}
+{% log response_body %}
+{% if response_body.stripe_user_id == blank %}
+  {% log 'Stripe Api errors.', type:'[stripe-connect-account]' %}
+  {% log response_body %}
+  {% assign express_created_stripe_user_id = '' %}
+{% else %}
+  {% log response_body %}
+  {% assign express_created_stripe_user_id = response_body.stripe_user_id %}
+{% endif %}
+{% export express_created_stripe_user_id, namespace: "payments"  %}

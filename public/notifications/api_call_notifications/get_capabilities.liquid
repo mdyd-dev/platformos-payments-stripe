@@ -1,0 +1,34 @@
+---
+name: get_capabilities
+to: https://api.stripe.com/v1/accounts/{{ data.stripe_user_id }}/capabilities/{{ data.capability }}
+enabled: true
+format: https
+trigger_condition: true
+request_type: post
+callback: >
+  {%- assign response_data = response.body | to_hash -%}
+  {% if response_data.error %}
+    {%- log response_data.error, type: 'modules/stripe_payments/request_capability' -%}
+  {% endif %}
+headers: >
+  {%- include 'modules/stripe/shared/api_credentials' -%}
+  {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
+    "Stripe-Version": "2020-03-02"
+  }
+---
+{% log data %}
+{%- assign allowed_params = 'requested' | split: ',' -%}
+{%- assign request_params = '' | split: "|" -%}
+{%- for var in data -%}
+  {%- if var[1] != blank -%}
+    {%- if allowed_params contains var[0] -%}
+      {%- parse_json "query" -%}{ }{%- endparse_json -%}
+      {%- assign query = query | add_hash_key: var[0], var[1] | querify -%}
+      {%- assign request_params = request_params | add_to_array: query -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{% log request_params, type: "DEBUG_request_params" %}
+{{ request_params | join: '&' | html_safe }}

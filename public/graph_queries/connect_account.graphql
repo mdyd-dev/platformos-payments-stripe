@@ -1,0 +1,14 @@
+mutation connect_account($data: HashObject) {
+  api_call_send(
+    data: $data
+    template: { name: "modules/stripe/connect_account" }
+  ) {
+    response {
+      status
+      body
+    }
+    errors {
+      message
+    }
+  }
+}
