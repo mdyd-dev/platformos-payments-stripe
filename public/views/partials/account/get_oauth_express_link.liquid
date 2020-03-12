@@ -28,6 +28,6 @@
   | append: options
 %}
 
-<p style="overflow-wrap: break-word;">{{ oauth_link_value }}</p>
+{% comment %} <p style="overflow-wrap: break-word;">{{ oauth_link_value }}</p> {% endcomment %}
 {% assign express_oauth_url = oauth_link_value %}
 {% export express_oauth_url, namespace: "payments"  %}

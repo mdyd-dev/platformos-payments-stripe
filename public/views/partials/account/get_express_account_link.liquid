@@ -11,7 +11,7 @@
 
 {%- graphql g = 'modules/stripe/create_express_account_link', data: request_data -%}
 {% assign response_body = g.api_call_send.response.body | to_hash %}
-{{ response_body.url }}
+{% comment %} {{ response_body.url }} {% endcomment %}
 
 {% assign express_account_url = response_body.url %}
 {% export express_account_url, namespace: "payments"  %}
