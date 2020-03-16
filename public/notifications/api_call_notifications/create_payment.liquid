@@ -16,12 +16,12 @@ headers: >
     {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}",
-      "Idempotency-Key": "{{ data.idempotence_key }}"
+      "Idempotency-Key": "{{ data.idempotence_key }}",
+      "Stripe-Version": "2020-03-02"
     }
   {% endif %}
 ---
-
-{%- assign allowed_params = 'application_fee,currency,description,statement_descriptor,capture,customer,destination,transfer_group,amount,source' | split: ',' -%}
+{%- assign allowed_params = 'application_fee_amount,application_fee,currency,description,statement_descriptor,capture,customer,destination,transfer_group,amount,source' | split: ',' -%}
 {%- assign request_params = '' | split: "|" -%}
 {%- for var in data -%}
   {%- if var[1] != blank -%}
