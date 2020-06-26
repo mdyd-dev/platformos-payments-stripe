@@ -2,7 +2,6 @@
 name: create_transfer
 to: https://api.stripe.com/v1/transfers
 enabled: true
-format: https
 trigger_condition: true
 request_type: Post
 callback: >
@@ -16,12 +15,15 @@ headers: >
     {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
+      {% if data.stripe_account_id != blank %}
+        "Stripe-Account": "{{ data.stripe_account_id }}",
+      {% endif %}
       "Idempotency-Key": "{{ data.indempotency_key }}"
     }
   {% endif %}
 ---
 
-{%- assign allowed_params = 'amount,currency,destination' | split: ',' -%}
+{%- assign allowed_params = 'amount,currency,destination,description' | split: ',' -%}
 {%- assign request_params = '' | split: "|" -%}
 {%- for var in data -%}
   {%- if var[1] != blank -%}
