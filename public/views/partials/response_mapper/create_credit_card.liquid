@@ -1,0 +1,26 @@
+{%- parse_json 'response_body' -%}
+  {{ gateway_response.body }}
+{%- endparse_json -%}
+{%- if gateway_response.status == 200 -%}
+  {
+    {%- if response_body.error -%}
+      "errors": [
+        {"message": "{{ response_body.error.message }}"}
+      ],
+    {%- endif -%}
+    "properties": [
+      { "name": "gateway_customer_id", "value": "{{ response_body.customer }}" },
+      { "name": "customer_id", "value": "{{ data.stored_customer_id }}" },
+      { "name": "external_id", "value": "{{ data.external_id }}" },
+      { "name": "gateway_id", "value": "{{ response_body.id }}" },
+      { "name": "brand", "value": "{{ response_body.brand }}" },
+      { "name": "exp_month", "value": "{{ response_body.exp_month }}" },
+      { "name": "exp_year", "value": "{{ response_body.exp_year }}" },
+      { "name": "last4", "value": "{{ response_body.last4 }}" }
+    ]
+  }
+{%- else -%}
+  {
+    "errors": {{ response_body.error.message | json }}
+  }
+{%- endif -%}
