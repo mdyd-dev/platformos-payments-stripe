@@ -1,9 +1,7 @@
-{% log account_id, type: 'set_payouts' %}
-{% log gateway_id, type: 'set_payouts' %}
 {%- if context.environment == 'production' -%}
-  {% assign delay_days = 30 %}
+  {% assign delay_days = context.constants.payouts_delay_days | default: 30 %}
 {% else %}
-  {% assign delay_days = 7 %}
+  {% assign delay_days = context.constants.payouts_delay_days | default: 7 %}
 {% endif %}
 
 {%- parse_json 'data' -%}
@@ -32,5 +30,3 @@
 {% parse_json response_body %}
   {{ response.api_call_send.response.body }}
 {% endparse_json %}
-
-{% log response_body, 'set_payouts' %}
