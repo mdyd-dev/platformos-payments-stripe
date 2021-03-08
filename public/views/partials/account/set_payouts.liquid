@@ -1,7 +1,7 @@
 {%- if context.environment == 'production' -%}
-  {% assign delay_days = context.constants.stripe_payouts_delay_days | default: 30 | plus: 0 %}
+  {% assign delay_days = stripe_payouts_delay_days | default: 30 | plus: 0 %}
 {% else %}
-  {% assign delay_days = context.constants.stripe_payouts_delay_days | default: 7 | plus: 0 %}
+  {% assign delay_days = stripe_payouts_delay_days | default: 7 | plus: 0 %}
 {% endif %}
 
 {%- parse_json 'data' -%}
