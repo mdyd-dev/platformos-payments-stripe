@@ -1,0 +1,23 @@
+{% if webhook_data.account %}
+  {%- graphql g = 'modules/payments/get_accounts_by_gateway_id', gateway_id: webhook_data.account %}
+  {%- assign account = g.customizations.results.first %}
+  {% log account.id, type: "account.application.authorized" %}
+
+  {% if account.id != blank  %}
+    {%- parse_json 'data' -%}
+      {
+        "gateway_id": "{{ account.gateway_id }}"
+      }
+    {%- endparse_json -%}
+    {%- graphql response = 'modules/payments/gateway_request',
+      data: data,
+      api_template: "modules/stripe/get_account"
+    -%}
+
+    {% log response, type: "account.application.authorized get_account" %}
+    {% assign response = response | dig: 'api_call_send', 'response', 'body' | parse_json %}
+    {% log response, type: "account.application.authorized parsed response" %}
+
+    {%- include 'modules/stripe/webhook_processors/account_updated', data: response -%}
+  {% endif %}
+{% endif %}

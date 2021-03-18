@@ -3,6 +3,8 @@
 {% if account.id == blank %}
   {% assign error_message = "account: " | append: data.id | append: "do not exist." %}
   {% log error_message, type: "ERROR" %}
+{% elsif account.properties.state == "verified" and data.payouts_enabled == true and data.charges_enabled == true %}
+  {% log data, type:  "account.updated account already verified" %}
 {% else %}
   {%- assign account_state = 'pending' -%}
   {%- if data.payouts_enabled == true and data.charges_enabled == true -%}
