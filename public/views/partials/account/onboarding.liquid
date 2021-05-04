@@ -47,8 +47,8 @@
   {% else %}
     {%- graphql c = "modules/payments/create_customization", form: 'modules/payments/create_account_form', data: account_data -%}
     {%- assign customization = c.customization_create %}
-    {% background source_name: "set_payouts", account_id: account.id, gateway_id: response_body.stripe_user_id, stripe_payouts_delay_days: context.constants.stripe_payouts_delay_days %}
-      {% include 'modules/stripe/account/set_payouts', account_id: account_id, gateway_id: gateway_id, stripe_payouts_delay_days: stripe_payouts_delay_days %}
+    {% background source_name: "set_payouts", account_id: account.id, gateway_id: response_body.stripe_user_id, stripe_payouts_delay_days: context.constants.stripe_payouts_delay_days, stripe_statement_descriptor_prefix: context.constants.stripe_statement_descriptor_prefix %}
+      {% include 'modules/stripe/account/set_payouts', account_id: account_id, gateway_id: gateway_id, stripe_payouts_delay_days: stripe_payouts_delay_days, stripe_statement_descriptor_prefix: stripe_statement_descriptor_prefix %}
     {% endbackground %}
   {% endif %}
 

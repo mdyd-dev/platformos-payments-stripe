@@ -12,7 +12,12 @@
         "schedule": {
           "delay_days": {{ delay_days }}
         }
-      }
+      }{%- if stripe_statement_descriptor_prefix != blank -%}
+        ,
+        "payments": {
+          "statement_descriptor": {{ stripe_statement_descriptor_prefix | json }}
+        }
+      {%- endif -%}
     }
 
   }
