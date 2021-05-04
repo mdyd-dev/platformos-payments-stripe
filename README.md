@@ -1,18 +1,18 @@
 # platformOS Payments Stripe
 
-A module for processing payments in platformOS using the Stripe Payment Gateway. To use the platformOS Payments Strip module, you have to have the [platformOS Payments](https://github.com/mdyd-dev/platformos-payments) module installed.  
+A module for processing payments in platformOS using the Stripe Payment Gateway. To use the platformOS Payments Strip module, you have to have the [platformOS Payments](https://github.com/mdyd-dev/platformos-payments) module installed.
 
 # Installation
 
 ## Installation through the Partner Portal
 1. Go to the [Module Marketplace](https://portal.apps.near-me.com/module_marketplace) and click on "Buy" (it's FREE) next to the "PlatformOS Payments" and "PlatformOS Payments Stripe" modules.
-2. Go to your Instance view and install both modules. 
+2. Go to your Instance view and install both modules.
 3. During the installation process, set up Stripe public and secret keys.
 4. Make sure that `enable_sms_and_api_workflow_alerts_on_staging` in your Instance configuration is set to `true`.
 
 ## Manual installation
 
-1. Open a terminal and go to the root directory of your Instance codebase. 
+1. Open a terminal and go to the root directory of your Instance codebase.
 2. Install the platformOS Payment Module from our GitHub repository:
   ```
   git submodule add https://github.com/mdyd-dev/platformos-payments modules/payments
@@ -89,7 +89,8 @@ The `create_payment` request sends a [Stripe Charge API Request](https://stripe.
     - application_fee: A fee in cents that will be applied to the charge and transferred to the application owner’s Stripe account.
     - currency: Three-letter ISO currency code, in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
     - description: optional, an arbitrary string which you can attach to a Charge object. [Read more](https://stripe.com/docs/api/charges/create#create_charge-description)
-    - statement_descriptor: optional, an arbitrary string to be used as the dynamic portion of the full descriptor displayed on your customer’s credit card statement. [Read more](https://stripe.com/docs/api/charges/create#create_charge-statement_descriptor)
+    - statement_descriptor_suffix: optional, Provides information about the charge that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor. Maximum 22 characters for the concatenated descriptor. [Read more](https://stripe.com/docs/api/charges/create#create_charge-statement_descriptor)
+    - statement_descriptor: For card charges, use statement_descriptor_suffix instead. Otherwise, you can use this value as the complete description of a charge on your customers’ statements. Must contain at least one letter, maximum 22 characters. [Read more](https://stripe.com/docs/api/charges/create#create_charge-statement_descriptor)
     - capture: whether to immediately capture the charge. Defaults to true.
     - customer: the ID of an existing customer that will be charged in this request.
     - destination: the ID of a connected account for processing [Stripe Connect Payments](https://stripe.com/docs/connect). By default, it is stored as a `gateway_id` property of the `modules/payments/account` object.
