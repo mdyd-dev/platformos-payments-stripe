@@ -16,7 +16,8 @@ headers: >
     {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key }}",
-      "Idempotency-Key": "{{ data.indempotency_key }}"
+      "Idempotency-Key": "{{ data.indempotency_key }}",
+      "Stripe-Version": "2019-08-14"
     }
   {% endif %}
 ---
