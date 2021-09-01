@@ -18,7 +18,8 @@ headers: >
       {% if data.stripe_account_id != blank %}
         "Stripe-Account": "{{ data.stripe_account_id }}",
       {% endif %}
-      "Idempotency-Key": "{{ data.indempotency_key }}"
+      "Idempotency-Key": "{{ data.indempotency_key }}",
+      "Stripe-Version": "2019-08-14"
     }
   {% endif %}
 ---
