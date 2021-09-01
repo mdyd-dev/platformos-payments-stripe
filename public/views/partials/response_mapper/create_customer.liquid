@@ -8,6 +8,7 @@
         {"message": "{{ response_body.error.message }}"}
       ],
     {%- endif -%}
+    {% assign source = response_body.sources.data[0] %}
     "properties": [
       { "name": "email", "value": "{{ data.email }}" },
       { "name": "description", "value": "{{ data.description }}" },
@@ -15,11 +16,20 @@
       { "name": "gateway_id", "value": "{{ response_body.id }}" },
       { "name": "source", "value": "{{ response_body.default_source }}" },
       { "name": "default_source", "value": "{{ response_body.default_source }}" },
-      { "name": "card_brand", "value": "{{ response_body.sources.data[0].brand }}" },
-      { "name": "card_exp_month", "value": "{{ response_body.sources.data[0].exp_month }}" },
-      { "name": "card_exp_year", "value": "{{ response_body.sources.data[0].exp_year }}" },
-      { "name": "card_last4", "value": "{{ response_body.sources.data[0].last4 }}" },
-      { "name": "skip_credit_card_creation", "value": "false" }
+      { "name": "source_type", "value": "{{ source.object }}" },
+      {% if source.object == "bank_account" %}
+        { "name": "account_holder_name", "value": "{{ source.account_holder_name }}" },
+        { "name": "account_holder_type", "value": "{{ source.account_holder_type }}" },
+        { "name": "bank_name", "value": "{{ source.bank_name }}" },
+        { "name": "last4", "value": "{{ source.last4 }}" },
+        { "name": "routing_number", "value": "{{ source.routing_number }}" }
+      {% else %}
+        { "name": "card_brand", "value": "{{ source.brand }}" },
+        { "name": "card_exp_month", "value": "{{ source.exp_month }}" },
+        { "name": "card_exp_year", "value": "{{ source.exp_year }}" },
+        { "name": "card_last4", "value": "{{ source.last4 }}" },
+        { "name": "skip_credit_card_creation", "value": "false" }
+      {% endif %}
     ]
   }
 {%- else -%}

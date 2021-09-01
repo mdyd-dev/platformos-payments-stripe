@@ -1,0 +1,27 @@
+{%- parse_json 'response_body' -%}
+  {{ gateway_response.body }}
+{%- endparse_json -%}
+{%- if gateway_response.status == 200 -%}
+  {
+    {%- if response_body.error -%}
+      "errors": [
+        { "message": "{{ response_body.error.message }}" }
+      ],
+    {%- endif -%}
+    "properties": [
+      { "name": "gateway_customer_id", "value": "{{ response_body.customer }}" },
+      { "name": "customer_id", "value": "{{ data.stored_customer_id }}" },
+      { "name": "external_id", "value": "{{ data.external_id }}" },
+      { "name": "gateway_id", "value": "{{ response_body.id }}" },
+      { "name": "account_holder_name", "value": "{{ response_body.account_holder_name }}" },
+      { "name": "account_holder_type", "value": "{{ response_body.account_holder_type }}" },
+      { "name": "bank_name", "value": "{{ response_body.bank_name }}" },
+      { "name": "last4", "value": "{{ response_body.last4 }}" },
+      { "name": "routing_number", "value": "{{ response_body.routing_number }}" }
+    ]
+  }
+{%- else -%}
+  {
+    "errors": {{ response_body.error.message | json }}
+  }
+{%- endif -%}

@@ -1,0 +1,20 @@
+---
+name: delete_bank_account
+to: https://api.stripe.com/v1/customers/{{ data.customer_id }}/sources/{{ data.gateway_id }}
+request_type: DELETE
+callback: >
+  {%- assign response_data = response.body | to_hash -%}
+  {% if response_data.error %}
+    {%- log response_data.error, type: 'modules/payments/delete_card' -%}
+  {% endif %}
+headers: >
+  {% if data %}
+    {%- include 'modules/stripe/shared/api_credentials' -%}
+    {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": "Bearer {{ context.exports.payments.gateway.secret_key  }}",
+      "Stripe-Version": "2019-08-14"
+    }
+  {% endif %}
+---
+
