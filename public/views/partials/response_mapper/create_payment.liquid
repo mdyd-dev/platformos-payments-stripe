@@ -5,6 +5,15 @@
 {%- if gateway_response.status == 200 -%}
 
   {%- assign now = 'now' | to_time | strftime: "%d-%m-%Y %H:%M:%S"  -%}
+  {% if response_body.status == "pending" %}
+    {% assign status = "pending" %}
+  {% elsif response_body.status != 'succeeded' %}
+    {% assign status = "failed" %}
+  {% elsif response_body.captured %}
+    {% assign status = "paid" %}
+  {% else %}
+    {% assign status = "authorized" %}
+  {% endif %}
   {
     {%- if response_body.error -%}
       "errors": [
@@ -24,8 +33,8 @@
       { "name": "application_fee_cents", "value": "{{ response_body.application_fee_amount }}" },
       { "name": "destination", "value": "{{ response_body.destination }}" },
       { "name": "transfer_group", "value": "{{ response_body.transfer_group }}" },
-      { "name": "paid_at", "value": "{% if response_body.captured %}{{ now }}{% endif %}" },
-      { "name": "state", "value": "{% if response_body.status != 'succeeded' %}failed{% else %}{% if response_body.captured %}paid{% else%}authorized{% endif %}{% endif %}" }
+      { "name": "paid_at", "value": "{% if status == "paid" %}{{ now }}{% endif %}" },
+      { "name": "state", "value": "{{ status }}" }
     ]
   }
 {%- else -%}
