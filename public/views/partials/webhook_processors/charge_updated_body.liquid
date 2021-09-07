@@ -12,6 +12,7 @@
           { "name": "paid_at", "value": "{{ 'now' | strftime: '%FT%T%z' }}" },
         {% else %}
           { "name": "failed_at", "value": "{{ 'now' | strftime: '%FT%T%z' }}" },
+          { "name": "failure_message", "value": {{ data.failure_message | json }} },
         {% endif %}
         { "name": "state", "value": "{{ data.status }}" }
       ]
