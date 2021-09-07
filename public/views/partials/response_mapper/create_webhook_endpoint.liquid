@@ -13,7 +13,8 @@
       { "name": "gateway_id", "value": "{{ response_body.id }}" },
       { "name": "url", "value": "{{ response_body.url }}" },
       { "name": "secret", "value": "{{ response_body.secret }}" },
-      { "name": "livemode", "value": "{{ response_body.livemode }}" }
+      { "name": "livemode", "value": "{{ response_body.livemode }}" },
+      { "name": "enabled_events", "value_array": {{ response_body.enabled_events }} }
     ]
   }
 {%- else -%}

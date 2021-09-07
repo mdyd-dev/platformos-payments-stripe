@@ -1,0 +1,22 @@
+{%- graphql payment = 'modules/payments/get_payment_by_gateway_id', gateway_id: data.id | dig: 'customizations', 'results' | first %}
+{% if payment.id == blank %}
+  {% assign error_message = "Payment: " | append: data.id | append: "do not exist." %}
+  {% log error_message, type: "ERROR" %}
+{% elsif payment.properties.state == "succeeded"%}
+  {% log data, type:  "charge.succeeded payment already paid" %}
+{% else %}
+  {% parse_json payment_data %}
+    {
+      "properties": [
+        {% if data.status == "succeeded" %}
+          { "name": "paid_at", "value": "{{ 'now' | strftime: '%FT%T%z' }}" },
+        {% else %}
+          { "name": "failed_at", "value": "{{ 'now' | strftime: '%FT%T%z' }}" },
+        {% endif %}
+        { "name": "state", "value": "{{ data.status }}" }
+      ]
+    }
+  {% endparse_json %}
+  {%- graphql g = "modules/payments/update_customization", form: "modules/payments/webhook_update_payment_form", data: payment_data, id: payment.id -%}
+  {% log g, type: "WEBHOOK CHARGE UPDATED" %}
+{% endif %}
