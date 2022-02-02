@@ -2,5 +2,6 @@
   "stripe_pk_key": "your_stripe_pk_key",
   "stripe_sk_key": "your_stripe_sk_key",
   "stripe_client_id": "your_stripe_client_id",
-  "terms-and-conditions": "/terms-and-conditions"
+  "terms-and-conditions": "/terms-and-conditions",
+  "webhook_payout_paid_partial": "payments/webhook_payout_paid"
 }
