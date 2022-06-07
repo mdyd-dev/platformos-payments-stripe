@@ -1,6 +1,6 @@
 ---
 name: get_payout
-to: https://api.stripe.com/v1/balance/history?payout={{ data.payout_id }}
+to: https://api.stripe.com/v1/balance/history?payout={{ data.payout_id }}&limit=100
 enabled: true
 format: https
 trigger_condition: true
