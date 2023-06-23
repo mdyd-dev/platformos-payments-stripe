@@ -182,12 +182,34 @@ Used to remove credit card from an an existing customer.
   - customer_id: Stripe Customer object ID
   - gateway_id: Stripe Credit Card object ID
 
-
-
-TBD
 ### get_account
+
+Retrieves the details of a Stripe account. You can see things like its current requirements or if it is enabled to make live charges or receive payouts.
+
+- data:
+  - gateway_id: id of account
+
 ### get_payout
+
+Retrieves a payout object (created when receiving funds from Stripe, or when a payout is initiated to a bank account or to a debit card of a connected Stripe account). The schedules of payouts vary depending on the country and industry.
+
+- data:
+  - payout_id: id of payout
+  - account_id: id of Stripe account
+
 ### get_persons
+
+Retrieves a list of persons (objects representing persons associated with a Stripe account).
+
+- data:
+  - gateway_id: id of Stripe account
+
 ### get_webhook_endpoints
 
+Retrieves a list of webhook endpoints.
 
+Webhook endpoints can be configured to be notified about events that happen in a Stripe account.
+
+Usually webhooks are configured and tested from the dashboard.
+
+No parameters required.
