@@ -1,18 +1,18 @@
 # platformOS Payments Stripe
 
-A module for processing payments in platformOS using the Stripe Payment Gateway. To use the platformOS Payments Strip module, you have to have the [platformOS Payments](https://github.com/mdyd-dev/platformos-payments) module installed.  
+A module for processing payments in platformOS using the Stripe Payment Gateway. To use the platformOS Payments Strip module, you have to have the [platformOS Payments](https://github.com/mdyd-dev/platformos-payments) module installed.
 
 # Installation
 
 ## Installation through the Partner Portal
 1. Go to the [Module Marketplace](https://portal.apps.near-me.com/module_marketplace) and click on "Buy" (it's FREE) next to the "PlatformOS Payments" and "PlatformOS Payments Stripe" modules.
-2. Go to your Instance view and install both modules. 
+2. Go to your Instance view and install both modules.
 3. During the installation process, set up Stripe public and secret keys.
 4. Make sure that `enable_sms_and_api_workflow_alerts_on_staging` in your Instance configuration is set to `true`.
 
 ## Manual installation
 
-1. Open a terminal and go to the root directory of your Instance codebase. 
+1. Open a terminal and go to the root directory of your Instance codebase.
 2. Install the platformOS Payment Module from our GitHub repository:
   ```
   git submodule add https://github.com/mdyd-dev/platformos-payments modules/payments
@@ -182,12 +182,35 @@ Used to remove credit card from an an existing customer.
   - customer_id: Stripe Customer object ID
   - gateway_id: Stripe Credit Card object ID
 
-
-
-TBD
 ### get_account
+
+Retrieves the details of a Stripe account. You can see things like its current requirements or if it is enabled to make live charges or receive payouts. [Read more](https://stripe.com/docs/api/accounts/retrieve)
+
+- data:
+  - gateway_id: id of account
+
 ### get_payout
+
+Retrieves all transactions that have been included in a [Payout](https://stripe.com/docs/api/payouts) operation (created when receiving funds from Stripe, or when a payout is initiated to a bank account or to a debit card of a connected Stripe account). [Read more](https://stripe.com/docs/api/balance_transactions/list)
+
+- data:
+  - payout_id: id of payout
+  - account_id: id of Stripe account
+
 ### get_persons
+
+Retrieves a list of persons (objects representing persons associated with a Stripe account or connected account). [Read more](https://stripe.com/docs/api/persons)
+
+- data:
+  - gateway_id: id of Stripe account
+
 ### get_webhook_endpoints
 
+Retrieves a list of configured webhook endpoints.
 
+Webhook endpoints can be configured to be notified about events that happen in a Stripe account.
+
+Usually webhooks are configured and tested from the dashboard.
+
+No parameters required.
+[Read more](https://stripe.com/docs/api/webhook_endpoints/list)
