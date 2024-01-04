@@ -3,7 +3,7 @@
 {% graphql g = 'modules/stripe/set_constant', name: 'stripe_client_id', value: '<%= stripe_client_id =%>' %}
 
 {% assign gateway_name = 'stripe' %}
-{% export gateway_name, namespace: "payments"  %}
+{% export gateway_name, namespace: "payments" %}
 
 {% parse_json "webhook_data" %}
   {
@@ -16,11 +16,18 @@
   }
 {% endparse_json %}
 
+{% parse_json config %}
+  {
+    "gateway": "stripe"
+  }
+{% endparse_json %}
+
 {% parse_json "data" %}
   {
     "properties": [
        { "name": "request_type", "value": "create_webhook_endpoint" },
-       { "name": "data", "value":  "{{ webhook_data | json | escape_javascript }}" }
+       { "name": "data", "value":  "{{ webhook_data | json | escape_javascript }}" },
+       { "name": "config", "value": "{{ config | json | escape_javascript }}" }
      ]
   }
 {% endparse_json %}
